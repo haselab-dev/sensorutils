@@ -10,7 +10,7 @@ import typing
 
 import numpy as np
 
-def framing(segment:np.ndarray, **options) -> np.ndarray:
+def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     """segment をフレーム分けする。
 
     各シェープは以下のようになる。
