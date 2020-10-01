@@ -9,6 +9,8 @@ sensor utils。
 import typing
 
 import numpy as np
+from scipy import interpolate
+
 
 def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     """segment をフレーム分けする。
@@ -107,3 +109,57 @@ def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
     for i in range(1, len(idxes)):
         ret[target[idxes[i-1]]].append(src[idxes[i-1]:idxes[i]].copy())
     return dict(ret)
+
+
+def linear_up(ft:np.ndarray, rate:int, axis:int=-1) -> np.ndarray:
+    """linear interpolation function
+
+    Parameters
+    ----------
+    ft: np.ndarray
+        interpolation source.
+
+    rate: int
+        rate.
+
+    axis: int
+        axis.
+
+    Returns
+    -------
+    np.ndarray:
+        shape[axis] == rate * ft.shape[axis]
+    """
+    N = ft.shape[axis]
+    x_low = np.linspace(0, 1, N)
+    x_target = np.linspace(0, 1, N*rate)
+    f_linear = interpolate.interp1d(x_low, ft, kind='linear', axis=axis)
+    return f_linear(x_target)
+
+
+def spline_up(ft:np.ndarray, rate:int, axis:int=-1) -> np.ndarray:
+    """spline interpolation function
+
+    3 次スプライン補間
+
+    Parameters
+    ----------
+    ft: np.ndarray
+        interpolation source.
+
+    rate: int
+        rate.
+
+    axis: int
+        axis.
+
+    Returns
+    -------
+    np.ndarray:
+        shape[axis] == rate * ft.shape[axis]
+    """
+    N = ft.shape[axis]
+    x_low = np.linspace(0, 1, N)
+    x_target = np.linspace(0, 1, N*rate)
+    f_linear = interpolate.interp1d(x_low, ft, kind='cubic', axis=axis)
+    return f_linear(x_target)

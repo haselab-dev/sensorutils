@@ -26,3 +26,4 @@ import sensorutils.datasets
     * 3.8 以外でも動くように設計しているが、エラーが出たら教えてください
 * numpy
 * pandas
+* scipy
