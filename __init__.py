@@ -6,4 +6,5 @@ from .core import *
 from . import (
     datasets,
     metrics,
+    stats,
 )
