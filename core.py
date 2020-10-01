@@ -72,3 +72,38 @@ def framing(segment:np.ndarray, **options) -> np.ndarray:
         num_frames = (len(seg) - window_size) // stride + 1
         idx = np.arange(window_size).reshape(-1, window_size).repeat(num_frames, axis=0) + np.arange(num_frames).reshape(num_frames, 1) * stride
         return seg[idx]
+
+
+def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
+    """target のデータを元に src の分割を行う。
+
+    ```python
+    tgt = np.array([0, 0, 1, 1, 2, 2, 1])
+    src = np.array([1, 2, 3, 4, 5, 6, 7])
+    assert split_from_target(src, tgt) == {0: [np.array([1, 2]), np.array([7])], 1: [np.array([3, 4])], 2: [np.array([5, 6])]}
+    ```
+
+    Parameters
+    ----------
+    src: np.ndarray
+        分割するデータ
+
+    target: np.ndarray
+        ラベルデータ（一次元配列）
+
+    Returns
+    -------
+    dict:
+        key はラベル、value はデータのリスト。
+    """
+    from collections import defaultdict
+
+    rshifted = np.roll(target, 1)
+    diff = target - rshifted
+    diff[0] = 1
+    idxes = np.where(diff != 0)[0]
+
+    ret = defaultdict(list)
+    for i in range(1, len(idxes)):
+        ret[target[idxes[i-1]]].append(src[idxes[i-1]:idxes[i]].copy())
+    return dict(ret)
