@@ -8,3 +8,8 @@
 * [ ] Opportunity
 * [ ] PAMAP2
 """
+
+from . import (
+    hasc,
+    opportunity,
+)
