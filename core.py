@@ -61,7 +61,7 @@ def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     # segment が短いときの処理
     if len(segment) < ftrim + btrim:
         return return_error_value
-    seg = segment[ftrim: btrim].copy()
+    seg = segment[ftrim: -btrim].copy()
     if len(seg) < window_size:
         return return_error_value
     # 分割処理
