@@ -58,6 +58,8 @@ def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     btrim = options.pop('btrim', 5)
     return_error_value = options.pop('return_error_value', None)
     assert not bool(options), "args error: key {} is not exist.".format(list(options.keys()))
+    if type(segment) is not np.ndarray:
+        return return_error_value
     # segment が短いときの処理
     if len(segment) < ftrim + btrim:
         return return_error_value
