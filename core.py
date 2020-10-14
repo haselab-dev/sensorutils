@@ -81,12 +81,39 @@ def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
         num_frames = (len(seg) - window_size) // stride + 1
         idx = np.arange(window_size).reshape(-1, window_size).repeat(num_frames, axis=0) + np.arange(num_frames).reshape(num_frames, 1) * stride
         return seg[idx]
-        """ 上のインデックス指定よりも速い。実験的機能として入れておきたい。
-        num_frames = (seg.shape[0] - window_size) // stride + 1
-        ret_shape = (num_frames, window_size, seg.shape[-1])
-        strides = (stride * seg.strides[0], *seg.strides)
-        return np.lib.stride_tricks.as_strided(seg, shape=ret_shape, strides=strides)
-        """
+
+
+def window(src: np.ndarray, window_size: int, stride: int):
+    """
+    np.ndarray をフレーム分けする。
+    stride が window_size 以外のとき split_by_sliding_window 関数より速く分割を行う。
+    また、src のシェープはどのような次元数でも行える。
+
+    Parameters
+    ----------
+    src: np.ndarray
+        splited source.
+
+    window_size: int
+        sliding window size.
+
+    stride: int,
+        stride is 0 or more int.
+
+    Returns
+    -------
+    frames: np.ndarray
+        a shape of frames is `(num_frames, window_size, *src.shape[1:])`, where num_frames is `(src.shape[0] - window_size) // stride + 1`.
+    """
+    assert stride >= 0
+    num_frames = (src.shape[0] - window_size) // stride + 1
+    if stride == window_size:
+        ret = src[:(num_frames * window_size)]
+        return ret.reshape(-1, window_size, *src.shape[1:])
+    else:
+        ret_shape = (num_frames, window_size, *src.shape[1:])
+        strides = (stride * src.strides[0], *src.strides)
+        return np.lib.stride_tricks.as_strided(src, shape=ret_shape, strides=strides)
 
 
 def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
