@@ -58,12 +58,17 @@ def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     btrim = options.pop('btrim', 5)
     return_error_value = options.pop('return_error_value', None)
     assert not bool(options), "args error: key {} is not exist.".format(list(options.keys()))
+    assert type(window_size) is int, "type(window_size) is int: {}".format(type(window_size))
+    assert ftrim >= 0 and btrim >= 0, "ftrim >= 0 and btrim >= 0: ftrim={}, btrim={}".format(ftrim, btrim)
     if type(segment) is not np.ndarray:
         return return_error_value
     # segment が短いときの処理
     if len(segment) < ftrim + btrim:
         return return_error_value
-    seg = segment[ftrim: -btrim].copy()
+    if btrim == 0:
+        seg = segment[ftrim:].copy()
+    else:
+        seg = segment[ftrim: -btrim].copy()
     if len(seg) < window_size:
         return return_error_value
     # 分割処理
@@ -76,6 +81,12 @@ def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
         num_frames = (len(seg) - window_size) // stride + 1
         idx = np.arange(window_size).reshape(-1, window_size).repeat(num_frames, axis=0) + np.arange(num_frames).reshape(num_frames, 1) * stride
         return seg[idx]
+        """ 上のインデックス指定よりも速い。実験的機能として入れておきたい。
+        num_frames = (seg.shape[0] - window_size) // stride + 1
+        ret_shape = (num_frames, window_size, seg.shape[-1])
+        strides = (stride * seg.strides[0], *seg.strides)
+        return np.lib.stride_tricks.as_strided(seg, shape=ret_shape, strides=strides)
+        """
 
 
 def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
