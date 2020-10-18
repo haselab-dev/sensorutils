@@ -2,7 +2,9 @@
 Opportunity データの読み込みなど
 """
 
+import pandas as pd
 from pathlib import Path
+from collections import defaultdict
 
 
 def load(path:Path) -> dict:
@@ -11,7 +13,7 @@ def load(path:Path) -> dict:
     Parameters
     ----------
     path: Path
-        HASC ファイルのパス。BasicActivity のあるディレクトリを指定すること。
+        Opportunity(UCI)のdatasetディレクトリがあるディレクトリ
 
     Returns
     -------
@@ -19,15 +21,17 @@ def load(path:Path) -> dict:
         person_no: [pd.DataFrame(sensor,..)]
     """
     path = path / 'dataset'
-    segs = defaultdict(list)
-    for person in PERSONS:
+    #segs = defaultdict(list)
+    segs = []
+    for p_id, person in enumerate(PERSONS):
         datfiles = path.glob('{}-ADL*.dat'.format(person))
         for datfile in datfiles:
-            df = pd.read_csv(datfile, sep=' ', header=None)
+            df = pd.read_csv(datfile, sep='\s+', header=None)
             df.columns = Column
+            df['User'] = p_id
             # NOTE: NaN は触れない (変更する可能性有)
             segs.append(df)
-    return dict(segs)
+    return pd.concat(segs)
 
 
 # NOTE: Locomotion と辞書があってない可能性がある
@@ -454,4 +458,5 @@ Column = [
     'LL_Right_Arm',
     'LL_Right_Arm_Object',
     'ML_Both_Arms',
+    #'User',     # ユーザID(ローダ側で付与)
 ]
