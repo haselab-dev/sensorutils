@@ -4,6 +4,7 @@ Opportunity データの読み込みなど
 
 import pandas as pd
 from pathlib import Path
+from core import split_by_sliding_window, split_from_target
 from collections import defaultdict
 
 
@@ -17,21 +18,37 @@ def load(path:Path) -> dict:
 
     Returns
     -------
-    dict:
-        person_no: [pd.DataFrame(sensor,..)]
+    segments:
+        Locomotionをもとにセグメンテーションされたデータ
     """
+    import itertools
     path = path / 'dataset'
     #segs = defaultdict(list)
-    segs = []
+    chunks = []
     for p_id, person in enumerate(PERSONS):
         datfiles = path.glob('{}-ADL*.dat'.format(person))
         for datfile in datfiles:
+            print(datfile)
             df = pd.read_csv(datfile, sep='\s+', header=None)
             df.columns = Column
             df['User'] = p_id
-            # NOTE: NaN は触れない (変更する可能性有)
-            segs.append(df)
-    return pd.concat(segs)
+            # 将来的には欠損値処理はもう少しきちんと行う必要がある
+            df = df.fillna(method='ffill')  # NANは周辺の平均値で埋める
+            chunks.append(df)
+    
+    segs = []
+    for chunk in chunks:
+        sub_segs = split_from_target(np.array(chunk), np.array(chunk['Locomotion']))
+        sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
+        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
+        # For debug
+        for seg in sub_segs:
+            label = seg['Locomotion'].iloc[0]
+            if not np.array(seg['Locomotion'] == label).all():
+                raise RuntimeError('This is bug. Failed segmentation')
+        segs += sub_segs
+
+    return segs
 
 
 # NOTE: Locomotion と辞書があってない可能性がある
