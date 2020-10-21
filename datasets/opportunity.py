@@ -5,8 +5,8 @@ Opportunity データの読み込みなど
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from core import split_by_sliding_window, split_from_target
-from collections import defaultdict
+from ..core import split_by_sliding_window, split_from_target
+#from collections import defaultdict
 
 
 """
@@ -28,7 +28,16 @@ Accelerometer_MILK_accX 3
 """
 
 class Opportunity:
-    not_supoorted_labels = [
+    """Opportunity
+
+    Opportunity データセットの行動分類を行うためのローダクラス。
+
+    Attributes
+    ----------
+    not_supported_labels: サポートしていないラベルの一覧。
+    """
+
+    not_supported_labels = [
         'Accelerometer_CHEESE_accX',
         'Accelerometer_SPOON_accX',
         'Accelerometer_KNIFE1_accX',
@@ -45,10 +54,10 @@ class Opportunity:
 
     def __init__(self, path:Path):
         self.path = path
-    
+
     def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
         """Opportunityの読み込み(ADL)とsliding-window
-        
+
         Parameters
         ----------
         window_size: int
@@ -56,26 +65,26 @@ class Opportunity:
 
         stride: int
             ウィンドウの移動幅
-        
+
         x_labels: list
             入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠。)。ここで指定したラベルのデータが入力として取り出される。
             一部サポートしていないラベルがあるの注意。
-        
+
         y_labels: list
             ターゲットのラベルリスト。使用はx_labelsと同様。
-        
+
         ftrim_sec: int
             セグメント先頭のトリミングサイズ。単位は秒。
 
         btrim_sec: int
             セグメント末尾のトリミングサイズ。単位は秒。
-        
+
         Returns
         -------
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
         """
-        if not set(self.not_supoorted_labels).isdisjoint(set(x_labels+y_labels)):
+        if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
             raise ValueError('x_labels or y_labels include non supported labels')
         segments = load(self.path)
         segments = [seg[x_labels+y_labels] for seg in segments]
@@ -119,7 +128,7 @@ def load(path:Path) -> dict:
             # 将来的には欠損値処理はもう少しきちんと行う必要がある
             df = df.fillna(method='ffill')  # NANは周辺の平均値で埋める
             chunks.append(df)
-    
+
     segs = []
     for chunk in chunks:
         sub_segs = split_from_target(np.array(chunk), np.array(chunk['Locomotion']))
