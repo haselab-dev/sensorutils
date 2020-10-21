@@ -64,7 +64,7 @@ class HASC:
         return filed_meta
 
     # フィルタリング周りの実装は暫定的
-    def load(self, window_size:int, stride:int, ftrim_sec:int=0, btrim_sec:int=0, queries:dict=None):
+    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:dict=None):
         """HASCデータの読み込みとsliding-window
 
         Parameters
@@ -75,11 +75,11 @@ class HASC:
         stride: int
             ウィンドウの移動幅
 
-        ftrim_sec: int
-            セグメント先頭のトリミングサイズ。単位は秒。
+        ftrim: int
+            セグメント先頭のトリミングサイズ
 
-        btrim_sec: int
-            セグメント末尾のトリミングサイズ。単位は秒。
+        btrim: int
+            セグメント末尾のトリミングサイズ
         
         queries: dict
             メタ情報に基づいてフィルタリングを行うためのクエリ。
@@ -119,6 +119,7 @@ class HASC:
 
             fs = split_by_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
+                ftrim=ftrim, btrim=btrim,
                 return_error_value=None)
             if fs is not None:
                 x_frames += [fs]
