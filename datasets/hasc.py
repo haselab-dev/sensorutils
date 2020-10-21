@@ -23,6 +23,10 @@ class HASC:
         'Frequency', 'Gender', 'Height', 'Weight',
     ]
 
+    supported_activity_labels = [
+        'stay', 'walk', 'jog', 'skip', 'stup', 'stdown',
+    ]
+
     def __init__(self, path:Path, cache_dir_meta:Path=None):
         self.path = path
         self.cache_dir_meta = cache_dir_meta
@@ -106,20 +110,23 @@ class HASC:
         act2id = {}
         act_id_counter = 0
         for meta_row, seg in zip(filed_meta.itertuples(), segments):
+            act = meta_row.act
+            if act == '0_sequence':
+                continue
+            if act not in act2id.keys():
+                act2id[act] = act_id_counter
+                act_id_counter += 1
+
             fs = split_by_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
                 return_error_value=None)
             if fs is not None:
                 x_frames += [fs]
-                act_label = meta_row.Activity
-                if act_label not in act2id.keys():
-                    act2id[act_label] = act_id_counter
-                    act_id_counter += 1
-                y_frames += [np.array([act2id[act_label]]).repeat(len(fs))]
+                y_frames += [np.array([act2id[act]]).repeat(len(fs))]
         x_frames = np.concatenate(x_frames)
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
-        return x_frames, y_frames
+        return x_frames, y_frames, act2id
 
 
 def load_meta(path:Path) -> pd.DataFrame:
