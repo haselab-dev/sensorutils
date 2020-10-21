@@ -8,7 +8,118 @@ import functools
 from pathlib import Path
 import typing
 
+import numpy as np
 import pandas as pd
+import pickle
+from ..core import split_by_sliding_window
+
+class HASC:
+    """HASC
+
+    HASCデータセット(HASC-PAC2016)の行動分類を行うためのローダクラス
+    """
+
+    supported_queries = [
+        'Frequency', 'Gender', 'Height', 'Weight',
+    ]
+
+    def __init__(self, path:Path, cache_dir_meta:Path=None):
+        self.path = path
+        self.cache_dir_meta = cache_dir_meta
+
+        if cache_dir_meta.exists():
+            self.meta = pd.read_csv(str(cache_dir_meta), index_col=0)
+        else:
+            self.meta = load_meta(path)
+    
+    @classmethod
+    def load_from_cache(cls, cache_path:Path):
+        with cache_path.open('rb') as fp:
+            x, y = pickle.load(fp)
+        return x, y
+    
+    def _filter_with_meta(self, queries):
+        """
+        Supported Queries
+        - Frequency
+        - Gender
+        - Weight
+        """
+        if not (set(queries.keys()) < set(self.supported_queries)):
+            raise ValueError(f'Unknown queries detected. (Supported: {self.supported_queries})')
+
+        # クエリの整形
+        # 括弧は特殊文字として扱われるため無視したい場合はバッククォートで囲む
+        if 'Height' in queries.keys():
+            queries['Height'] = queries['Height'].replace('Height', '`Height(cm)`')
+        if 'Weight' in queries.keys():
+            queries['Weight'] = queries['Weight'].replace('Weight', '`Weight(kg)`')
+        
+        query_string = ' & '.join([queries[k] for k in queries.keys()])
+        filed_meta = self.meta.query(query_string)
+        return filed_meta
+
+    # フィルタリング周りの実装は暫定的
+    def load(self, window_size:int, stride:int, ftrim_sec:int=0, btrim_sec:int=0, queries:dict=None):
+        """HASCデータの読み込みとsliding-window
+
+        Parameters
+        ----------
+        window_size: int
+            フレーム分けするサンプルサイズ
+
+        stride: int
+            ウィンドウの移動幅
+
+        ftrim_sec: int
+            セグメント先頭のトリミングサイズ。単位は秒。
+
+        btrim_sec: int
+            セグメント末尾のトリミングサイズ。単位は秒。
+        
+        queries: dict
+            メタ情報に基づいてフィルタリングを行うためのクエリ。
+            Keyはフィルタリングのラベル(Supported: Frequency, Height, Weight)
+            Valueはクエリ文字列(DataFrame.queryに準拠)
+            e.g.
+            # サンプリングレートが100Hz and 身長が170cmより大きい and 体重が100kg以上でフィルタリング
+            queries = {
+                'Frequency': 'Frequency == 100', # サンプリングレートが100Hzのデータのみを取得
+                'Height': 'Height > 170',   # 身長が170cmより大きい人
+                'Weight': 'Weight >= 100',   # 体重が100kg以上の人
+            }
+
+        Returns
+        -------
+        (x_frames, y_frames): tuple
+            sliding-windowで切り出した入力とターゲットのフレームリスト
+        """
+
+        if queries is None:
+            filed_meta = self.meta
+        else:
+            filed_meta = self._filter_with_meta(queries)
+        
+        segments = load(self.path, filed_meta)
+        x_frames = []
+        y_frames = []
+        act2id = {}
+        act_id_counter = 0
+        for meta_row, seg in zip(filed_meta.itertuples(), segments):
+            fs = split_by_sliding_window(
+                np.array(seg), window_size=window_size, stride=stride,
+                return_error_value=None)
+            if fs is not None:
+                x_frames += [fs]
+                act_label = meta_row.Activity
+                if act_label not in act2id.keys():
+                    act2id[act_label] = act_id_counter
+                    act_id_counter += 1
+                y_frames += [np.array([act2id[act_label]]).repeat(len(fs))]
+        x_frames = np.concatenate(x_frames)
+        y_frames = np.concatenate(y_frames)
+        assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
+        return x_frames, y_frames
 
 
 def load_meta(path:Path) -> pd.DataFrame:
