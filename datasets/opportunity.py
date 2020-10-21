@@ -97,8 +97,9 @@ class Opportunity:
             if fs is not None:
                 frames += [fs]
         frames = np.concatenate(frames)
+        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
         x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., -len(y_labels):]
+        y_frames = frames[..., len(x_labels):]
         return x_frames, y_frames
 
 def load(path:Path) -> dict:
