@@ -1,8 +1,13 @@
 """
-センサデータに関する評価関数
+センサデータに関する評価関数。
+numpy 実装。
 
-追加予定
-SNR,..
+* [x] Mean Absolute Error; MAE
+* [x] Mean Absolute Persentage Error; MAPE
+* [x] Mean Squared Error; MSE
+* [x] Root Mean Squared Error; RMSE
+* [x] Root Mean Squared Persentage Error; RMSPE
+* [x] Signal to Noise Ratio; SNR
 """
 
 import typing
@@ -10,15 +15,123 @@ import typing
 import numpy as np
 
 
-def snr(dst:np.ndarray, src:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
-    """to calc Signal to Noise Ratio.
+def mae(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Mean Absolute Error.
+
+    ```math
+    \frac{1}{N}\sum_{i=0}^{N} |\hat{y}_i - y_i|
+    ```
 
     Parameters
     ----------
-    dst: np.ndarray
+    true: np.ndarray
+        true data.
+
+    pred: np.ndarray
+        predicted data.
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+    """
+    return np.abs(true - pred).mean(axis=axis)
+
+
+def mape(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Mean Absolute Persentage Error.
+
+    ```math
+    \frac{100}{N}\sum_{i=0}^{N} \left| \frac{\hat{y}_i - y_i}{y_i} \right|
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
+        true data.
+
+    pred: np.ndarray
+        predicted data.
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+    """
+    return mae(np.ones_like(true), pred / true, axis) * 100
+
+
+def mse(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Mean Squared Error.
+
+    ```math
+    \frac{1}{N}\sum_{i=0}^{N} (dst_i - src_i)^2
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
+
+    pred: np.ndarray
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+    """
+    return (np.square(true - pred)).mean(axis=axis)
+
+
+def rmse(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Root Mean Squared Error.
+
+    ```math
+    \left(\frac{1}{N}\sum_{i=0}^{N} (\hat{y}_i - y_i)^2 \right)^{\frac{1}{2}}
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
+
+    pred: np.ndarray
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+    """
+    return np.sqrt(mse(true, pred, axis))
+
+
+def rmspe(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Root Mean Squared Persentage Error.
+
+    ```math
+    100 \left(\frac{1}{N}\sum_{i=0}^{N} (\frac{\hat{y}_i - y_i}{y_i})^2 \right)^{\frac{1}{2}}
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
+
+    pred: np.ndarray
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+    """
+    return rmse(np.ones_like(true), pred / true, axis) * 100
+
+
+def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Signal to Noise Ratio.
+
+    ```math
+    20 \log_{10} \left(\frac{\frac{1}{N}\sum_{i=0}^{N}true_i^2}{\frac{1}{N}\sum_{i=0}^{N}(true_i - pred_i)^2} \right)
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
         clean data
 
-    src: np.ndarray
+    pred: np.ndarray
         with noise
 
     axis: Optional[int], default=None
@@ -29,6 +142,6 @@ def snr(dst:np.ndarray, src:np.ndarray, axis:typing.Optional[int]=None) -> typin
     Union[float, np.ndarray]:
         [dB]
     """
-    noise_mse = (np.square(dst - src)).mean(axis=axis)
-    signal_ms = (np.square(dst)).mean(axis=axis)
+    noise_mse = (np.square(true - pred)).mean(axis=axis)
+    signal_ms = (np.square(true)).mean(axis=axis)
     return 20 * np.log10((signal_ms / noise_mse))
