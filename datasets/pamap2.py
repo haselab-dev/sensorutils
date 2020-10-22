@@ -1,0 +1,197 @@
+import numpy as np
+import pandas as pd
+
+import pickle
+from pathlib import Path
+from typing import Union, Optional
+from ..core import split_from_target, split_by_sliding_window
+
+
+class PAMAP2:
+    def __init__(self, path:Path, cache_dir:Path=Path('./')):
+        self.path = path
+        self.cache_dir = cache_dir
+
+    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
+        """PAMAP2の読み込みとsliding-window
+
+        Parameters
+        ----------
+        window_size: int
+            フレーム分けするサンプルサイズ
+
+        stride: int
+            ウィンドウの移動幅
+
+        x_labels: list
+            入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠。)。ここで指定したラベルのデータが入力として取り出される。
+            一部サポートしていないラベルがあるの注意。
+
+        y_labels: list
+            ターゲットのラベルリスト。使用はx_labelsと同様。
+
+        ftrim_sec: int
+            セグメント先頭のトリミングサイズ。単位は秒。
+
+        btrim_sec: int
+            セグメント末尾のトリミングサイズ。単位は秒。
+
+        Returns
+        -------
+        (x_frames, y_frames): tuple
+            sliding-windowで切り出した入力とターゲットのフレームリスト
+        """
+        # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
+        #     raise ValueError('x_labels or y_labels include non supported labels')
+        segments = load(self.path)
+        segments = [seg[x_labels+y_labels] for seg in segments]
+        frames = []
+        for seg in segments:
+            fs = split_by_sliding_window(
+                np.array(seg), window_size=window_size, stride=stride,
+                ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
+                return_error_value=None)
+            if fs is not None:
+                frames += [fs]
+            else:
+                print('no frame')
+        frames = np.concatenate(frames)
+        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
+        x_frames = frames[..., :len(x_labels)]
+        y_frames = frames[..., 0, len(x_labels):]
+        return x_frames, y_frames
+    
+def load(path:Path) -> dict:
+    """PAMAP2の読み込み
+
+    Parameters
+    ----------
+    path: Path
+        PAMAP2データセットのディレクトリ(PAMAP2_Datasetディレクトリ)
+
+    Returns
+    -------
+    segments: list
+        行動ラベルをもとにセグメンテーションされたデータ
+    """
+
+    import itertools
+
+    def _load_raw_data(path):
+        try:
+            seg = pd.read_csv(str(path), sep='\s+', header=None)
+            seg.columns = Columns
+            # 欠損値処理は暫定的
+            seg = seg.fillna(method='ffill')
+            return seg
+        except FileNotFoundError:
+            print(f'[load] {path} not found')
+        except pd.errors.EmptyDataError:
+            print(f'[load] {path} is empty')
+        return pd.DataFrame()
+
+    pathes = [path / 'Protocol' / (person + '.dat') for person in PERSONS]
+    # pathes = list(filter(lambda p: p.exists(), pathes))   # このケースが存在した場合エラーを吐きたい
+    chunks_per_persons = [_load_raw_data(path) for path in pathes]
+    segs = []
+    for p_id, chunk in enumerate(chunks_per_persons):
+        chunk['person_id'] = p_id
+        sub_segs = split_from_target(np.array(chunk), np.array(chunk['activity_id']))
+        sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
+        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
+        # For debug
+        for seg in sub_segs:
+            label = seg['activity_id'].iloc[0]
+            if not np.array(seg['activity_id'] == label).all():
+                raise RuntimeError('This is bug. Failed segmentation')
+        segs += sub_segs
+
+    return segs
+
+   
+Sampling_Rate = 100 # Hz
+ATTRIBUTES = ['temperature', 'acc1', 'acc2', 'gyro', 'mag']
+POSITIONS = ['hand', 'chest', 'ankle']
+AXES = ['x', 'y', 'z']
+
+PERSONS = [
+    'subject101', 'subject102', 'subject103',
+    'subject104', 'subject105', 'subject106',
+    'subject107', 'subject108', #'subject109',
+]
+
+ACTIVITIES = {
+    1: 'lying', 2: 'sitting', 3: 'standing', 4: 'walking', 5: 'running',
+    7: 'cycling', 8: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
+    11: 'car_driving', 12: 'ascending stairs', 13: 'descending stairs',
+    16: 'vacuum_cleaning', 17: 'ironing', 18: 'folding_laundry',
+    19: 'house_cleaning', 20: 'playing_soccer',
+    24: 'rope_jumping',
+    0: 'other',
+}
+
+# Columns = ['timestamp(s)', 'activity_id', 'heart_rate(bpm)']
+# for pos in POSITIONS:
+#     Columns += ['IMU_{}_{}'.format(pos, ATTRIBUTES[0])]
+#     for attr in ATTRIBUTES[1:]:
+#         for axis in AXES:
+#             col = 'IMU_{}_{}_{}'.format(pos, attr, axis)
+#             Columns += [col]
+#     Columns += ['IMU_{}_orientation{}'.format(pos, i) for i in range(4)]
+Columns = [
+    'timestamp(s)',
+    'activity_id',
+    # 'person_id',  # ローダ側で付与
+    'heart_rate(bpm)',
+    'IMU_hand_temperature',
+    'IMU_hand_acc1_x',
+    'IMU_hand_acc1_y',
+    'IMU_hand_acc1_z',
+    'IMU_hand_acc2_x',
+    'IMU_hand_acc2_y',
+    'IMU_hand_acc2_z',
+    'IMU_hand_gyro_x',
+    'IMU_hand_gyro_y',
+    'IMU_hand_gyro_z',
+    'IMU_hand_mag_x',
+    'IMU_hand_mag_y',
+    'IMU_hand_mag_z',
+    'IMU_hand_orientation0',
+    'IMU_hand_orientation1',
+    'IMU_hand_orientation2',
+    'IMU_hand_orientation3',
+    'IMU_chest_temperature',
+    'IMU_chest_acc1_x',
+    'IMU_chest_acc1_y',
+    'IMU_chest_acc1_z',
+    'IMU_chest_acc2_x',
+    'IMU_chest_acc2_y',
+    'IMU_chest_acc2_z',
+    'IMU_chest_gyro_x',
+    'IMU_chest_gyro_y',
+    'IMU_chest_gyro_z',
+    'IMU_chest_mag_x',
+    'IMU_chest_mag_y',
+    'IMU_chest_mag_z',
+    'IMU_chest_orientation0',
+    'IMU_chest_orientation1',
+    'IMU_chest_orientation2',
+    'IMU_chest_orientation3',
+    'IMU_ankle_temperature',
+    'IMU_ankle_acc1_x',
+    'IMU_ankle_acc1_y',
+    'IMU_ankle_acc1_z',
+    'IMU_ankle_acc2_x',
+    'IMU_ankle_acc2_y',
+    'IMU_ankle_acc2_z',
+    'IMU_ankle_gyro_x',
+    'IMU_ankle_gyro_y',
+    'IMU_ankle_gyro_z',
+    'IMU_ankle_mag_x',
+    'IMU_ankle_mag_y',
+    'IMU_ankle_mag_z',
+    'IMU_ankle_orientation0',
+    'IMU_ankle_orientation1',
+    'IMU_ankle_orientation2',
+    'IMU_ankle_orientation3',
+]
