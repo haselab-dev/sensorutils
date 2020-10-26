@@ -8,6 +8,7 @@ sensor utils。
 
 import numpy as np
 import scipy
+import scipy.interpolate
 
 
 def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
