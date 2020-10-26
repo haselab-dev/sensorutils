@@ -6,10 +6,8 @@ sensor utils。
 分離できそうなら分離すること。
 """
 
-import typing
-
 import numpy as np
-from scipy import interpolate
+import scipy
 
 
 def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
@@ -151,55 +149,37 @@ def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
     return dict(ret)
 
 
-def linear_up(ft:np.ndarray, rate:int, axis:int=-1) -> np.ndarray:
-    """linear interpolation function
+def interpolate(src:np.ndarray, rate:int, kind:str='linear', axis:int=-1) -> np.ndarray:
+    """interpolation function.
+    (use scipy.interpolate.interp1d)
+
+    example: (linear interpolation)
+    ```text
+    [0, 2, 4] - x2 -> [0, 1, 2, 3, 4]
+    [0, 3, 6] - x3 -> [0, 1, 2, 3, 4, 5, 6]
+    ```
 
     Parameters
     ----------
-    ft: np.ndarray
+    src: np.ndarray
         interpolation source.
 
     rate: int
         rate.
 
+    kind: str, default='linear'
+        Specifies the kind of interpolation as a string (‘linear’, ‘nearest’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, ‘next’, where ‘zero’, ‘slinear’, ‘quadratic’ and ‘cubic’ refer to a spline interpolation of zeroth, first, second or third order; ‘previous’ and ‘next’ simply return the previous or next value of the point) or as an integer specifying the order of the spline interpolator to use. Default is ‘linear’.
+
     axis: int
-        axis.
+        Specifies the axis of y along which to interpolate. Interpolation defaults to the last axis of y.
 
     Returns
     -------
     np.ndarray:
-        shape[axis] == rate * ft.shape[axis]
+        shape[axis] - 1 == rate * ft.shape[axis]
     """
-    N = ft.shape[axis]
+    N = src.shape[axis]
     x_low = np.linspace(0, 1, N)
-    x_target = np.linspace(0, 1, N*rate)
-    f_linear = interpolate.interp1d(x_low, ft, kind='linear', axis=axis)
-    return f_linear(x_target)
-
-
-def spline_up(ft:np.ndarray, rate:int, axis:int=-1) -> np.ndarray:
-    """spline interpolation function
-
-    3 次スプライン補間
-
-    Parameters
-    ----------
-    ft: np.ndarray
-        interpolation source.
-
-    rate: int
-        rate.
-
-    axis: int
-        axis.
-
-    Returns
-    -------
-    np.ndarray:
-        shape[axis] == rate * ft.shape[axis]
-    """
-    N = ft.shape[axis]
-    x_low = np.linspace(0, 1, N)
-    x_target = np.linspace(0, 1, N*rate)
-    f_linear = interpolate.interp1d(x_low, ft, kind='cubic', axis=axis)
-    return f_linear(x_target)
+    x_target = np.linspace(0, 1, N + (N-1) * (rate-1))
+    f = scipy.interpolate.interp1d(x_low, src, kind=kind, axis=axis)
+    return f(x_target)
