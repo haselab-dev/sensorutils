@@ -97,14 +97,14 @@ def window(src: np.ndarray, window_size: int, stride: int):
         sliding window size.
 
     stride: int,
-        stride is 0 or more int.
+        stride is int more than 0.
 
     Returns
     -------
     frames: np.ndarray
         a shape of frames is `(num_frames, window_size, *src.shape[1:])`, where num_frames is `(src.shape[0] - window_size) // stride + 1`.
     """
-    assert stride >= 0
+    assert stride > 0
     num_frames = (src.shape[0] - window_size) // stride + 1
     if stride == window_size:
         ret = src[:(num_frames * window_size)]
