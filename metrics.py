@@ -7,6 +7,8 @@ numpy 実装。
 * [x] Mean Squared Error; MSE
 * [x] Root Mean Squared Error; RMSE
 * [x] Root Mean Squared Persentage Error; RMSPE
+* [x] Root Mean Squared Logarithmic Error; RMSLE
+* [ ] R^2 (r2)
 * [x] Signal to Noise Ratio; SNR
 """
 
@@ -117,6 +119,53 @@ def rmspe(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> t
     Union[float, np.ndarray]:
     """
     return rmse(np.ones_like(true), pred / true, axis) * 100
+
+
+def rmsle(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc root mean squared logarithmic error.
+
+    ```math
+    \left(\frac{1}{N}\sum_{i=0}^{N} (\log (\hat{y}_i + 1) - \log (y_i + 1))^2 \right)^{\frac{1}{2}}
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
+        clean data
+
+    pred: np.ndarray
+        with noise
+
+    axis: Optional[int], default=None
+        mean axis
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+    """
+    return rmse(np.log(true + 1), np.log(pred + 1), axis=axis)
+
+
+def r2(true:np.ndarray, pred:np.ndarray) -> float:
+    """to calc r2 score.
+
+    ```math
+     {R^{2}}( \hat{y} ) := 1 - \frac{ \frac{1}{N} \sum_{i=1}^{N} { ( {y}_i - \hat{y}_{i} ) }^{2} }{ \frac{1}{N} \sum_{i=1}^{N} { ( {y}_i - \bar{y}) }^{2} } = 1 - \frac{M S E(\hat{y})}{Var(y)}
+    ```
+
+    Parameters
+    ----------
+    true: np.ndarray
+        clean data
+
+    pred: np.ndarray
+        with noise
+
+    Returns
+    -------
+    float
+    """
+    return 1 - (mse(true, pred) / np.var(true))
 
 
 def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
