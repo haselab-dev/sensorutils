@@ -8,7 +8,7 @@ numpy 実装。
 * [x] Root Mean Squared Error; RMSE
 * [x] Root Mean Squared Persentage Error; RMSPE
 * [x] Root Mean Squared Logarithmic Error; RMSLE
-* [ ] R^2 (r2)
+* [x] R^2 (r2)
 * [x] Signal to Noise Ratio; SNR
 """
 
