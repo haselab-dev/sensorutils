@@ -20,7 +20,7 @@ class HASC:
     """
 
     supported_queries = [
-        'Frequency', 'Gender', 'Height', 'Weight',
+        'Frequency', 'Gender', 'Height', 'Weight', 'Person'
     ]
 
     supported_activity_labels = [
@@ -48,6 +48,7 @@ class HASC:
         - Frequency
         - Gender
         - Weight
+        - Person 
         """
         if not (set(queries.keys()) < set(self.supported_queries)):
             raise ValueError(f'Unknown queries detected. (Supported: {self.supported_queries})')
@@ -58,6 +59,10 @@ class HASC:
             queries['Height'] = queries['Height'].replace('Height', '`Height(cm)`')
         if 'Weight' in queries.keys():
             queries['Weight'] = queries['Weight'].replace('Weight', '`Weight(kg)`')
+        if 'Person' in queries.keys():
+            queries['Person'] = queries['Person'].replace('Person', 'person')
+        for k in queries.keys():
+            queries[k] = f'({queries[k]})'
         
         query_string = ' & '.join([queries[k] for k in queries.keys()])
         filed_meta = self.meta.query(query_string)
