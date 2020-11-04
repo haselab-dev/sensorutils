@@ -17,7 +17,7 @@ class UCIHAR(object):
         self.train_metas = meta['train']
         self.test_metas = meta['test']
    
-    def load_data(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> tuple:
+    def load(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> tuple:
         """Sliding-Windowをロード
 
         Parameters
