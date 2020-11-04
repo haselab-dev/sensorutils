@@ -9,6 +9,7 @@ sensor utils。
 import numpy as np
 import scipy
 import scipy.interpolate
+import typing
 
 
 def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
@@ -115,7 +116,7 @@ def window(src: np.ndarray, window_size: int, stride: int):
         return np.lib.stride_tricks.as_strided(src, shape=ret_shape, strides=strides)
 
 
-def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
+def split_from_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, typing.List[np.ndarray]]:
     """target のデータを元に src の分割を行う。
 
     ```python
