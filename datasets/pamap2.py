@@ -117,12 +117,12 @@ AXES = ['x', 'y', 'z']
 PERSONS = [
     'subject101', 'subject102', 'subject103',
     'subject104', 'subject105', 'subject106',
-    'subject107', 'subject108', #'subject109',
+    'subject107', 'subject108', 'subject109',
 ]
 
 ACTIVITIES = {
     1: 'lying', 2: 'sitting', 3: 'standing', 4: 'walking', 5: 'running',
-    7: 'cycling', 8: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
+    6: 'cycling', 7: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
     11: 'car_driving', 12: 'ascending_stairs', 13: 'descending_stairs',
     16: 'vacuum_cleaning', 17: 'ironing', 18: 'folding_laundry',
     19: 'house_cleaning', 20: 'playing_soccer',
