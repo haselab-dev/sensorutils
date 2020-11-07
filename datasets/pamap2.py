@@ -11,6 +11,20 @@ class PAMAP2:
     def __init__(self, path:Path, cache_dir:Path=Path('./')):
         self.path = path
         self.cache_dir = cache_dir
+    
+    def _load_segments(self):
+        segments = load(self.path)
+        self.min_max_vals = pd.concat(segments, axis=0).agg(['min', 'max'])
+        return segments
+    
+    def _normalize_segment(self, segment):
+        print(segment)
+        for col in segment.columns:
+            if 'IMU' in col and 'temperature' not in col and 'orientation' not in col:
+                min_val, max_val = self.min_max_vals[col].loc['min'], self.min_max_vals[col].loc['max']
+                segment[col] = (segment[col] - min_val) / (max_val - min_val)
+        print(segment)
+        return segment
 
     def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
         """PAMAP2の読み込みとsliding-window
@@ -43,8 +57,8 @@ class PAMAP2:
         """
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
-        segments = load(self.path)
-        segments = [seg[x_labels+y_labels] for seg in segments]
+        segments = self._load_segments()
+        segments = [self._normalize_segment(seg[x_labels+y_labels]) for seg in segments]
         frames = []
         for seg in segments:
             fs = split_by_sliding_window(
