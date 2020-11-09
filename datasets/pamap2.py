@@ -18,12 +18,10 @@ class PAMAP2:
         return segments
     
     def _normalize_segment(self, segment):
-        print(segment)
         for col in segment.columns:
             if 'IMU' in col and 'temperature' not in col and 'orientation' not in col:
                 min_val, max_val = self.min_max_vals[col].loc['min'], self.min_max_vals[col].loc['max']
                 segment[col] = (segment[col] - min_val) / (max_val - min_val)
-        print(segment)
         return segment
 
     def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
