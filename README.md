@@ -23,6 +23,8 @@ import sensorutils
 import sensorutils.datasets
 ```
 
+[sensorutils.datasetの使い方](https://github.com/haselab-dev/sensorutils/tree/sample)
+
 ## requirement
 
 **共通**

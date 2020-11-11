@@ -9,6 +9,7 @@ sensor utils。
 import numpy as np
 import scipy
 import scipy.interpolate
+import typing
 
 
 def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
@@ -115,13 +116,13 @@ def window(src: np.ndarray, window_size: int, stride: int):
         return np.lib.stride_tricks.as_strided(src, shape=ret_shape, strides=strides)
 
 
-def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
+def split_from_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, typing.List[np.ndarray]]:
     """target のデータを元に src の分割を行う。
 
     ```python
     tgt = np.array([0, 0, 1, 1, 2, 2, 1])
     src = np.array([1, 2, 3, 4, 5, 6, 7])
-    assert split_from_target(src, tgt) == {0: [np.array([1, 2]), np.array([7])], 1: [np.array([3, 4])], 2: [np.array([5, 6])]}
+    assert split_from_target(src, tgt) == {0: [np.array([1, 2])], 1: [np.array([3, 4]), np.array([7])], 2: [np.array([5, 6])]}
     ```
 
     Parameters
@@ -144,9 +145,12 @@ def split_from_target(src:np.ndarray, target:np.ndarray) -> np.ndarray:
     diff[0] = 1
     idxes = np.where(diff != 0)[0]
 
+    # idxes = np.append(idxes, len(target)) # 最後の部分を含めるため
+
     ret = defaultdict(list)
     for i in range(1, len(idxes)):
         ret[target[idxes[i-1]]].append(src[idxes[i-1]:idxes[i]].copy())
+    ret[target[idxes[-1]]].append(src[idxes[-1]:].copy()) # 最後の部分を含めるため
     return dict(ret)
 
 
