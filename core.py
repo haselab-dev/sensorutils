@@ -85,7 +85,7 @@ def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
 
 def window(src: np.ndarray, window_size: int, stride: int):
     """
-    np.ndarray をフレーム分けする。
+    np.ndarray をフレーム分けするプリミティブな実装。
     stride が window_size 以外のとき split_by_sliding_window 関数より速く分割を行う。
     また、src のシェープはどのような次元数でも行える。
 
