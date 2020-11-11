@@ -12,7 +12,6 @@ from ..core import split_by_sliding_window, split_from_target
 """
 下記のcolumnは重複している。
 ドキュメントのミスなのか使用なのか。。。？
-Aneman2810
 Accelerometer_CHEESE_accX 3
 Accelerometer_SPOON_accX 3
 Accelerometer_KNIFE1_accX 3

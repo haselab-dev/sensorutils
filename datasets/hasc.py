@@ -31,8 +31,11 @@ class HASC:
         self.path = path
         self.cache_dir_meta = cache_dir_meta
 
-        if cache_dir_meta.exists():
-            self.meta = pd.read_csv(str(cache_dir_meta), index_col=0)
+        if cache_dir_meta is not None:
+            if cache_dir_meta.exists():
+                self.meta = pd.read_csv(str(cache_dir_meta), index_col=0)
+            else:
+                self.meta = load_meta(path)
         else:
             self.meta = load_meta(path)
     

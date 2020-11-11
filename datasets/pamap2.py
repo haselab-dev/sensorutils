@@ -11,6 +11,18 @@ class PAMAP2:
     def __init__(self, path:Path, cache_dir:Path=Path('./')):
         self.path = path
         self.cache_dir = cache_dir
+    
+    def _load_segments(self):
+        segments = load(self.path)
+        self.min_max_vals = pd.concat(segments, axis=0).agg(['min', 'max'])
+        return segments
+    
+    def _normalize_segment(self, segment):
+        for col in segment.columns:
+            if 'IMU' in col and 'temperature' not in col and 'orientation' not in col:
+                min_val, max_val = self.min_max_vals[col].loc['min'], self.min_max_vals[col].loc['max']
+                segment[col] = (segment[col] - min_val) / (max_val - min_val)
+        return segment
 
     def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
         """PAMAP2の読み込みとsliding-window
@@ -43,8 +55,8 @@ class PAMAP2:
         """
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
-        segments = load(self.path)
-        segments = [seg[x_labels+y_labels] for seg in segments]
+        segments = self._load_segments()
+        segments = [self._normalize_segment(seg[x_labels+y_labels]) for seg in segments]
         frames = []
         for seg in segments:
             fs = split_by_sliding_window(
@@ -117,13 +129,13 @@ AXES = ['x', 'y', 'z']
 PERSONS = [
     'subject101', 'subject102', 'subject103',
     'subject104', 'subject105', 'subject106',
-    'subject107', 'subject108', #'subject109',
+    'subject107', 'subject108', 'subject109',
 ]
 
 ACTIVITIES = {
     1: 'lying', 2: 'sitting', 3: 'standing', 4: 'walking', 5: 'running',
-    7: 'cycling', 8: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
-    11: 'car_driving', 12: 'ascending stairs', 13: 'descending stairs',
+    6: 'cycling', 7: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
+    11: 'car_driving', 12: 'ascending_stairs', 13: 'descending_stairs',
     16: 'vacuum_cleaning', 17: 'ironing', 18: 'folding_laundry',
     19: 'house_cleaning', 20: 'playing_soccer',
     24: 'rope_jumping',
