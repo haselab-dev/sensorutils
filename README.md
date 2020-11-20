@@ -15,10 +15,16 @@
     * 可能なら `pandas` の `goupby` や `rolling` 関数を用いたほうが良い
 * metrics   : センサデータの評価関数
     * 可能なら `sklearn.metrics` を使用したほうが良い
+* doc       : ドキュメントファイルを格納
+* test      : テストコードを格納
 
 詳細は `docs` ディレクトリへ
 
 ## usage
+
+`sensorutils` をインポートすると `core.py` と `dataset` が自動的に読み込まれる。
+
+インポートしたときに `doc` と `test` が補完に表示されるがインポートする意味はない。
 
 ```python
 import sensorutils
