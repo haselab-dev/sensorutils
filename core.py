@@ -6,6 +6,7 @@ sensor utils。
 分離できそうなら分離すること。
 """
 
+import pickle
 import numpy as np
 import scipy
 import scipy.interpolate
@@ -188,3 +189,32 @@ def interpolate(src:np.ndarray, rate:int, kind:str='linear', axis:int=-1) -> np.
     x_target = np.linspace(0, 1, N + (N-1) * (rate-1))
     f = scipy.interpolate.interp1d(x_low, src, kind=kind, axis=axis)
     return f(x_target)
+
+
+def pickle_dump(obj:typing.Any, path:typing.Union[str,pathlib.Path]) -> None:
+    """object dump using pickle.
+
+    Parameters
+    ----------
+    obj: Any
+        any object.
+
+    path: Union[str, pathlib.Path]
+        save path.
+    """
+    with open(path, mode='wb') as f:
+        pickle.dump(obj, f)
+    return
+
+
+def pickle_load(path:pathlib.Path) -> typing.Any:
+    """object load using pickle.
+
+    Parameters
+    ----------
+    path: Union[str, pathlib.Path]
+        a saved object pickle path.
+    """
+    with open(path, mode='rb') as f:
+        data = pickle.load(f)
+    return data
