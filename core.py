@@ -13,71 +13,6 @@ import scipy.interpolate
 import typing
 
 
-def split_by_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
-    """segment をフレーム分けする。
-
-    各シェープは以下のようになる。
-
-    segment: (segment_size, ch)
-
-    frames: (num_frames, window_size, ch)
-
-    ch はいくらでも対応しているため、ラベルを ch に追加しておけばラベルもフレーム分けできる。
-
-    Parameters
-    ----------
-    segments: np.ndarray
-        分割対象のデータ。
-        len(segment.shape) == 2 であること。
-
-    window_size: int, default=512
-        フレーム分けするサンプルサイズ
-
-    stride: int, default=None
-        None は window_size となる。
-
-    ftrim: int, default=5
-        最初の {ftrim} サンプルをとばす
-
-    btrim: int, default=5
-        最後の {btrim} サンプルをとばす
-
-    return_error_value: None
-        エラーの時の返り値
-
-    Returns
-    -------
-    frames: np.ndarray
-        フレーム分けした結果。失敗したら None を返す
-    """
-
-    # 引数処理
-    assert len(segment.shape) == 2, "Segment's shape is (segment_size, ch). This segment shape is {}".format(segment.shape)
-    window_size = options.pop('window_size', 512)
-    stride = options.pop('stride', None)
-    ftrim = options.pop('ftrim', 5)
-    btrim = options.pop('btrim', 5)
-    return_error_value = options.pop('return_error_value', None)
-    assert not bool(options), "args error: key {} is not exist.".format(list(options.keys()))
-    assert type(window_size) is int, "type(window_size) is int: {}".format(type(window_size))
-    assert ftrim >= 0 and btrim >= 0, "ftrim >= 0 and btrim >= 0: ftrim={}, btrim={}".format(ftrim, btrim)
-    if type(segment) is not np.ndarray:
-        return return_error_value
-    # segment が短いときの処理
-    if len(segment) < ftrim + btrim:
-        return return_error_value
-    if btrim == 0:
-        seg = segment[ftrim:].copy()
-    else:
-        seg = segment[ftrim: -btrim].copy()
-    if len(seg) < window_size:
-        return return_error_value
-    # 分割処理
-    if stride is None:
-        stride = window_size
-    return to_frames(seg, window_size, stride, stride_mode='index')
-
-
 def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='index') -> np.ndarray:
     """np.ndarray をフレーム分けするプリミティブな実装。
 
@@ -185,7 +120,72 @@ def to_frames_using_nptricks(src: np.ndarray, window_size: int, stride: int) -> 
     return np.lib.stride_tricks.as_strided(src, shape=ret_shape, strides=strides)
 
 
-def split_from_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, typing.List[np.ndarray]]:
+def split_using_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
+    """segment をフレーム分けする。
+
+    各シェープは以下のようになる。
+
+    segment: (segment_size, ch)
+
+    frames: (num_frames, window_size, ch)
+
+    ch はいくらでも対応しているため、ラベルを ch に追加しておけばラベルもフレーム分けできる。
+
+    Parameters
+    ----------
+    segments: np.ndarray
+        分割対象のデータ。
+        len(segment.shape) == 2 であること。
+
+    window_size: int, default=512
+        フレーム分けするサンプルサイズ
+
+    stride: int, default=None
+        None は window_size となる。
+
+    ftrim: int, default=5
+        最初の {ftrim} サンプルをとばす
+
+    btrim: int, default=5
+        最後の {btrim} サンプルをとばす
+
+    return_error_value: None
+        エラーの時の返り値
+
+    Returns
+    -------
+    frames: np.ndarray
+        フレーム分けした結果。失敗したら None を返す
+    """
+
+    # 引数処理
+    assert len(segment.shape) == 2, "Segment's shape is (segment_size, ch). This segment shape is {}".format(segment.shape)
+    window_size = options.pop('window_size', 512)
+    stride = options.pop('stride', None)
+    ftrim = options.pop('ftrim', 5)
+    btrim = options.pop('btrim', 5)
+    return_error_value = options.pop('return_error_value', None)
+    assert not bool(options), "args error: key {} is not exist.".format(list(options.keys()))
+    assert type(window_size) is int, "type(window_size) is int: {}".format(type(window_size))
+    assert ftrim >= 0 and btrim >= 0, "ftrim >= 0 and btrim >= 0: ftrim={}, btrim={}".format(ftrim, btrim)
+    if type(segment) is not np.ndarray:
+        return return_error_value
+    # segment が短いときの処理
+    if len(segment) < ftrim + btrim:
+        return return_error_value
+    if btrim == 0:
+        seg = segment[ftrim:].copy()
+    else:
+        seg = segment[ftrim: -btrim].copy()
+    if len(seg) < window_size:
+        return return_error_value
+    # 分割処理
+    if stride is None:
+        stride = window_size
+    return to_frames(seg, window_size, stride, stride_mode='index')
+
+
+def split_using_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, typing.List[np.ndarray]]:
     """target のデータを元に src の分割を行う。
 
     ```python
