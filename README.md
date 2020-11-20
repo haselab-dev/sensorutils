@@ -16,6 +16,8 @@
 * metrics   : センサデータの評価関数
     * 可能なら `sklearn.metrics` を使用したほうが良い
 
+詳細は `docs` ディレクトリへ
+
 ## usage
 
 ```python
@@ -23,7 +25,9 @@ import sensorutils
 import sensorutils.datasets
 ```
 
-[sensorutils.datasetの使い方](https://github.com/haselab-dev/sensorutils/tree/sample)
+* [sensorutils.datasetの使い方](docs/samples/README.md)
+
+詳細は `docs` ディレクトリへ
 
 ## requirement
 
