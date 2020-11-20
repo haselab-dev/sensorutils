@@ -146,12 +146,10 @@ def split_from_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, typ
     diff[0] = 1
     idxes = np.where(diff != 0)[0]
 
-    # idxes = np.append(idxes, len(target)) # 最後の部分を含めるため
-
     ret = defaultdict(list)
     for i in range(1, len(idxes)):
         ret[target[idxes[i-1]]].append(src[idxes[i-1]:idxes[i]].copy())
-    ret[target[idxes[-1]]].append(src[idxes[-1]:].copy()) # 最後の部分を含めるため
+    ret[target[idxes[-1]]].append(src[idxes[-1]:].copy())
     return dict(ret)
 
 
