@@ -10,6 +10,7 @@ import pickle
 import numpy as np
 import scipy
 import scipy.interpolate
+import pathlib
 import typing
 
 
@@ -38,14 +39,14 @@ def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='
     assert stride > 0, 'ストライドは正の整数である必要がある. stride={}'.format(stride)
     assert stride_mode in ['index', 'nptrick'], "stride_mode is 'index' or 'nptrick'. stride_mode={}".format(stride_mode)
     if stride == window_size:
-        return to_frames_using_reshape(src, window_size)
+        return to_frames_using_reshape(src, window_size, stride)
     elif stride_mode == 'index':
         return to_frames_using_index(src, window_size, stride)
     else:
         return to_frames_using_nptricks(src, window_size, stride)
 
 
-def to_frames_using_reshape(src: np.ndarray, window_size: int) -> np.ndarray:
+def to_frames_using_reshape(src: np.ndarray, window_size: int, stride: int) -> np.ndarray:
     """np.ndarray をフレーム分けするプリミティブな実装。
     分割に `reshape` を使用。
 
@@ -56,6 +57,9 @@ def to_frames_using_reshape(src: np.ndarray, window_size: int) -> np.ndarray:
 
     window_size: int
         sliding window size. stride = window_size.
+
+    stride: int,
+        stride is int more than 0.
 
     Returns
     -------
