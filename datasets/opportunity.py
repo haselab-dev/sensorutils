@@ -5,7 +5,7 @@ Opportunity データの読み込みなど
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from ..core import split_by_sliding_window, split_from_target
+from ..core import split_using_target, split_using_sliding_window
 #from collections import defaultdict
 
 
@@ -89,7 +89,7 @@ class Opportunity:
         segments = [seg[x_labels+y_labels] for seg in segments]
         frames = []
         for seg in segments:
-            fs = split_by_sliding_window(
+            fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
                 ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
                 return_error_value=None)
@@ -131,7 +131,7 @@ def load(path:Path) -> dict:
 
     segs = []
     for chunk in chunks:
-        sub_segs = split_from_target(np.array(chunk), np.array(chunk['Locomotion']))
+        sub_segs = split_using_target(np.array(chunk), np.array(chunk['Locomotion']))
         sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
         sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
         # For debug

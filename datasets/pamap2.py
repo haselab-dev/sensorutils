@@ -4,7 +4,7 @@ import pandas as pd
 import pickle
 from pathlib import Path
 from typing import Union, Optional
-from ..core import split_from_target, split_by_sliding_window
+from ..core import split_using_target, split_using_sliding_window
 
 
 class PAMAP2:
@@ -59,7 +59,7 @@ class PAMAP2:
         segments = [self._normalize_segment(seg[x_labels+y_labels]) for seg in segments]
         frames = []
         for seg in segments:
-            fs = split_by_sliding_window(
+            fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
                 ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
                 return_error_value=None)
@@ -108,7 +108,7 @@ def load(path:Path) -> dict:
     segs = []
     for p_id, chunk in enumerate(chunks_per_persons):
         chunk['person_id'] = p_id
-        sub_segs = split_from_target(np.array(chunk), np.array(chunk['activity_id']))
+        sub_segs = split_using_target(np.array(chunk), np.array(chunk['activity_id']))
         sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
         sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
         # For debug
