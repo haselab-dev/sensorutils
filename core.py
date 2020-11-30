@@ -39,14 +39,14 @@ def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='
     assert stride > 0, 'ストライドは正の整数である必要がある. stride={}'.format(stride)
     assert stride_mode in ['index', 'nptrick'], "stride_mode is 'index' or 'nptrick'. stride_mode={}".format(stride_mode)
     if stride == window_size:
-        return to_frames_using_reshape(src, window_size, stride)
+        return to_frames_using_reshape(src, window_size)
     elif stride_mode == 'index':
         return to_frames_using_index(src, window_size, stride)
     else:
         return to_frames_using_nptricks(src, window_size, stride)
 
 
-def to_frames_using_reshape(src: np.ndarray, window_size: int, stride: int) -> np.ndarray:
+def to_frames_using_reshape(src: np.ndarray, window_size: int) -> np.ndarray:
     """np.ndarray をフレーム分けするプリミティブな実装。
     分割に `reshape` を使用。
 
@@ -58,15 +58,12 @@ def to_frames_using_reshape(src: np.ndarray, window_size: int, stride: int) -> n
     window_size: int
         sliding window size. stride = window_size.
 
-    stride: int,
-        stride is int more than 0.
-
     Returns
     -------
     frames: np.ndarray
-        a shape of frames is `(num_frames, window_size, *src.shape[1:])`, where num_frames is `(src.shape[0] - window_size) // stride + 1`.
+        a shape of frames is `(num_frames, window_size, *src.shape[1:])`, where num_frames is `(src.shape[0] - window_size) // window_size + 1`.
     """
-    num_frames = (src.shape[0] - window_size) // stride + 1
+    num_frames = (src.shape[0] - window_size) // window_size + 1
     ret = src[:(num_frames * window_size)]
     return ret.reshape(-1, window_size, *src.shape[1:])
 
