@@ -202,6 +202,10 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
 #    """to calc Log Spectral Distance.
 #
 #    ```math
+#    \mathrm{LSD}(S(\omega),\tilde{S}(\omega)) =
+#    \sqrt{\frac{1}{W}\sum_{\omega}^{W} \left(20\log_{10}|S(\omega)| - 20\log_{10}|\tilde{S}(\omega)|\right)^2}
 #    ```
+#
+#    $20\log_{10}|S(\omega)|$ と $20\log_{10}|\tilde{S}(\omega)|$ は、それぞれ原波形と雑音抑圧波形の対数スペクトル
 #    """
 #    return np.mean(np.sqrt(np.mean(np.square(true - pred), axis=0)))
