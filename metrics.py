@@ -10,6 +10,7 @@ numpy 実装。
 * [x] Root Mean Squared Logarithmic Error; RMSLE
 * [x] R^2 (r2)
 * [x] Signal to Noise Ratio; SNR
+* [ ] Log Spectral Distance; LSD
 """
 
 import typing
@@ -172,7 +173,7 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     """to calc Signal to Noise Ratio.
 
     ```math
-    20 \log_{10} \left(\frac{\frac{1}{N}\sum_{i=0}^{N}true_i^2}{\frac{1}{N}\sum_{i=0}^{N}(true_i - pred_i)^2} \right)
+    10 \log_{10} \left(\frac{\sum_{i=0}^{N}true_i^2}{\sum_{i=0}^{N}(true_i - pred_i)^2} \right)
     ```
 
     Parameters
@@ -191,6 +192,16 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     Union[float, np.ndarray]:
         [dB]
     """
-    noise_mse = (np.square(true - pred)).mean(axis=axis)
-    signal_ms = (np.square(true)).mean(axis=axis)
-    return 20 * np.log10((signal_ms / noise_mse))
+    assert true.shape == pred.shape, 'true.shape ({}) == pred.shape ({})'.format(true.shape, pred.shape)
+    noise_mse = (np.square(true - pred)).sum(axis=axis)
+    signal_ms = (np.square(true)).sum(axis=axis)
+    return 10 * np.log10((signal_ms / noise_mse))
+
+
+#def lsd(true:np.ndarray, pred:np.ndarray, axis:typeing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+#    """to calc Log Spectral Distance.
+#
+#    ```math
+#    ```
+#    """
+#    return np.mean(np.sqrt(np.mean(np.square(true - pred), axis=0)))
