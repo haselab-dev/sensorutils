@@ -24,7 +24,7 @@ class PAMAP2:
                 segment[col] = (segment[col] - min_val) / (max_val - min_val)
         return segment
 
-    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
+    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int, norm:bool):
         """PAMAP2の読み込みとsliding-window
 
         Parameters
@@ -56,7 +56,8 @@ class PAMAP2:
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
         segments = self._load_segments()
-        segments = [self._normalize_segment(seg[x_labels+y_labels]) for seg in segments]
+        if norm:
+            segments = [self._normalize_segment(seg[x_labels+y_labels]) for seg in segments]
         frames = []
         for seg in segments:
             fs = split_using_sliding_window(
