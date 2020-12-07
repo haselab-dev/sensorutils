@@ -1,20 +1,9 @@
 """
 センサデータに関する評価関数。
 numpy 実装。
-
-* [x] Mean Absolute Error; MAE
-* [x] Mean Absolute Persentage Error; MAPE
-* [x] Mean Squared Error; MSE
-* [x] Root Mean Squared Error; RMSE
-* [x] Root Mean Squared Persentage Error; RMSPE
-* [x] Root Mean Squared Logarithmic Error; RMSLE
-* [x] R^2 (r2)
-* [x] Signal to Noise Ratio; SNR
-* [ ] Log Spectral Distance; LSD
 """
 
 import typing
-
 import numpy as np
 
 
@@ -198,14 +187,17 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     return 10 * np.log10((signal_ms / noise_mse))
 
 
-#def lsd(true:np.ndarray, pred:np.ndarray, axis:typeing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
-#    """to calc Log Spectral Distance.
-#
-#    ```math
-#    \mathrm{LSD}(S(\omega),\tilde{S}(\omega)) =
-#    \sqrt{\frac{1}{W}\sum_{\omega}^{W} \left(20\log_{10}|S(\omega)| - 20\log_{10}|\tilde{S}(\omega)|\right)^2}
-#    ```
-#
-#    $20\log_{10}|S(\omega)|$ と $20\log_{10}|\tilde{S}(\omega)|$ は、それぞれ原波形と雑音抑圧波形の対数スペクトル
-#    """
-#    return np.mean(np.sqrt(np.mean(np.square(true - pred), axis=0)))
+def lsd(true_spec:np.ndarray, pred_spec:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Log Spectral Distance.
+
+    ```math
+    \mathrm{LSD}(S(\omega),\tilde{S}(\omega)) =
+    \sqrt{\frac{1}{W}\sum_{\omega}^{W} \left(20\log_{10}\left|\frac{S(\omega)}{\tilde{S}(\omega)}\right|\right)^2}
+    ```
+
+    $S(\omega)$ と $\tilde{S}(\omega)$ は、それぞれ原波形と雑音抑圧波形の対数スペクトル。
+    
+    複数の短時間スペクトルの距離は各スペクトルで距離を算出した後、平均を取ること。
+    """
+    return np.sqrt(np.mean(20 * np.log10(np.abs(true_spec / (true_spec - pred_spec)))))
+
