@@ -20,7 +20,8 @@
 * metrics   : センサデータの評価関数
     * 可能なら `sklearn.metrics` を使用したほうが良い
 * doc       : ドキュメントファイルを格納
-* test      : テストコードを格納
+* tests     : テストコードを格納
+    * `python -m unittest discover tests` で実行できるようにしておく？
 
 詳細は `docs` ディレクトリへ
 
