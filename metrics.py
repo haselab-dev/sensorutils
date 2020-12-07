@@ -1,19 +1,9 @@
 """
 センサデータに関する評価関数。
 numpy 実装。
-
-* [x] Mean Absolute Error; MAE
-* [x] Mean Absolute Persentage Error; MAPE
-* [x] Mean Squared Error; MSE
-* [x] Root Mean Squared Error; RMSE
-* [x] Root Mean Squared Persentage Error; RMSPE
-* [x] Root Mean Squared Logarithmic Error; RMSLE
-* [x] R^2 (r2)
-* [x] Signal to Noise Ratio; SNR
 """
 
 import typing
-
 import numpy as np
 
 
@@ -172,7 +162,7 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     """to calc Signal to Noise Ratio.
 
     ```math
-    20 \log_{10} \left(\frac{\frac{1}{N}\sum_{i=0}^{N}true_i^2}{\frac{1}{N}\sum_{i=0}^{N}(true_i - pred_i)^2} \right)
+    10 \log_{10} \left(\frac{\sum_{i=0}^{N}true_i^2}{\sum_{i=0}^{N}(true_i - pred_i)^2} \right)
     ```
 
     Parameters
@@ -191,6 +181,23 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     Union[float, np.ndarray]:
         [dB]
     """
-    noise_mse = (np.square(true - pred)).mean(axis=axis)
-    signal_ms = (np.square(true)).mean(axis=axis)
-    return 20 * np.log10((signal_ms / noise_mse))
+    assert true.shape == pred.shape, 'true.shape ({}) == pred.shape ({})'.format(true.shape, pred.shape)
+    noise_mse = (np.square(true - pred)).sum(axis=axis)
+    signal_ms = (np.square(true)).sum(axis=axis)
+    return 10 * np.log10((signal_ms / noise_mse))
+
+
+def lsd(true_spec:np.ndarray, pred_spec:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float, np.ndarray]:
+    """to calc Log Spectral Distance.
+
+    ```math
+    \mathrm{LSD}(S(\omega),\tilde{S}(\omega)) =
+    \sqrt{\frac{1}{W}\sum_{\omega}^{W} \left(20\log_{10}\left|\frac{S(\omega)}{\tilde{S}(\omega)}\right|\right)^2}
+    ```
+
+    $S(\omega)$ と $\tilde{S}(\omega)$ は、それぞれ原波形と雑音抑圧波形の対数スペクトル。
+    
+    複数の短時間スペクトルの距離は各スペクトルで距離を算出した後、平均を取ること。
+    """
+    return np.sqrt(np.mean(20 * np.log10(np.abs(true_spec / (true_spec - pred_spec)))))
+

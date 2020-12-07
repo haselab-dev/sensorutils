@@ -11,7 +11,7 @@ import typing
 import numpy as np
 import pandas as pd
 import pickle
-from ..core import split_by_sliding_window
+from ..core import split_using_target, split_using_sliding_window
 
 class HASC:
     """HASC
@@ -125,7 +125,7 @@ class HASC:
                 act2id[act] = act_id_counter
                 act_id_counter += 1
 
-            fs = split_by_sliding_window(
+            fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
                 ftrim=ftrim, btrim=btrim,
                 return_error_value=None)
