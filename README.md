@@ -36,7 +36,7 @@ import sensorutils
 import sensorutils.datasets
 ```
 
-* [sensorutils.datasetの使い方](docs/samples/README.md)
+* [sensorutils.datasetの使い方](doc/samples/README.md)
 
 詳細は `docs` ディレクトリへ
 
