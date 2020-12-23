@@ -56,8 +56,9 @@ class PAMAP2:
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
         segments = self._load_segments()
+        segments = [seg[x_labels+y_labels] for seg in segments]
         if norm:
-            segments = [self._normalize_segment(seg[x_labels+y_labels]) for seg in segments]
+            segments = [self._normalize_segment(seg) for seg in segments]
         frames = []
         for seg in segments:
             fs = split_using_sliding_window(
