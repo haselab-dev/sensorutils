@@ -138,31 +138,14 @@ def rotation(x):
     """
     axis = np.random.uniform(low=-1, high=1, size=x.shape[1])
     angle = np.random.uniform(low=-np.pi, high=np.pi)
-    return np.matmul(x, axangle2mat(axis, angle))
-
-def rotation_dev(x):
-    """rotation. under developing?
-
-    Parameters
-    ----------
-    x:
-
-    Returns
-    -------
-    """
-    axis = np.random.uniform(low=-1, high=1, size=x.shape[1])
-    angle = np.random.uniform(low=-np.pi, high=np.pi)
     quaterinion = np.array([
         np.cos(angle/2),
         axis[0]*np.sin(angle/2),
         axis[1]*np.sin(angle/2),
         axis[2]*np.sin(angle/2),
     ])
-    print(f'axis: {axis}')
-    print(f'angle: {angle}')
-    print(f'quaterinion: {quaterinion}')
     rot_mat = Rotation.from_quat(quaterinion).as_matrix()
-    return np.matmul(x, rot_mat), axis
+    return np.matmul(x, rot_mat)
 
 
 def permutation(x, n_perm=4, min_seg_length=10):
@@ -290,25 +273,3 @@ def low_pass_filter(x, cutoff=20, fs=50):
     x_new[:, 2] = signal.lfilter(filter_, 1, x[:, 2])
     return x_new
 
-
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    x = np.arange(10*3).reshape([10, 3])
-    print(x)
-    print(x.shape)
-    x_rot, rot_axis = rotation_dev(x)
-    print(x_rot)
-    print(x_rot.shape)
-
-    rot_axis *= 10
-    ax.plot([0, rot_axis[0]], [0, rot_axis[1]], [0, rot_axis[2]], color='black')
-    # ax.scatter(*(rot_axis.reshape([1, -1]).T), color='green')
-    ax.scatter(*(x.T), color='blue')
-    ax.scatter(*(x_rot.T), color='red')
-
-    plt.show()
