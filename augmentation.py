@@ -148,6 +148,21 @@ def rotation(x):
     return np.matmul(x, rot_mat)
 
 
+def swapping(x):
+    """swapping
+    
+    Parameters
+    ----------
+    x:
+
+    Returns
+    -------
+    """
+    idx = np.arange(x.shape[1]).reshape(-1, 3)
+    idx = np.take_along_axis(idx, np.random.rand(*(idx.shape)).argsort(axis=1), axis=1).reshape(-1)
+    return x[:, idx, :]
+
+
 def permutation(x, n_perm=4, min_seg_length=10):
     """permutation
 
@@ -222,7 +237,7 @@ def random_sampling(x, n_samples=100):
     return x_new
 
 
-def flipping(x):
+def flipping(x, overall=True):
     """flipping
 
     Parameters
@@ -232,10 +247,13 @@ def flipping(x):
     Returns
     -------
     """
-    x_new = np.zeros(x.shape)
-    x_new[:, 0] = ((-1) ** random.randint(0, 1)) * x[:, 0]
-    x_new[:, 1] = ((-1) ** random.randint(0, 1)) * x[:, 1]
-    x_new[:, 2] = ((-1) ** random.randint(0, 1)) * x[:, 2]
+    if overall:
+        x_new = ((-1) ** random.randint(0, 1)) * x
+    else:
+        x_new = np.zeros(x.shape)
+        x_new[:, 0] = ((-1) ** random.randint(0, 1)) * x[:, 0]
+        x_new[:, 1] = ((-1) ** random.randint(0, 1)) * x[:, 1]
+        x_new[:, 2] = ((-1) ** random.randint(0, 1)) * x[:, 2]
     return x_new
 
 
