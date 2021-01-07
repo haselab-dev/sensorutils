@@ -158,9 +158,9 @@ def swapping(x):
     Returns
     -------
     """
-    idx = np.arange(x.shape[1]).reshape(-1, 3)
+    idx = np.arange(x.shape[0]).reshape(-1, 3)
     idx = np.take_along_axis(idx, np.random.rand(*(idx.shape)).argsort(axis=1), axis=1).reshape(-1)
-    return x[:, idx, :]
+    return x[idx, :]
 
 
 def permutation(x, n_perm=4, min_seg_length=10):
