@@ -67,12 +67,12 @@ class UCIHAR(object):
         return sdata, labels, person_id_list
 
 def load_meta(path:Path) -> dict:
-    """UCIHAR の meta ファイルを読み込む。
+    """UCIHAR の meta ファイルを読み込む
 
     Parameters
     ----------
     path: Path
-        UCIHAR ファイルのパス。trainやtestディレクトリがあるパスを指定する。
+        UCIHAR ファイルのパス。trainやtestディレクトリがあるパスを指定する
 
     Returns
     -------
@@ -94,12 +94,12 @@ def load_meta(path:Path) -> dict:
     return {'train': train_metas, 'test': test_metas}
 
 def load(path:Path, train=True, include_gravity=False):
-    """UCIHAR の センサデータを読み込む。
+    """UCIHAR の センサデータを読み込む
 
     Parameters
     ----------
     path: Path
-        UCIHAR ファイルのパス。trainやtestディレクトリがあるパスを指定する。
+        UCIHAR ファイルのパス。trainやtestディレクトリがあるパスを指定する
     
     train: bool
         train == True then load train data
@@ -138,27 +138,5 @@ def load(path:Path, train=True, include_gravity=False):
  
 PERSONS = list(range(1, 31))
 
-if __name__ == '__main__':
-    import sys
-    ucihar_dir = Path('E:/datasets/UCI_HAR_Dataset/UCI HAR Dataset/')
-    if not ucihar_dir.exists():
-        sys.stderr(' >>> Error: {} not found'.format(ucihar_dir))
-        sys.exit(1)
-    
-    ucihar_ds = UCIHAR(ucihar_dir)
-
-    all_person_list = np.array(PERSONS)
-    p = np.random.permutation(len(all_person_list))
-    train_person_list = all_person_list[p][:len(all_person_list)//2]
-    test_person_list = all_person_list[p][len(all_person_list)//2:]
-    x_train, y_train, p_train = ucihar_ds.load_data(train=True, person_list=train_person_list, include_gravity=True)
-    x_test, y_test, p_test = ucihar_ds.load_data(train=False, person_list=test_person_list, include_gravity=True)
-
-    print('x_train: {}'.format(x_train.shape))
-    print('y_train: {}'.format(y_train.shape))
-    print('x_test: {}'.format(x_test.shape))
-    print('y_test: {}'.format(y_test.shape))
-    print(p_train)
-    print(p_test)
  
 
