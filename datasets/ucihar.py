@@ -137,6 +137,5 @@ def load(path:Path, train=True, include_gravity=False):
 
  
 PERSONS = list(range(1, 31))
-
+ACTIVITIES = ['WALKING', 'WALKING_UPSTAIRS', 'WALKING_DOWNSTAIRS', 'SITTING', 'STANDING', 'LAYING']
  
-
