@@ -11,6 +11,7 @@ class PAMAP2:
     def __init__(self, path:Path, cache_dir:Path=Path('./')):
         self.path = path
         self.cache_dir = cache_dir
+        self.data_cache = None
     
     def _load_segments(self):
         segments = load(self.path)
@@ -23,8 +24,28 @@ class PAMAP2:
                 min_val, max_val = self.min_max_vals[col].loc['min'], self.min_max_vals[col].loc['max']
                 segment[col] = (segment[col] - min_val) / (max_val - min_val)
         return segment
+    
+    def _filter_by_person(self, x_frames, y_frames, person_labels, persons):
+        p2id = dict(zip(PERSONS, list(range(len(PERSONS)))))
+        p_flags = np.zeros(len(x_frames), dtype=np.bool)
+        for person in persons:
+            p_flags = np.logical_or(p_flags, person_labels == p2id[person])
+        flags = p_flags
 
-    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int, norm:bool):
+        # filter
+        x_frames, y_frames = x_frames[flags], y_frames[flags]
+
+        return x_frames, y_frames
+    
+    def _load(self):
+        if self.data_cache is None:
+            segments = self._load_segments()
+            self.data_cache = segments
+        else:
+            segments = self.data_cache
+        return segments
+    
+    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int, persons:Union[list, None]=None, norm:bool=False):
         """PAMAP2の読み込みとsliding-window
 
         Parameters
@@ -54,10 +75,17 @@ class PAMAP2:
             sliding-windowで切り出した入力とターゲットのフレームリスト
             y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
         """
+
+        if not isinstance(persons, list) and persons is not None:
+            raise TypeError('expected type of persons is list or None, but {}'.format(type(persons)))
+        if persons is not None:
+            if not (set(persons) <= set(PERSONS)):
+                raise ValueError('detect unknown person, {}'.format(persons))
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
-        segments = self._load_segments()
-        segments = [seg[x_labels+y_labels] for seg in segments]
+        # segments = self._load_segments()
+        segments = self._load()
+        segments = [seg[x_labels+y_labels+['person_id']] for seg in segments]
         if norm:
             segments = [self._normalize_segment(seg) for seg in segments]
         frames = []
@@ -71,9 +99,14 @@ class PAMAP2:
             else:
                 print('no frame')
         frames = np.concatenate(frames)
-        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
+        assert frames.shape[-1] == len(x_labels) + len(y_labels) + 1, 'Extracted data shape does not match with the number of total labels'
         x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., 0, len(x_labels):]
+        y_frames = frames[..., 0, len(x_labels):-1]
+
+        if persons is not None:
+            person_labels = frames[..., 0, -1]
+            x_frames, y_frames = self._filter_by_person(x_frames, y_frames, person_labels, persons)
+
         return x_frames, y_frames
     
 def load(path:Path) -> dict:
