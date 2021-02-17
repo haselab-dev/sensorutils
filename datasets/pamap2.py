@@ -52,6 +52,7 @@ class PAMAP2:
         -------
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
         """
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
