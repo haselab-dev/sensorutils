@@ -3,11 +3,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Union
-# from ..core import split_using_target, split_using_sliding_window
-
-import sys
-sys.path += ['./']
-from core import split_using_target, split_using_sliding_window
+from ..core import split_using_target, split_using_sliding_window
 
 class WISDM:
     def __init__(self, path:Path):
