@@ -49,44 +49,15 @@ import sensorutils.datasets
 * pandas
 * scipy
 
-## Git 関連
+## install
 
-サブモジュールを扱うときのコマンド（適宜引数は変えること）
+### pip
 
-サブモジュールとして clone する方法。
 ```bash
-# すでにリポジトリが存在し、サブモジュールとして追加する場合
-git submodule add https://github.com/haselab-dev/sensorutils.git
-# サブモジュールの clone をし忘れた場合
-git submodule update --init --recursive
-# サブモジュールと同時にリポジトリを clone する場合
-git clone --recursive [リポジトリの url など]
+pip install git+https://github.com/haselab-dev/sensorutils
 ```
 
-サブモジュールの更新を受け取るとき
+ブランチやタグを指定する場合
 ```bash
-git submodule foreach git fetch
-git submodule foreach git merge origin/master
-# 上二つの代わりに下でも可能
-git submodule update --remote --merge
-```
-
-サブモジュールの更新をした時
-```bash
-git submodule foreach git add .
-git submodule foreach git commit -m "2 on parent"
-git submodule foreach git push
-# このようにしてサブモジュールのリモートを更新したのち
-git add .
-git commit -m "update child 2"
-git push --recurse-submodules=check
-# 元のリポジトリのリモートの更新もする（確認）
-```
-
-サブモジュールが `Detached HEAD` になったときの対処
-```bash
-git submodule foreach git status #HEADのリビジョン名(SHA-1)を調べる
-git submodule foreach git checkout master
-git submodule foreach git merge <HEADのSHA-1> #rebse
-git submodule foreach git push
+pip install git+https://github.com/haselab-dev/sensorutils@{ブランチ名またはタグ名}
 ```
