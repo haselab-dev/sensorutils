@@ -1,14 +1,14 @@
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read().replace("\r\n", "\n")
+#with open("README.md", "r") as fh:
+#    long_description = fh.read().replace("\r\n", "\n")
 
 setuptools.setup(
     name='sensorutils',
     version='0.11.0',
     description='A utils for sensor data',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+    #long_description=long_description,
+    #long_description_content_type='text/markdown',
     author='watashi',
     classifiers=[
         'License :: OSI Approved :: MIT License',
