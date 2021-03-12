@@ -22,5 +22,6 @@ setuptools.setup(
     packages=setuptools.find_packages(where='src'),
     package_dir={'': 'src'},
     python_requires='>=3.6, <4',
+    install_requires=['numpy', 'pandas', 'scipy'],
     tests_require=["pytest", "pytest-cov"],
 )
