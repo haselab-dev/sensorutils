@@ -57,7 +57,7 @@ import sensorutils.datasets
 pip install git+https://github.com/haselab-dev/sensorutils
 ```
 
-ブランチやタグを指定する場合
+ブランチやタグを指定することもできます。
 ```bash
-pip install git+https://github.com/haselab-dev/sensorutils@{ブランチ名またはタグ名}
+pip install git+https://github.com/haselab-dev/sensorutils[@{ブランチ名 | タグ名}]
 ```
