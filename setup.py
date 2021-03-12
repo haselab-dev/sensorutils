@@ -20,6 +20,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3 :: Only',
     ],
     packages=setuptools.find_packages(where='src'),
+    package_dir={'': 'src'},
     python_requires='>=3.6, <4',
     tests_require=["pytest", "pytest-cov"],
 )
