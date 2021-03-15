@@ -94,6 +94,9 @@ python setup.py clean --all
 conda packageはビルド用のrecipeを用意して作成する．
 
 ```bash
+git clone <sensorutils url>
+cd sensorutils
+
 # conda install conda-build
 conda build recipe
 
