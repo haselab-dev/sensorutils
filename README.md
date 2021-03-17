@@ -55,9 +55,85 @@ import sensorutils.datasets
 
 ```bash
 pip install git+https://github.com/haselab-dev/sensorutils
+# pip install -e[--editable] ... # DEVELOPER MODE
 ```
 
 ブランチやタグを指定することもできます。
 ```bash
 pip install git+https://github.com/haselab-dev/sensorutils[@{ブランチ名 | タグ名}]
+```
+
+## build package
+
+### pip
+
+```bash
+# pip install --upgrade pip setuptools
+python setup.py sdist
+
+pip install dist/***.tar.gz
+```
+
+```bash
+# pip install --upgrade pip setuptools wheel
+python setup.py bdist_wheel
+
+pip install dist/***.whl
+```
+
+掃除
+
+```bash
+python setup.py clean --all
+```
+
+### conda
+
+#### with recipe
+
+conda packageはビルド用のrecipeを用意して作成する．
+
+```bash
+git clone <sensorutils url>
+cd sensorutils
+
+# conda install conda-build
+conda build recipe
+
+# conda install --use-local sensorutils # 公式の方法ではうまくいかなかった
+conda install -c file:///C:/Users/{name}/Miniconda3/envs/{仮想環境名}/conda-bld sensorutils
+# or
+conda install C:\Users\{name}\Miniconda3\envs\{仮想環境名}\conda-bld\noarch\sensorutils-0.11.0-py_0.tar.bz2
+```
+Windowsだと `%USERPROFILE%\Miniconda3\envs\{仮想環境名}\conda-bld` 配下にファイルができる.
+以下のコマンドで確認することも可能．
+```
+conda build recipe --output
+```
+
+#### without recipe (未検証)
+
+```bash
+python setup.py bdist_conda
+```
+
+掃除
+
+```bash
+conda build purge # not delete conda package
+conda build purge-all # delete conda package
+```
+
+## Uninstall package
+
+### pip
+
+```bash
+pip uninstall sensorutils
+```
+
+### conda
+
+```bash
+conda uninstall sensorutils
 ```
