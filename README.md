@@ -89,6 +89,12 @@ python setup.py clean --all
 
 ### conda
 
+<details>
+<summary>仮想環境が壊れる可能性あり，注意を守って使うこと</summary>
+<span style="color: red;">注意：`conda-build`を`base`環境以外にインストールすると`conda-build`がインストールされた環境のパスがおかしくなる可能性があり</span>
+
+`conda-build`を`base`環境にインストールすればその他の環境でも使えるうえ，おそらくパスのバグは起きない．
+
 #### with recipe
 
 conda packageはビルド用のrecipeを用意して作成する．
@@ -97,15 +103,14 @@ conda packageはビルド用のrecipeを用意して作成する．
 git clone <sensorutils url>
 cd sensorutils
 
-# conda install conda-build
+conda activate base 
+# conda install conda-build # or conda install -n base conda-build
 conda build recipe
 
-# conda install --use-local sensorutils # 公式の方法ではうまくいかなかった
-conda install -c file:///C:/Users/{name}/Miniconda3/envs/{仮想環境名}/conda-bld sensorutils
-# or
-conda install C:\Users\{name}\Miniconda3\envs\{仮想環境名}\conda-bld\noarch\sensorutils-0.11.0-py_0.tar.bz2
+conda install --use-local sensorutils
+# conda install -c file:///C:/Users/{name}/Miniconda3/conda-bld sensorutils
 ```
-Windowsだと `%USERPROFILE%\Miniconda3\envs\{仮想環境名}\conda-bld` 配下にファイルができる.
+Windowsだと `%USERPROFILE%\Miniconda3\conda-bld` 配下にファイルができる.
 以下のコマンドで確認することも可能．
 ```
 conda build recipe --output
@@ -123,6 +128,8 @@ python setup.py bdist_conda
 conda build purge # not delete conda package
 conda build purge-all # delete conda package
 ```
+
+</details>
 
 ## Uninstall package
 
