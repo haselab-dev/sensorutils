@@ -144,3 +144,13 @@ pip uninstall sensorutils
 ```bash
 conda uninstall sensorutils
 ```
+
+## loadmap
+
+* 1.0
+   * [ ] create abstruct class for dataset loader
+   * [ ] data argumentation
+   * [ ] pytest
+* 2.0（signal utils に向ける？）
+   * [ ] pipeline
+   * [ ] 前処理の拡充（適当）
