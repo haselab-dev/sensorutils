@@ -33,7 +33,6 @@ class WISDM:
         -------
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
         """
 
         segments = load(dataset_path=self.path)
