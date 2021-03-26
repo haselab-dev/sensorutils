@@ -8,7 +8,9 @@ from pathlib import Path
 from ..core import split_using_sliding_window, split_using_target
 from typing import Union, List, Dict, Tuple
 
-class HHAR:
+from .base import BaseDataset
+
+class HHAR(BaseDataset):
     """HHAR 
     
     HHAR <https://archive.ics.uci.edu/ml/datasets/Heterogeneity+Activity+Recognition> データセットの行動分類を行うためのローダクラス
@@ -24,7 +26,15 @@ class HHAR:
 
         if type(path) is str:
             path = Path(path)
-        self.path = path
+        super().__init__(path)
+    
+    def act2id(self):
+        global ACTIVITIES
+        return ACTIVITIES.copy()
+    
+    def subject2id(self):
+        global SUBJECTS
+        return SUBJECTS.copy()
 
     def load(self, sensor_types:Union[List[str], str], device_types:Union[List[str], str], window_size:int, stride:int, subjects:Union[list, None]=None):
         """HHARの読み込みとsliding-window

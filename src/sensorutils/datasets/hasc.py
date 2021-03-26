@@ -13,7 +13,9 @@ import pandas as pd
 import pickle
 from ..core import split_using_target, split_using_sliding_window
 
-class HASC:
+from .base import BaseDataset
+
+class HASC(BaseDataset):
     """HASC
 
     HASCデータセット(HASC-PAC2016)の行動分類を行うためのローダクラス
@@ -30,7 +32,7 @@ class HASC:
     supported_target_labels = ['activity', 'person']
 
     def __init__(self, path:Path, cache_dir_meta:Path=None):
-        self.path = path
+        super().__init__(path)
         self.cache_dir_meta = cache_dir_meta
 
         if cache_dir_meta is not None:
@@ -40,6 +42,14 @@ class HASC:
                 self.meta = load_meta(path)
         else:
             self.meta = load_meta(path)
+        
+        self.label_map = {'activity': None, 'subject': None}
+    
+    def act2id(self):
+        return self.label_map['activity']
+    
+    def subject2id(self):
+        return self.label_map['subject']
     
     @classmethod
     def load_from_cache(cls, cache_path:Path):
@@ -160,8 +170,10 @@ class HASC:
         x_frames = np.concatenate(x_frames)
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
-        return x_frames, y_frames, dict(zip(y_labels, self.maps))
 
+        self.label_map = dict(zip(y_labels, self.maps))
+
+        return x_frames, y_frames, self.label_map
 
 def load_meta(path:Path) -> pd.DataFrame:
     """HASC の meta ファイルを読み込む。
