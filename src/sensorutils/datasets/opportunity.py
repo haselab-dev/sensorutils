@@ -11,7 +11,7 @@ from ..core import split_using_target, split_using_sliding_window
 
 """
 下記のcolumnは重複している。
-ドキュメントのミスなのか使用なのか。。。？
+ドキュメントのミスなのか仕様なのか。。。？
 Accelerometer_CHEESE_accX 3
 Accelerometer_SPOON_accX 3
 Accelerometer_KNIFE1_accX 3
