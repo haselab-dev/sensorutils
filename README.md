@@ -63,6 +63,13 @@ pip install git+https://github.com/haselab-dev/sensorutils
 pip install git+https://github.com/haselab-dev/sensorutils[@{ブランチ名 | タグ名}]
 ```
 
+## test
+
+```bash
+# cd sensorutils
+python tests/test_core.py
+```
+
 ## build package
 
 ### pip
