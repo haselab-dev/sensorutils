@@ -45,12 +45,6 @@ class HASC(BaseDataset):
         
         self.label_map = {'activity': None, 'subject': None}
     
-    def act2id(self):
-        return self.label_map['activity']
-    
-    def subject2id(self):
-        return self.label_map['subject']
-    
     @classmethod
     def load_from_cache(cls, cache_path:Path):
         with cache_path.open('rb') as fp:

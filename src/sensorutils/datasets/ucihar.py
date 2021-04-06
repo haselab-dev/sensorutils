@@ -14,15 +14,6 @@ class UCIHAR(BaseDataset):
         super().__init__(path)
         self.load_meta()
     
-    def act2id(self):
-        global ACTIVITIES
-        return dict(zip(ACTIVITIES, list(range(len(ACTIVITIES)))))
-    
-    def subject2id(self):
-        global PERSONS
-        subs = list(map(lambda x: str(x), PERSONS))
-        return dict(zip(subs, list(range(1, len(subs)+1))))
-    
     def load_meta(self):
         meta = load_meta(self.path)
         self.train_metas = meta['train']
