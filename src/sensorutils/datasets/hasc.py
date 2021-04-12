@@ -13,7 +13,9 @@ import pandas as pd
 import pickle
 from ..core import split_using_target, split_using_sliding_window
 
-class HASC:
+from .base import BaseDataset
+
+class HASC(BaseDataset):
     """HASC
 
     HASCデータセット(HASC-PAC2016)の行動分類を行うためのローダクラス
@@ -27,8 +29,10 @@ class HASC:
         'stay', 'walk', 'jog', 'skip', 'stup', 'stdown',
     ]
 
+    supported_target_labels = ['activity', 'person']
+
     def __init__(self, path:Path, cache_dir_meta:Path=None):
-        self.path = path
+        super().__init__(path)
         self.cache_dir_meta = cache_dir_meta
 
         if cache_dir_meta is not None:
@@ -38,6 +42,14 @@ class HASC:
                 self.meta = load_meta(path)
         else:
             self.meta = load_meta(path)
+        
+        self.label_map = {'activity': None, 'subject': None}
+    
+    def act2id(self):
+        return self.label_map['activity']
+    
+    def subject2id(self):
+        return self.label_map['subject']
     
     @classmethod
     def load_from_cache(cls, cache_path:Path):
@@ -70,9 +82,20 @@ class HASC:
         query_string = ' & '.join([queries[k] for k in queries.keys()])
         filed_meta = self.meta.query(query_string)
         return filed_meta
+    
+    def __extract_targets(self, y_labels:list, meta_row:pd.DataFrame) -> np.ndarray:
+        targets = []
+        for i, yl in enumerate(y_labels):
+            t = meta_row._asdict()[yl]
+            if t not in self.maps[i]:
+                self.maps[i][t] = self.counters[i]
+                self.counters[i] += 1
+            targets += [self.maps[i][t]]
+
+        return np.array(targets)
 
     # フィルタリング周りの実装は暫定的
-    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:dict=None):
+    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:dict=None, y_labels:typing.Union[str, list]='activity'):
         """HASCデータの読み込みとsliding-window
 
         Parameters
@@ -100,12 +123,26 @@ class HASC:
                 'Height': 'Height > 170',   # 身長が170cmより大きい人
                 'Weight': 'Weight >= 100',   # 体重が100kg以上の人
             }
+        
+        y_labels: Union[str, list]
+
+            ターゲットデータとしてロードするデータの種類を指定．
+            サポートする種類は以下の通り(今後拡張予定)．
+
+            - 'activity'
+            - 'subject'
 
         Returns
         -------
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
         """
+
+        if isinstance(y_labels, str):
+            y_labels = [y_labels]
+        if not (set(y_labels) <= set(self.supported_target_labels)):
+            raise ValueError('include not supported target labels: {}'.format(y_labels))
+        target_labels = list(map(lambda x: x.replace('activity', 'act'), y_labels))
 
         if queries is None:
             filed_meta = self.meta
@@ -115,15 +152,13 @@ class HASC:
         segments = load(self.path, filed_meta)
         x_frames = []
         y_frames = []
-        act2id = {}
-        act_id_counter = 0
+        self.maps = [{} for _ in y_labels]
+        self.counters = [0 for _ in y_labels]
         for meta_row, seg in zip(filed_meta.itertuples(), segments):
             act = meta_row.act
             if act == '0_sequence':
                 continue
-            if act not in act2id.keys():
-                act2id[act] = act_id_counter
-                act_id_counter += 1
+            ys = self.__extract_targets(target_labels, meta_row)
 
             fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
@@ -131,12 +166,14 @@ class HASC:
                 return_error_value=None)
             if fs is not None:
                 x_frames += [fs]
-                y_frames += [np.array([act2id[act]]).repeat(len(fs))]
+                y_frames += [np.expand_dims(ys, axis=0).repeat(len(fs), axis=0)]
         x_frames = np.concatenate(x_frames)
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
-        return x_frames, y_frames, act2id
 
+        self.label_map = dict(zip(y_labels, self.maps))
+
+        return x_frames, y_frames, self.label_map
 
 def load_meta(path:Path) -> pd.DataFrame:
     """HASC の meta ファイルを読み込む。

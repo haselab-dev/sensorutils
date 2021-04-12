@@ -5,9 +5,20 @@ from pathlib import Path
 from typing import Union
 from ..core import split_using_target, split_using_sliding_window
 
-class WISDM:
+from .base import BaseDataset
+
+class WISDM(BaseDataset):
     def __init__(self, path:Path):
-        self.path = path
+        super().__init__(path)
+    
+    def act2id(self):
+        global ACTIVITIES
+        return dict(zip(ACTIVITIES, list(range(len(ACTIVITIES)))))
+    
+    def subject2id(self):
+        global SUBJECTS
+        subs = list(map(lambda x: str(x), SUBJECTS))
+        return dict(zip(subs, list(range(1, len(subs)+1))))
     
     def load(self, window_size:int=None, stride:int=None, ftrim_sec:int=3, btrim_sec:int=3, subjects:Union[list, None]=None):
         """WISDMの読み込みとsliding-window
@@ -33,7 +44,6 @@ class WISDM:
         -------
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
         """
 
         segments = load(dataset_path=self.path)
@@ -117,7 +127,6 @@ def load(dataset_path:Path):
     raw_data['z-acceleration'] = raw_data['z-acceleration'].replace('', np.nan)
 
     # convert activity name to activity id
-    print(ACTIVITIES)
     raw_data = raw_data.replace(list(ACTIVITIES), list(range(len(ACTIVITIES))))
 
     raw_data = raw_data.astype({'user': 'uint8', 'activity': 'uint8', 'timestamp': 'uint64', 'x-acceleration': 'float64', 'y-acceleration': 'float64', 'z-acceleration': 'float64'})

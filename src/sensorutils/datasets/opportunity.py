@@ -8,10 +8,11 @@ from pathlib import Path
 from ..core import split_using_target, split_using_sliding_window
 #from collections import defaultdict
 
+from .base import BaseDataset
 
 """
 下記のcolumnは重複している。
-ドキュメントのミスなのか使用なのか。。。？
+ドキュメントのミスなのか仕様なのか。。。？
 Accelerometer_CHEESE_accX 3
 Accelerometer_SPOON_accX 3
 Accelerometer_KNIFE1_accX 3
@@ -26,7 +27,7 @@ Accelerometer_CUP_accX 3
 Accelerometer_MILK_accX 3
 """
 
-class Opportunity:
+class Opportunity(BaseDataset):
     """Opportunity
 
     Opportunity データセットの行動分類を行うためのローダクラス。
@@ -52,7 +53,16 @@ class Opportunity:
     ]
 
     def __init__(self, path:Path):
-        self.path = path
+        super().__init__(path)
+    
+    def act2id(self):
+        global Locomotion
+        return dict([(Locomotion[k], k) for k in Locomotion.keys()])
+    
+    def subject2id(self):
+        global PERSONS
+        subs = list(map(lambda x: str(x), PERSONS))
+        return dict(zip(subs, list(range(len(subs)))))
 
     def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
         """Opportunityの読み込み(ADL)とsliding-window

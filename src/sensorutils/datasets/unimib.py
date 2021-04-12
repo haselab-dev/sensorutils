@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Union
 from ..core import split_using_sliding_window
 
+from .base import BaseDataset
+
 
 """
 + UniMibの基本データ構造
@@ -36,9 +38,18 @@ fullというのもあるが構造は不明．
 
 """
 
-class UniMib:
+class UniMib(BaseDataset):
     def __init__(self, path:Path):
-        self.path = path
+        super().__init__(path)
+    
+    def act2id(self):
+        global ACTIVITIES
+        return dict(zip(ACTIVITIES, list(range(1, len(ACTIVITIES)+1))))
+    
+    def subject2id(self):
+        global SUBJECTS
+        subs = list(map(lambda x: str(x), SUBJECTS))
+        return dict(zip(subs, list(range(1, len(subs)+1))))
     
     def load(self, data_type:str, window_size:Union[int, None]=None, stride:Union[int, None]=None, ftrim_sec:int=3, btrim_sec:int=3, subjects:Union[list, None]=None):
         """UniMibの読み込みとsliding-window

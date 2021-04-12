@@ -6,12 +6,22 @@ from pathlib import Path
 from typing import Union, Optional
 from ..core import split_using_target, split_using_sliding_window
 
+from .base import BaseDataset
 
-class PAMAP2:
+
+class PAMAP2(BaseDataset):
     def __init__(self, path:Path, cache_dir:Path=Path('./')):
-        self.path = path
+        super().__init__(path)
         self.cache_dir = cache_dir
         self.data_cache = None
+
+    def act2id(self):
+        global ACTIVITIES
+        return dict([(ACTIVITIES[k], k) for k in ACTIVITIES.keys()])
+    
+    def subject2id(self):
+        global PERSONS
+        return dict(zip(PERSONS, list(range(len(PERSONS)))))
     
     def _load_segments(self):
         segments = load(self.path)

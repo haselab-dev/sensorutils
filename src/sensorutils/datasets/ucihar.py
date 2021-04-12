@@ -3,17 +3,28 @@ import pandas as pd
 from pathlib import Path
 from typing import Union, Optional
 
+from .base import BaseDataset
+
 __all__ = ['UCIHAR', 'load_meta', 'load']
 
 
-class UCIHAR(object):
-    def __init__(self, ucihar_dir):
-        if type(ucihar_dir) == str: ucihar_dir = Path(ucihar_dir)
-        self.ucihar_dir = ucihar_dir
+class UCIHAR(BaseDataset):
+    def __init__(self, path:Union[str, Path]):
+        if type(path) == str: path = Path(path)
+        super().__init__(path)
         self.load_meta()
     
+    def act2id(self):
+        global ACTIVITIES
+        return dict(zip(ACTIVITIES, list(range(len(ACTIVITIES)))))
+    
+    def subject2id(self):
+        global PERSONS
+        subs = list(map(lambda x: str(x), PERSONS))
+        return dict(zip(subs, list(range(1, len(subs)+1))))
+    
     def load_meta(self):
-        meta = load_meta(self.ucihar_dir)
+        meta = load_meta(self.path)
         self.train_metas = meta['train']
         self.test_metas = meta['test']
    
@@ -33,25 +44,24 @@ class UCIHAR(object):
         -------
         sensor_data:
             sliding-windows
-        labels:
-            activity labels
-        person_id_list:
-            the list of person id
+        targets:
+            activity and subject labels
+            subjectラベルはデータセット内の値をそのまま返すため，分類等で用いる際はラベルの再割り当てが必要となることに注意
         """
 
         if include_gravity:
             if train:
-                sdata = load(self.ucihar_dir, train=True, include_gravity=True)
+                sdata = load(self.path, train=True, include_gravity=True)
                 metas = self.train_metas
             else:
-                sdata = load(self.ucihar_dir, train=False, include_gravity=True)
+                sdata = load(self.path, train=False, include_gravity=True)
                 metas = self.test_metas
         else:
             if train:
-                sdata = load(self.ucihar_dir, train=True, include_gravity=False)
+                sdata = load(self.path, train=True, include_gravity=False)
                 metas = self.train_metas
             else:
-                sdata = load(self.ucihar_dir, train=False, include_gravity=False)
+                sdata = load(self.path, train=False, include_gravity=False)
                 metas = self.test_metas
  
         flags = np.zeros((sdata.shape[0],), dtype=np.bool)
@@ -63,8 +73,9 @@ class UCIHAR(object):
         labels = metas['activity'].to_numpy()[flags]
         labels -= 1 # scale: [1, 6] => scale: [0, 5]
         person_id_list = np.array(metas.iloc[flags]['person_id'])
+        targets = np.stack([labels, person_id_list]).T
 
-        return sdata, labels, person_id_list
+        return sdata, targets
 
 def load_meta(path:Path) -> dict:
     """UCIHAR の meta ファイルを読み込む
