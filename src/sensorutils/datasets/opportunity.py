@@ -55,15 +55,6 @@ class Opportunity(BaseDataset):
     def __init__(self, path:Path):
         super().__init__(path)
     
-    def act2id(self):
-        global Locomotion
-        return dict([(Locomotion[k], k) for k in Locomotion.keys()])
-    
-    def subject2id(self):
-        global PERSONS
-        subs = list(map(lambda x: str(x), PERSONS))
-        return dict(zip(subs, list(range(len(subs)))))
-
     def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
         """Opportunityの読み込み(ADL)とsliding-window
 

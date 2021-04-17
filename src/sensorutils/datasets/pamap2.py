@@ -15,14 +15,6 @@ class PAMAP2(BaseDataset):
         self.cache_dir = cache_dir
         self.data_cache = None
 
-    def act2id(self):
-        global ACTIVITIES
-        return dict([(ACTIVITIES[k], k) for k in ACTIVITIES.keys()])
-    
-    def subject2id(self):
-        global PERSONS
-        return dict(zip(PERSONS, list(range(len(PERSONS)))))
-    
     def _load_segments(self):
         segments = load(self.path)
         self.min_max_vals = pd.concat(segments, axis=0).agg(['min', 'max'])
