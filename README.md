@@ -155,8 +155,8 @@ conda uninstall sensorutils
 ## loadmap
 
 * 1.0
-   * [ ] create abstruct class for dataset loader
-   * [ ] data argumentation
+   * [x] create abstruct class for dataset loader
+   * [x] data argumentation
    * [ ] pytest
 * 2.0（signal utils に向ける？）
    * [ ] pipeline
