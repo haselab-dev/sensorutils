@@ -7,6 +7,16 @@ from ..core import split_using_target, split_using_sliding_window
 
 from .base import BaseDataset
 
+
+__all = ['WISDM', 'load']
+
+
+# Meta Info
+SUBJECTS = tuple(range(1, 36+1))
+ACTIVITIES = tuple(['Walking', 'Jogging', 'Sitting', 'Standing', 'Upstairs', 'Downstairs'])
+Sampling_Rate = 20 # Hz
+
+
 class WISDM(BaseDataset):
     def __init__(self, path:Path):
         super().__init__(path)
@@ -133,9 +143,7 @@ def load(dataset_path:Path):
                 segments += splited[act_id]
     return segments
 
-SUBJECTS = tuple(range(1, 36+1))
-ACTIVITIES = tuple(['Walking', 'Jogging', 'Sitting', 'Standing', 'Upstairs', 'Downstairs'])
-Sampling_Rate = 20 # Hz
+
 
 if __name__ == '__main__':
     path = Path('path/to/dataset')

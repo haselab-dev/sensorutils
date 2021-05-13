@@ -5,7 +5,13 @@ from typing import Union, Optional
 
 from .base import BaseDataset
 
+
 __all__ = ['UCIHAR', 'load_meta', 'load']
+
+
+# Meta Info
+PERSONS = list(range(1, 31))
+ACTIVITIES = ['WALKING', 'WALKING_UPSTAIRS', 'WALKING_DOWNSTAIRS', 'SITTING', 'STANDING', 'LAYING']
 
 
 class UCIHAR(BaseDataset):
@@ -68,6 +74,7 @@ class UCIHAR(BaseDataset):
 
         return sdata, targets
 
+
 def load_meta(path:Path) -> dict:
     """UCIHAR の meta ファイルを読み込む
 
@@ -94,6 +101,7 @@ def load_meta(path:Path) -> dict:
     test_metas.columns = ['activity', 'person_id']
 
     return {'train': train_metas, 'test': test_metas}
+
 
 def load(path:Path, train=True, include_gravity=False):
     """UCIHAR の センサデータを読み込む
@@ -137,7 +145,4 @@ def load(path:Path, train=True, include_gravity=False):
 
     return sensor_data
 
- 
-PERSONS = list(range(1, 31))
-ACTIVITIES = ['WALKING', 'WALKING_UPSTAIRS', 'WALKING_DOWNSTAIRS', 'SITTING', 'STANDING', 'LAYING']
  

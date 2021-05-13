@@ -8,6 +8,15 @@ from ..core import split_using_sliding_window
 from .base import BaseDataset
 
 
+__all__ = ['UniMib', 'load']
+
+
+# Meta Info
+SUBJECTS = tuple(range(1, 30+1))
+ACTIVITIES = tuple(['StandingUpFS', 'StandingUpFL', 'Walking', 'Running', 'GoingUpS', 'Jumping', 'GoingDownS', 'LyingDownFS', 'SittingDown', 'FallingForw', 'FallingRight', 'FallingBack', 'HittingObstacle', 'FallingWithPS', 'FallingBackSC', 'Syncope', 'FallingLeft'])
+Sampling_Rate = 50 # Hz
+
+
 """
 + UniMibの基本データ構造
 
@@ -204,9 +213,7 @@ def load(dataset_path:Path, data_type:str='full'):
 
     return segments
 
-SUBJECTS = tuple(range(1, 30+1))
-ACTIVITIES = tuple(['StandingUpFS', 'StandingUpFL', 'Walking', 'Running', 'GoingUpS', 'Jumping', 'GoingDownS', 'LyingDownFS', 'SittingDown', 'FallingForw', 'FallingRight', 'FallingBack', 'HittingObstacle', 'FallingWithPS', 'FallingBackSC', 'Syncope', 'FallingLeft'])
-Sampling_Rate = 50 # Hz
+
 
 if __name__ == '__main__':
     import pprint

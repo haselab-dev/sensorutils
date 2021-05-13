@@ -10,140 +10,11 @@ from ..core import split_using_target, split_using_sliding_window
 
 from .base import BaseDataset
 
-"""
-下記のcolumnは重複している。
-ドキュメントのミスなのか仕様なのか。。。？
-Accelerometer_CHEESE_accX 3
-Accelerometer_SPOON_accX 3
-Accelerometer_KNIFE1_accX 3
-Accelerometer_KNIFE2_accX 3
-Accelerometer_PLATE_accX 3
-Accelerometer_GLASS_accX 3
-Accelerometer_SALAMI_accX 3
-Accelerometer_WATER_accX 3
-Accelerometer_SUGAR_accX 3
-Accelerometer_BREAD_accX 3
-Accelerometer_CUP_accX 3
-Accelerometer_MILK_accX 3
-"""
 
-class Opportunity(BaseDataset):
-    """Opportunity
+__all__ = ['Opportunity', 'load']
 
-    Opportunity データセットの行動分類を行うためのローダクラス。
 
-    Attributes
-    ----------
-    not_supported_labels: サポートしていないラベルの一覧。
-    """
-
-    not_supported_labels = [
-        'Accelerometer_CHEESE_accX',
-        'Accelerometer_SPOON_accX',
-        'Accelerometer_KNIFE1_accX',
-        'Accelerometer_KNIFE2_accX',
-        'Accelerometer_PLATE_accX',
-        'Accelerometer_GLASS_accX',
-        'Accelerometer_SALAMI_accX',
-        'Accelerometer_WATER_accX',
-        'Accelerometer_SUGAR_accX',
-        'Accelerometer_BREAD_accX',
-        'Accelerometer_CUP_accX',
-        'Accelerometer_MILK_accX',
-    ]
-
-    def __init__(self, path:Path):
-        super().__init__(path)
-    
-    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
-        """Opportunityの読み込み(ADL)とsliding-window
-
-        Parameters
-        ----------
-        window_size: int
-            フレーム分けするサンプルサイズ
-
-        stride: int
-            ウィンドウの移動幅
-
-        x_labels: list
-            入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠。)。ここで指定したラベルのデータが入力として取り出される。
-            一部サポートしていないラベルがあるの注意。
-
-        y_labels: list
-            ターゲットのラベルリスト。使用はx_labelsと同様。
-
-        ftrim_sec: int
-            セグメント先頭のトリミングサイズ。単位は秒。
-
-        btrim_sec: int
-            セグメント末尾のトリミングサイズ。単位は秒。
-
-        Returns
-        -------
-        (x_frames, y_frames): tuple
-            sliding-windowで切り出した入力とターゲットのフレームリスト
-        """
-        if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
-            raise ValueError('x_labels or y_labels include non supported labels')
-        segments = load(self.path)
-        segments = [seg[x_labels+y_labels] for seg in segments]
-        frames = []
-        for seg in segments:
-            fs = split_using_sliding_window(
-                np.array(seg), window_size=window_size, stride=stride,
-                ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
-                return_error_value=None)
-            if fs is not None:
-                frames += [fs]
-        frames = np.concatenate(frames)
-        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
-        x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., len(x_labels):]
-        return x_frames, y_frames
-
-def load(path:Path) -> dict:
-    """Opportunity の読み込み
-
-    Parameters
-    ----------
-    path: Path
-        Opportunity(UCI)のdatasetディレクトリがあるディレクトリ
-
-    Returns
-    -------
-    segments:
-        Locomotionをもとにセグメンテーションされたデータ
-    """
-    import itertools
-    path = path / 'dataset'
-    #segs = defaultdict(list)
-    chunks = []
-    for p_id, person in enumerate(PERSONS):
-        datfiles = path.glob('{}-ADL*.dat'.format(person))
-        for datfile in datfiles:
-            print(datfile)
-            df = pd.read_csv(datfile, sep='\s+', header=None)
-            df.columns = Column
-            df['User'] = p_id
-            # 将来的には欠損値処理はもう少しきちんと行う必要がある
-            df = df.fillna(method='ffill')  # NANは周辺の平均値で埋める
-            chunks.append(df)
-
-    segs = []
-    for chunk in chunks:
-        sub_segs = split_using_target(np.array(chunk), np.array(chunk['Locomotion']))
-        sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
-        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
-        # For debug
-        for seg in sub_segs:
-            label = seg['Locomotion'].iloc[0]
-            if not np.array(seg['Locomotion'] == label).all():
-                raise RuntimeError('This is bug. Failed segmentation')
-        segs += sub_segs
-
-    return segs
-
+# Meta Info
 Sampling_Rate = 30  # Hz
 
 # NOTE: Locomotion と辞書があってない可能性がある
@@ -572,3 +443,140 @@ Column = [
     'ML_Both_Arms',
     #'User',     # ユーザID(ローダ側で付与)
 ]
+
+
+"""
+下記のcolumnは重複している。
+ドキュメントのミスなのか仕様なのか。。。？
+Accelerometer_CHEESE_accX 3
+Accelerometer_SPOON_accX 3
+Accelerometer_KNIFE1_accX 3
+Accelerometer_KNIFE2_accX 3
+Accelerometer_PLATE_accX 3
+Accelerometer_GLASS_accX 3
+Accelerometer_SALAMI_accX 3
+Accelerometer_WATER_accX 3
+Accelerometer_SUGAR_accX 3
+Accelerometer_BREAD_accX 3
+Accelerometer_CUP_accX 3
+Accelerometer_MILK_accX 3
+"""
+
+class Opportunity(BaseDataset):
+    """Opportunity
+
+    Opportunity データセットの行動分類を行うためのローダクラス。
+
+    Attributes
+    ----------
+    not_supported_labels: サポートしていないラベルの一覧。
+    """
+
+    not_supported_labels = [
+        'Accelerometer_CHEESE_accX',
+        'Accelerometer_SPOON_accX',
+        'Accelerometer_KNIFE1_accX',
+        'Accelerometer_KNIFE2_accX',
+        'Accelerometer_PLATE_accX',
+        'Accelerometer_GLASS_accX',
+        'Accelerometer_SALAMI_accX',
+        'Accelerometer_WATER_accX',
+        'Accelerometer_SUGAR_accX',
+        'Accelerometer_BREAD_accX',
+        'Accelerometer_CUP_accX',
+        'Accelerometer_MILK_accX',
+    ]
+
+    def __init__(self, path:Path):
+        super().__init__(path)
+    
+    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
+        """Opportunityの読み込み(ADL)とsliding-window
+
+        Parameters
+        ----------
+        window_size: int
+            フレーム分けするサンプルサイズ
+
+        stride: int
+            ウィンドウの移動幅
+
+        x_labels: list
+            入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠。)。ここで指定したラベルのデータが入力として取り出される。
+            一部サポートしていないラベルがあるの注意。
+
+        y_labels: list
+            ターゲットのラベルリスト。使用はx_labelsと同様。
+
+        ftrim_sec: int
+            セグメント先頭のトリミングサイズ。単位は秒。
+
+        btrim_sec: int
+            セグメント末尾のトリミングサイズ。単位は秒。
+
+        Returns
+        -------
+        (x_frames, y_frames): tuple
+            sliding-windowで切り出した入力とターゲットのフレームリスト
+        """
+        if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
+            raise ValueError('x_labels or y_labels include non supported labels')
+        segments = load(self.path)
+        segments = [seg[x_labels+y_labels] for seg in segments]
+        frames = []
+        for seg in segments:
+            fs = split_using_sliding_window(
+                np.array(seg), window_size=window_size, stride=stride,
+                ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
+                return_error_value=None)
+            if fs is not None:
+                frames += [fs]
+        frames = np.concatenate(frames)
+        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
+        x_frames = frames[..., :len(x_labels)]
+        y_frames = frames[..., len(x_labels):]
+        return x_frames, y_frames
+
+
+def load(path:Path) -> dict:
+    """Opportunity の読み込み
+
+    Parameters
+    ----------
+    path: Path
+        Opportunity(UCI)のdatasetディレクトリがあるディレクトリ
+
+    Returns
+    -------
+    segments:
+        Locomotionをもとにセグメンテーションされたデータ
+    """
+    import itertools
+    path = path / 'dataset'
+    #segs = defaultdict(list)
+    chunks = []
+    for p_id, person in enumerate(PERSONS):
+        datfiles = path.glob('{}-ADL*.dat'.format(person))
+        for datfile in datfiles:
+            print(datfile)
+            df = pd.read_csv(datfile, sep='\s+', header=None)
+            df.columns = Column
+            df['User'] = p_id
+            # 将来的には欠損値処理はもう少しきちんと行う必要がある
+            df = df.fillna(method='ffill')  # NANは周辺の平均値で埋める
+            chunks.append(df)
+
+    segs = []
+    for chunk in chunks:
+        sub_segs = split_using_target(np.array(chunk), np.array(chunk['Locomotion']))
+        sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
+        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
+        # For debug
+        for seg in sub_segs:
+            label = seg['Locomotion'].iloc[0]
+            if not np.array(seg['Locomotion'] == label).all():
+                raise RuntimeError('This is bug. Failed segmentation')
+        segs += sub_segs
+
+    return segs
+

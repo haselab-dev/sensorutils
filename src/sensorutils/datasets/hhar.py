@@ -10,6 +10,64 @@ from typing import Union, List, Dict, Tuple
 
 from .base import BaseDataset
 
+
+__all__ = ['HHAR', 'load']
+
+
+# Meta Info
+# ATTRIBUTES = ['acc','gyro']
+
+DEVICE_TYPES = ['Phone', 'Watch']
+SENSOR_TYPES = ['accelerometer', 'gyroscope']
+
+SUBJECTS = dict(zip(['a','b','c','d','e','f','g','h','i'], list(range(9))))
+
+ACTIVITIES = {
+    'bike': 1, 
+    'sit': 2, 
+    'stand': 3, 
+    'walk': 4, 
+    'stairsup': 5, 
+    'stairsdown': 6,
+    'null': 0,
+}
+
+PHONE_DEVICES = {
+    'nexus4_1': 0, 'nexus4_2': 1,
+    's3_1': 2, 's3_2': 3,
+    's3mini_1': 4,'s3mini_2': 5,
+    'samsungold_1': 6, 'samsungold_2': 7,
+}
+WATCH_DEVICES = {
+    'gear_1': 8, 'gear_2': 9,
+    'lgwatch_1': 10, 'lgwatch_2': 11,
+}
+
+Column = [
+    'Index', 
+    'Arrival_Time', 
+    'Creation_Time', 
+    'x', 
+    'y', 
+    'z', 
+    'User',
+    'Model', 'Device', 'gt',
+]
+
+def __id2act(act_id:int) -> str:
+    return ACTIVITIES[act_id]
+
+def __act2id(act:str) -> int:
+    if act in ACTIVITIES:
+        return ACTIVITIES[act]
+    raise ValueError(f'Unknown activity ({act})')
+
+def __name2id(name:str, name_list:Dict[str, int]) -> int:
+    if name in name_list:
+        return name_list[name]
+    raise ValueError(f'Unknown name ({name})')
+
+
 class HHAR(BaseDataset):
     """HHAR 
     
@@ -99,6 +157,7 @@ class HHAR(BaseDataset):
             y_frames = y_frames[flags]
 
         return x_frames, y_frames
+
 
 def _load_as_dataframe(path:Path, device_type:str):
     df = pd.read_csv(path)
@@ -330,58 +389,3 @@ def load(path:Path, sensor_type:Union[str, List[str]], device_type:str='Watch') 
                 segments += [segs]
     
     return segments
-
-
-def __id2act(act_id:int) -> str:
-    return ACTIVITIES[act_id]
-
-def __act2id(act:str) -> int:
-    if act in ACTIVITIES:
-        return ACTIVITIES[act]
-    raise ValueError(f'Unknown activity ({act})')
-
-def __name2id(name:str, name_list:Dict[str, int]) -> int:
-    if name in name_list:
-        return name_list[name]
-    raise ValueError(f'Unknown name ({name})')
-
-# データセットのメタデータ
-# ATTRIBUTES = ['acc','gyro']
-
-DEVICE_TYPES = ['Phone', 'Watch']
-SENSOR_TYPES = ['accelerometer', 'gyroscope']
-
-SUBJECTS = dict(zip(['a','b','c','d','e','f','g','h','i'], list(range(9))))
-
-ACTIVITIES = {
-    'bike': 1, 
-    'sit': 2, 
-    'stand': 3, 
-    'walk': 4, 
-    'stairsup': 5, 
-    'stairsdown': 6,
-    'null': 0,
-}
-
-PHONE_DEVICES = {
-    'nexus4_1': 0, 'nexus4_2': 1,
-    's3_1': 2, 's3_2': 3,
-    's3mini_1': 4,'s3mini_2': 5,
-    'samsungold_1': 6, 'samsungold_2': 7,
-}
-WATCH_DEVICES = {
-    'gear_1': 8, 'gear_2': 9,
-    'lgwatch_1': 10, 'lgwatch_2': 11,
-}
-
-Column = [
-    'Index', 
-    'Arrival_Time', 
-    'Creation_Time', 
-    'x', 
-    'y', 
-    'z', 
-    'User',
-    'Model', 'Device', 'gt',
-]
-

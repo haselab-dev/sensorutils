@@ -9,6 +9,98 @@ from ..core import split_using_target, split_using_sliding_window
 from .base import BaseDataset
 
 
+__all__ = ['PAMAP2', 'load']
+
+
+# Meta Info
+Sampling_Rate = 100 # Hz
+ATTRIBUTES = ['temperature', 'acc1', 'acc2', 'gyro', 'mag']
+POSITIONS = ['hand', 'chest', 'ankle']
+AXES = ['x', 'y', 'z']
+
+PERSONS = [
+    'subject101', 'subject102', 'subject103',
+    'subject104', 'subject105', 'subject106',
+    'subject107', 'subject108', 'subject109',
+]
+
+ACTIVITIES = {
+    1: 'lying', 2: 'sitting', 3: 'standing', 4: 'walking', 5: 'running',
+    6: 'cycling', 7: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
+    11: 'car_driving', 12: 'ascending_stairs', 13: 'descending_stairs',
+    16: 'vacuum_cleaning', 17: 'ironing', 18: 'folding_laundry',
+    19: 'house_cleaning', 20: 'playing_soccer',
+    24: 'rope_jumping',
+    0: 'other',
+}
+
+# Columns = ['timestamp(s)', 'activity_id', 'heart_rate(bpm)']
+# for pos in POSITIONS:
+#     Columns += ['IMU_{}_{}'.format(pos, ATTRIBUTES[0])]
+#     for attr in ATTRIBUTES[1:]:
+#         for axis in AXES:
+#             col = 'IMU_{}_{}_{}'.format(pos, attr, axis)
+#             Columns += [col]
+#     Columns += ['IMU_{}_orientation{}'.format(pos, i) for i in range(4)]
+Columns = [
+    'timestamp(s)',
+    'activity_id',
+    # 'person_id',  # ローダ側で付与
+    'heart_rate(bpm)',
+    'IMU_hand_temperature',
+    'IMU_hand_acc1_x',
+    'IMU_hand_acc1_y',
+    'IMU_hand_acc1_z',
+    'IMU_hand_acc2_x',
+    'IMU_hand_acc2_y',
+    'IMU_hand_acc2_z',
+    'IMU_hand_gyro_x',
+    'IMU_hand_gyro_y',
+    'IMU_hand_gyro_z',
+    'IMU_hand_mag_x',
+    'IMU_hand_mag_y',
+    'IMU_hand_mag_z',
+    'IMU_hand_orientation0',
+    'IMU_hand_orientation1',
+    'IMU_hand_orientation2',
+    'IMU_hand_orientation3',
+    'IMU_chest_temperature',
+    'IMU_chest_acc1_x',
+    'IMU_chest_acc1_y',
+    'IMU_chest_acc1_z',
+    'IMU_chest_acc2_x',
+    'IMU_chest_acc2_y',
+    'IMU_chest_acc2_z',
+    'IMU_chest_gyro_x',
+    'IMU_chest_gyro_y',
+    'IMU_chest_gyro_z',
+    'IMU_chest_mag_x',
+    'IMU_chest_mag_y',
+    'IMU_chest_mag_z',
+    'IMU_chest_orientation0',
+    'IMU_chest_orientation1',
+    'IMU_chest_orientation2',
+    'IMU_chest_orientation3',
+    'IMU_ankle_temperature',
+    'IMU_ankle_acc1_x',
+    'IMU_ankle_acc1_y',
+    'IMU_ankle_acc1_z',
+    'IMU_ankle_acc2_x',
+    'IMU_ankle_acc2_y',
+    'IMU_ankle_acc2_z',
+    'IMU_ankle_gyro_x',
+    'IMU_ankle_gyro_y',
+    'IMU_ankle_gyro_z',
+    'IMU_ankle_mag_x',
+    'IMU_ankle_mag_y',
+    'IMU_ankle_mag_z',
+    'IMU_ankle_orientation0',
+    'IMU_ankle_orientation1',
+    'IMU_ankle_orientation2',
+    'IMU_ankle_orientation3',
+]
+
+
 class PAMAP2(BaseDataset):
     def __init__(self, path:Path, cache_dir:Path=Path('./')):
         super().__init__(path)
@@ -110,6 +202,7 @@ class PAMAP2(BaseDataset):
             x_frames, y_frames = self._filter_by_person(x_frames, y_frames, person_labels, persons)
 
         return x_frames, y_frames
+
     
 def load(path:Path) -> dict:
     """PAMAP2の読み込み
@@ -159,89 +252,3 @@ def load(path:Path) -> dict:
     return segs
 
    
-Sampling_Rate = 100 # Hz
-ATTRIBUTES = ['temperature', 'acc1', 'acc2', 'gyro', 'mag']
-POSITIONS = ['hand', 'chest', 'ankle']
-AXES = ['x', 'y', 'z']
-
-PERSONS = [
-    'subject101', 'subject102', 'subject103',
-    'subject104', 'subject105', 'subject106',
-    'subject107', 'subject108', 'subject109',
-]
-
-ACTIVITIES = {
-    1: 'lying', 2: 'sitting', 3: 'standing', 4: 'walking', 5: 'running',
-    6: 'cycling', 7: 'nordic_walking', 9: 'watching_TV', 10: 'computer_work',
-    11: 'car_driving', 12: 'ascending_stairs', 13: 'descending_stairs',
-    16: 'vacuum_cleaning', 17: 'ironing', 18: 'folding_laundry',
-    19: 'house_cleaning', 20: 'playing_soccer',
-    24: 'rope_jumping',
-    0: 'other',
-}
-
-# Columns = ['timestamp(s)', 'activity_id', 'heart_rate(bpm)']
-# for pos in POSITIONS:
-#     Columns += ['IMU_{}_{}'.format(pos, ATTRIBUTES[0])]
-#     for attr in ATTRIBUTES[1:]:
-#         for axis in AXES:
-#             col = 'IMU_{}_{}_{}'.format(pos, attr, axis)
-#             Columns += [col]
-#     Columns += ['IMU_{}_orientation{}'.format(pos, i) for i in range(4)]
-Columns = [
-    'timestamp(s)',
-    'activity_id',
-    # 'person_id',  # ローダ側で付与
-    'heart_rate(bpm)',
-    'IMU_hand_temperature',
-    'IMU_hand_acc1_x',
-    'IMU_hand_acc1_y',
-    'IMU_hand_acc1_z',
-    'IMU_hand_acc2_x',
-    'IMU_hand_acc2_y',
-    'IMU_hand_acc2_z',
-    'IMU_hand_gyro_x',
-    'IMU_hand_gyro_y',
-    'IMU_hand_gyro_z',
-    'IMU_hand_mag_x',
-    'IMU_hand_mag_y',
-    'IMU_hand_mag_z',
-    'IMU_hand_orientation0',
-    'IMU_hand_orientation1',
-    'IMU_hand_orientation2',
-    'IMU_hand_orientation3',
-    'IMU_chest_temperature',
-    'IMU_chest_acc1_x',
-    'IMU_chest_acc1_y',
-    'IMU_chest_acc1_z',
-    'IMU_chest_acc2_x',
-    'IMU_chest_acc2_y',
-    'IMU_chest_acc2_z',
-    'IMU_chest_gyro_x',
-    'IMU_chest_gyro_y',
-    'IMU_chest_gyro_z',
-    'IMU_chest_mag_x',
-    'IMU_chest_mag_y',
-    'IMU_chest_mag_z',
-    'IMU_chest_orientation0',
-    'IMU_chest_orientation1',
-    'IMU_chest_orientation2',
-    'IMU_chest_orientation3',
-    'IMU_ankle_temperature',
-    'IMU_ankle_acc1_x',
-    'IMU_ankle_acc1_y',
-    'IMU_ankle_acc1_z',
-    'IMU_ankle_acc2_x',
-    'IMU_ankle_acc2_y',
-    'IMU_ankle_acc2_z',
-    'IMU_ankle_gyro_x',
-    'IMU_ankle_gyro_y',
-    'IMU_ankle_gyro_z',
-    'IMU_ankle_mag_x',
-    'IMU_ankle_mag_y',
-    'IMU_ankle_mag_z',
-    'IMU_ankle_orientation0',
-    'IMU_ankle_orientation1',
-    'IMU_ankle_orientation2',
-    'IMU_ankle_orientation3',
-]
