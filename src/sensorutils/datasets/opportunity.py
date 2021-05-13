@@ -534,7 +534,7 @@ class Opportunity(BaseDataset):
         frames = np.concatenate(frames)
         assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
         x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., len(x_labels):]
+        y_frames = frames[..., 0, len(x_labels):]
         return x_frames, y_frames
 
 
