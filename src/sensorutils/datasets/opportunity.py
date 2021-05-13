@@ -518,6 +518,7 @@ class Opportunity(BaseDataset):
         -------
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
+            y_framesはデータセット内の値をそのまま返すため，取り扱いには十分注意すること
         """
         if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
             raise ValueError('x_labels or y_labels include non supported labels')

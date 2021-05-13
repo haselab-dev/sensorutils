@@ -114,6 +114,9 @@ class HHAR(BaseDataset):
         (x_frames, y_frames): tuple
             sliding-windowで切り出した入力とターゲットのフレームリスト
             y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
+
+            y_framesのshapeは(*, 4)であり，axis=1ではUser, Model, Device, Activityの順でデータが格納されている．
+        
         """
 
         if isinstance(sensor_types, str):

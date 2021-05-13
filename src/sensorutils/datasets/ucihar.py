@@ -44,6 +44,13 @@ class UCIHAR(BaseDataset):
         targets:
             activity and subject labels
             subjectラベルはデータセット内の値をそのまま返すため，分類等で用いる際はラベルの再割り当てが必要となることに注意
+        
+        See Also
+        --------
+        Range of activity label: [0, 5]
+        Range of subject label :
+            if train is True: [1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30] (21 subjects)
+            else : [2, 4, 9, 10, 12, 13, 18, 20, 24] (9 subjects)
         """
 
         if include_gravity:

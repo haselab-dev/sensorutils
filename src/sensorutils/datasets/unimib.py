@@ -146,6 +146,20 @@ def load(dataset_path:Path, data_type:str='full'):
     
     See Also
     --------
+    [data_type is "full"]
+    Range of activity label: [1, 17]
+    Range of subject label : [1, 30]
+    Range of trial label   : [1, 2] or [1, 6]
+
+    [data_type is "adl"]
+    Range of activity label: [1, 9]
+    Range of subject label : [1, 30]
+
+    [data_type is "fall"]
+    Range of activity label: [1, 8]
+    Range of subject label : [1, 30]
+
+    [data_type is "raw"]
     Range of activity label: [1, 17]
     Range of subject label : [1, 30]
     Range of trial label   : [1, 2] or [1, 6]

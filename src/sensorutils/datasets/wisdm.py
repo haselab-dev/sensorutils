@@ -98,6 +98,9 @@ def load(dataset_path:Path):
             ...,
             [user id, activity id, timestamp, x-acceleration, y-acceleration, z-acceleration],
         ], dtype=float64))
+    
+    Range of activity label: [0, 5]
+    Range of subject label : [1, 36]
     """
 
     dataset_path = dataset_path / 'WISDM_ar_v1.1_raw.txt'
