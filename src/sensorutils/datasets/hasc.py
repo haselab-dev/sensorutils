@@ -128,7 +128,7 @@ class HASC(BaseDataset):
             サポートする種類は以下の通り(今後拡張予定)．
 
             - 'activity'
-            - 'subject'
+            - 'person'
 
         Returns
         -------
