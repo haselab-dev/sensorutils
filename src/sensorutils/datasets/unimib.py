@@ -229,17 +229,4 @@ def load(dataset_path:Path, data_type:str='full'):
 
 
 
-if __name__ == '__main__':
-    import pprint
-    base_dir = Path('path/to/dataset')
-    segments = load(base_dir, data_type='full')
-    pprint.pprint(segments, depth=1)
-    print(segments['acceleration'].shape)
 
-    unimib = UniMib(base_dir)
-    subjects = [2, 4, 6, 8, 10, 12]
-    # subjects = None
-    x, y = unimib.load(data_type='full', window_size=151, stride=20, ftrim_sec=3, btrim_sec=3, subjects=subjects)
-    print('x: {}'.format(x.shape))
-    print('y: {}'.format(y.shape))
-    print(np.unique(y[:, 1]))

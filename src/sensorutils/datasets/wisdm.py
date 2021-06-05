@@ -148,20 +148,5 @@ def load(dataset_path:Path):
 
 
 
-if __name__ == '__main__':
-    path = Path('path/to/dataset')
-    segments = load(path)
-    for seg in segments:
-        # check activity id
-        if not np.all(seg[:, 0] == seg[0, 0]):
-            print('[Debug] detect invalid segment about subjects')
 
-        # check subject id
-        if not np.all(seg[:, 1] == seg[0, 1]):
-            print('[Debug] detect invalid segment about activities')
-    
-    wisdm = WISDM(path)
-    subjects = None
-    x, y = wisdm.load(window_size=256, stride=256, ftrim_sec=2, btrim_sec=2, subjects=subjects)
-    print(x.shape)
-    print(y.shape)
+
