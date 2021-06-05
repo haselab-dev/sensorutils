@@ -124,7 +124,7 @@ class HHAR(BaseDataset):
         if not isinstance(sensor_types, list):
             raise TypeError('expected type of "sensor_types" is str or list, but got {}'.format(type(sensor_types)))
         if isinstance(device_types, str):
-            sensor_types = [sensor_types]
+            device_types = [device_types]
         if not isinstance(device_types, list):
             raise TypeError('expected type of "device_types" is str or list, but got {}'.format(type(device_types)))
 
