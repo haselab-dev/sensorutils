@@ -8,7 +8,7 @@ from ..core import split_using_target, split_using_sliding_window
 from .base import BaseDataset
 
 
-__all = ['WISDM', 'load']
+__all__ = ['WISDM', 'load']
 
 
 # Meta Info
