@@ -33,7 +33,7 @@ class HASC(BaseDataset):
         'stay', 'walk', 'jog', 'skip', 'stup', 'stdown',
     ]
 
-    supported_target_labels = ['activity', 'person']
+    supported_target_labels = ['activity', 'frequency', 'gender', 'height', 'weight', 'person']
 
     def __init__(self, path:Path, cache_dir_meta:Path=None):
         super().__init__(path)
@@ -81,14 +81,35 @@ class HASC(BaseDataset):
         filed_meta = self.meta.query(query_string)
         return filed_meta
     
-    def __extract_targets(self, y_labels:list, meta_row:pd.DataFrame) -> np.ndarray:
+    def __extract_targets(self, y_labels:typing.Iterable, meta_row:pd.Series) -> np.ndarray:
+        if not isinstance(meta_row, pd.Series):
+            raise TypeError('meta_row must be "pd.Series", but {}'.format(type(meta_row)))
         targets = []
         for i, yl in enumerate(y_labels):
-            t = meta_row._asdict()[yl]
-            if t not in self.maps[i]:
-                self.maps[i][t] = self.counters[i]
-                self.counters[i] += 1
-            targets += [self.maps[i][t]]
+            # metaデータのカラム名に変換
+            ylbl2col = {
+                'activity': 'act',
+                'frequency': 'Frequency',
+                'gender': 'Gender',
+                'height': 'Height(cm)',
+                'weight': 'Weight(kg)',
+                'person': 'person',
+            }
+            assert set(ylbl2col.keys()) == set(self.supported_target_labels), 'table for converting "y_label" to column is not enough'
+
+            # t = meta_row._asdict()[yl]
+            t = meta_row.to_dict()[ylbl2col[yl]]
+            cat_labels = ('activity', 'gender', 'person')
+            if yl in cat_labels:
+                if t not in self.maps[i]:
+                    # self.maps: List[dict], self.counters: List[int]
+                    self.maps[i][t] = self.counters[i]
+                    self.counters[i] += 1
+                targets += [self.maps[i][t]]
+            elif yl in (set(self.supported_target_labels) - set(cat_labels)):
+                targets += [t]
+            # else:
+            #     # not reach
 
         return np.array(targets)
 
@@ -128,6 +149,10 @@ class HASC(BaseDataset):
             サポートする種類は以下の通り(今後拡張予定)．
 
             - 'activity'
+            - 'frequency'
+            - 'gender'
+            - 'height'
+            - 'weight'
             - 'person'
 
         Returns
@@ -140,7 +165,6 @@ class HASC(BaseDataset):
             y_labels = [y_labels]
         if not (set(y_labels) <= set(self.supported_target_labels)):
             raise ValueError('include not supported target labels: {}'.format(y_labels))
-        target_labels = list(map(lambda x: x.replace('activity', 'act'), y_labels))
 
         if queries is None:
             filed_meta = self.meta
@@ -152,11 +176,11 @@ class HASC(BaseDataset):
         y_frames = []
         self.maps = [{} for _ in y_labels]
         self.counters = [0 for _ in y_labels]
-        for meta_row, seg in zip(filed_meta.itertuples(), segments):
-            act = meta_row.act
+        for (_, meta_row), seg in zip(filed_meta.iterrows(), segments):
+            act = meta_row['act']
             if act == '0_sequence':
                 continue
-            ys = self.__extract_targets(target_labels, meta_row)
+            ys = self.__extract_targets(tuple(y_labels), meta_row)
 
             fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
