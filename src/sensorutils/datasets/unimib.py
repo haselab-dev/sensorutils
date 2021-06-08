@@ -1,19 +1,21 @@
 import numpy as np
+import pandas as pd
 from scipy.io import loadmat
 
 from pathlib import Path
-from typing import Union
+from typing import List, Tuple, Union, Optional
 from ..core import split_using_sliding_window
 
 from .base import BaseDataset
 
 
-__all__ = ['UniMib', 'load']
+__all__ = ['UniMib', 'load', 'load_raw']
 
 
 # Meta Info
 SUBJECTS = tuple(range(1, 30+1))
 ACTIVITIES = tuple(['StandingUpFS', 'StandingUpFL', 'Walking', 'Running', 'GoingUpS', 'Jumping', 'GoingDownS', 'LyingDownFS', 'SittingDown', 'FallingForw', 'FallingRight', 'FallingBack', 'HittingObstacle', 'FallingWithPS', 'FallingBackSC', 'Syncope', 'FallingLeft'])
+GENDER = {'M': 0, 'F': 1}
 Sampling_Rate = 50 # Hz
 
 
@@ -51,7 +53,7 @@ class UniMib(BaseDataset):
     def __init__(self, path:Path):
         super().__init__(path)
     
-    def load(self, data_type:str, window_size:Union[int, None]=None, stride:Union[int, None]=None, ftrim_sec:int=3, btrim_sec:int=3, subjects:Union[list, None]=None):
+    def load(self, data_type:str, window_size:Optional[int]=None, stride:Optional[int]=None, ftrim_sec:int=3, btrim_sec:int=3, subjects:Optional[list]=None):
         """UniMibの読み込みとsliding-window
 
         Parameters
@@ -84,8 +86,9 @@ class UniMib(BaseDataset):
         """
 
         if data_type != 'raw':
-            segments = load(dataset_path=self.path, data_type=data_type)
-            x = segments['acceleration']
+            data, meta = load(path=self.path, data_type=data_type)
+            segments = {'acceleration': data, 'activity': meta['activity'], 'subject': meta['subject']}
+            x = np.stack(segments['acceleration']).transpose(0, 2, 1)
             y = np.stack([segments['activity'], segments['subject']]).T
             x_frames = x
             y_frames = y
@@ -93,14 +96,15 @@ class UniMib(BaseDataset):
         else:
             if window_size is None or stride is None:
                 raise ValueError('if data_type is "raw", window_size and stride must be specified.')
-            segments = load(dataset_path=self.path, data_type='raw')
+            data, meta = load(path=self.path, data_type='raw')
+            segments = {'acceleration': data, 'activity': meta['activity'], 'subject': meta['subject']}
             x = segments['acceleration']
             y = np.stack([segments['activity'], segments['subject']]).T
 
             x_frames, y_frames = [], []
             for i in range(len(x)):
                 fs = split_using_sliding_window(
-                    x[i].T, window_size=window_size, stride=stride,
+                    np.array(x[i]), window_size=window_size, stride=stride,
                     ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
                     return_error_value=None)
                 if fs is not None:
@@ -114,7 +118,7 @@ class UniMib(BaseDataset):
 
         # subject filtering
         if subjects is not None:
-            flags = np.zeros(len(x_frames), dtype=np.bool)
+            flags = np.zeros(len(x_frames), dtype=bool)
             for sub in subjects:
                 flags = np.logical_or(flags, y_frames[:, 1] == sub)
             x_frames = x_frames[flags]
@@ -123,7 +127,16 @@ class UniMib(BaseDataset):
         return x_frames, y_frames
 
 
-def load(dataset_path:Path, data_type:str='full'):
+def load(path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    raw = load_raw(path, data_type)
+    data, meta = reformat(raw)
+    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
+    # assert isinstance(meta, pd.DataFrame), '[debug] different type on "meta", meta: {}'.format(type(meta))
+    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), meta.shape)
+    return data, meta
+
+
+def load_raw(dataset_path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """UniMib SHARの読み込み
 
     Parameters
@@ -140,10 +153,20 @@ def load(dataset_path:Path, data_type:str='full'):
 
     Returns
     -------
-    segments: dict
-        sensor data and labels(not relabeld)
-        format: {'acceleration': <acceleration>, 'activity': <activity_id>, 'subject': <subject_id>, 'trial': <trial_id>}
+    * If data_type = 'full', 'adl' or 'fall'
+
+    data, meta: Tuple[NDArray, pd.DataFrame]
+        Sensor data and meta data.
+        Data shape is (?, 151, 3), and the second axis shows frames.
+        Third axis is channel axis, which indicates x, y and z acceleration.
     
+    * If data_type = 'raw'
+
+    data, meta: Tuple[List[NDArray], pd.DataFrame]
+        Sensor data and meta data.
+        Data shape is (?, ?, 3), and the second axis shows segments which is variable length.
+        Third axis is channel, which indicates x, y and z acceleration.
+
     See Also
     --------
     [data_type is "full"]
@@ -184,19 +207,22 @@ def load(dataset_path:Path, data_type:str='full'):
     #     # not reach
 
     if data_type != 'raw':
-        data = loadmat(str(dataset_path / f'{prefix}_data.mat'))[f'{prefix}_data'].reshape([-1, 3, 151])
-        labels = loadmat(str(dataset_path / f'{prefix}_labels.mat'))[f'{prefix}_labels']
-        activity_labels, subject_labels, trial_labels = labels[:, 0], labels[:, 1], labels[:, 2]
+        data = loadmat(str(dataset_path / f'{prefix}_data.mat'))[f'{prefix}_data'].reshape([-1, 3, 151])    # (?, 3, 151)
+        labels = loadmat(str(dataset_path / f'{prefix}_labels.mat'))[f'{prefix}_labels']    # (?, 3)
+        # activity_labels, subject_labels, trial_labels = labels[:, 0], labels[:, 1], labels[:, 2]
         # descriptions, class_names = loadmat(str(dataset_path / f'{prefix}_names.mat'))[f'{prefix}_names']
 
-        assert len(data) == len(activity_labels)
-        assert len(data) == len(subject_labels)
-        assert len(data) == len(trial_labels)
+        # assert len(data) == len(activity_labels)
+        # assert len(data) == len(subject_labels)
+        # assert len(data) == len(trial_labels)
 
-        segments = {'acceleration': data, 'activity': activity_labels, 'subject': subject_labels, 'trial': trial_labels}
+        meta = labels
+        meta = pd.DataFrame(meta, columns=['activity', 'subject', 'trial_id'])
+        meta = meta.astype({'activity': np.int8, 'subject': np.int8, 'trial_id': np.int8})
     else:
         full_data = loadmat(str(dataset_path / f'{prefix}_data.mat'))[f'{prefix}_data']
         sensor_data, activity_labels, subject_labels, trial_labels = [], [], [], []
+        gender_labels, age_labels, height_labels, weight_labels = [], [], [], []
         for subject_id, d0 in enumerate(full_data):
             accs, gender, age, height, weight = d0
             expand_size = 0
@@ -211,22 +237,45 @@ def load(dataset_path:Path, data_type:str='full'):
                     sd = acc_trial[0][:3]   # remove time instants and magnitude
                     sensor_data += [sd]
             subject_labels += [subject_id+1]*expand_size
+            gender_labels += [gender[0]]*expand_size
+            age_labels += [age[0][0]]*expand_size
+            height_labels += [height[0][0]]*expand_size
+            weight_labels += [weight[0][0]]*expand_size
         
-        assert len(subject_labels) == len(activity_labels)
-        assert len(subject_labels) == len(trial_labels)
-
         activity_labels = np.array(activity_labels, dtype=np.uint8)
         subject_labels = np.array(subject_labels, dtype=np.uint8)
         trial_labels = np.array(trial_labels, dtype=np.uint8)
+        gender_str_labels = np.array(gender_labels)
+        gender_labels = np.zeros_like(gender_str_labels, dtype=np.int8)
+        gender_labels[np.logical_or(gender_str_labels == 'M ', gender_str_labels == 'M ')] = GENDER['M']
+        gender_labels[np.logical_or(gender_str_labels == 'F ', gender_str_labels == 'F ')] = GENDER['F']
+        age_labels = np.array(age_labels, dtype=np.uint8)
+        height_labels = np.array(height_labels, dtype=np.uint8)
+        weight_labels = np.array(weight_labels, dtype=np.uint8)
 
         assert len(sensor_data) == len(activity_labels)
         assert len(sensor_data) == len(subject_labels)
         assert len(sensor_data) == len(trial_labels)
+        assert len(sensor_data) == len(gender_labels)
+        assert len(sensor_data) == len(age_labels)
+        assert len(sensor_data) == len(height_labels)
+        assert len(sensor_data) == len(weight_labels)
 
-        segments = {'acceleration': sensor_data, 'activity': activity_labels, 'subject': subject_labels, 'trial': trial_labels}
+        meta = np.stack([activity_labels, subject_labels, trial_labels, gender_labels, age_labels, height_labels, weight_labels]).T
+        meta = pd.DataFrame(meta, columns=['activity', 'subject', 'trial_id', 'gender', 'age', 'height', 'weight'])
+        # data = np.zeros(len(meta), dtype=np.object)
+        # data[:] = sensor_data
+        data = sensor_data
 
-    return segments
+    return data, meta
 
 
+def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    data, meta = raw
+    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
+    # assert len(data[0].shape) == 2, 'shape of data[0]: {}'.format(data[0].shape)
+    # assert data[0].shape[0] == 3
+    data = list(map(lambda x: pd.DataFrame(x.T, columns=['x', 'y', 'z']), data))
+    return data, meta
 
 
