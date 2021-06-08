@@ -16,7 +16,7 @@ from ..core import split_using_target, split_using_sliding_window
 from .base import BaseDataset
 
 
-__all__ = ['HASC', 'load_meta', 'load']
+__all__ = ['HASC', 'load', 'load_raw', 'load_meta']
 
 
 class HASC(BaseDataset):
@@ -171,7 +171,7 @@ class HASC(BaseDataset):
         else:
             filed_meta = self._filter_with_meta(queries)
         
-        segments = load(self.path, filed_meta)
+        segments, _ = load(self.path, meta=filed_meta)
         x_frames = []
         y_frames = []
         self.maps = [{} for _ in y_labels]
@@ -190,12 +190,22 @@ class HASC(BaseDataset):
                 x_frames += [fs]
                 y_frames += [np.expand_dims(ys, axis=0).repeat(len(fs), axis=0)]
         x_frames = np.concatenate(x_frames)
+        x_frames = x_frames.transpose(0, 2, 1)
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
 
         self.label_map = dict(zip(y_labels, self.maps))
 
         return x_frames, y_frames, self.label_map
+
+
+def load(path:Path, meta:pd.DataFrame) -> typing.Tuple[typing.List[pd.DataFrame], pd.DataFrame]:
+    raw = load_raw(path, meta)
+    data, meta = reformat(raw)
+    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
+    # assert isinstance(meta, pd.DataFrame), '[debug] different type on "meta", meta: {}'.format(type(meta))
+    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), meta.shape)
+    return data, meta
 
 
 def load_meta(path:Path) -> pd.DataFrame:
@@ -244,7 +254,7 @@ def load_meta(path:Path) -> pd.DataFrame:
     return metas
 
 
-def load(path:Path, meta:pd.DataFrame) -> typing.List[pd.DataFrame]:
+def load_raw(path:Path, meta:typing.Optional[pd.DataFrame]=None) -> typing.Tuple[typing.List[pd.DataFrame], pd.DataFrame]:
     """HASC の行動加速度センサデータの読み込み関数。
     予め meta を読み込む必要がある。
 
@@ -261,7 +271,7 @@ def load(path:Path, meta:pd.DataFrame) -> typing.List[pd.DataFrame]:
 
     Returns
     -------
-    List[pd.DataFrame]:
+    Tuple[List[pd.DataFrame], pd.DataFrame]:
         行動加速度センサデータのリスト。
     """
     def read_acc(path:Path) -> pd.DataFrame:
@@ -274,10 +284,21 @@ def load(path:Path, meta:pd.DataFrame) -> typing.List[pd.DataFrame]:
         else:
             print('[load] not found:', str(path))
         return pd.DataFrame()
+    
+    if meta is None:
+        meta = load_meta(path)
 
     path = path / 'BasicActivity'
     data = [
         read_acc(path / row.act / row.person / '{}-acc.csv'.format(row.file))
         for row in meta.itertuples()
     ]
-    return data
+
+    return data, meta
+
+
+def reformat(raw) -> typing.Tuple[typing.List[pd.DataFrame], pd.DataFrame]:
+    data, meta = raw
+    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
+    return data, meta
+
