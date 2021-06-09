@@ -28,25 +28,38 @@ class UCIHARTest(unittest.TestCase):
             with self.subTest(f'include_gravity: {include_gravity}'):
                 data, meta = load(self.path, include_gravity=include_gravity)
 
-                # compare with data and meta
+                # compare between data and meta
                 self.assertEqual(len(data), len(meta))
 
-                # check meta
+                # meta
+                ## type check
                 self.assertIsInstance(meta, pd.DataFrame)
+
+                ## shape and column check
                 self.assertSetEqual(set(meta.columns), set(['activity', 'person_id', 'train']))
+
+                ## data type check
                 flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes[:-1]]
                 self.assertTrue(all(flags_dtype), meta.dtypes[:-1])
                 self.assertTrue(meta.dtypes[-1] == np.dtype(bool), meta.dtypes[-1])
 
+                ## data check
+                self.assertSetEqual(set(np.unique(meta['activity'])), set(range(1, 6+1)))
+                self.assertSetEqual(set(np.unique(meta['person_id'])), set(range(1, 30+1)))
+                self.assertSetEqual(set(np.unique(meta['train'])), set([0, 1]))
+
+                # data
+                ## type check
                 self.assertIsInstance(data, list)
                 self.assertTrue(all(isinstance(d, pd.DataFrame) for d in data))
 
-                # data
+                ## shape check
                 flgs_shape = [len(d.shape) == 2 for d in data]
                 self.assertTrue(all(flgs_shape))
                 flgs_shape_ax1 = [d.shape[1] == 3 for d in data]
                 self.assertTrue(all(flgs_shape_ax1))
 
+                ## data check
                 sizes_seg = set(len(d) for d in data)
                 self.assertEqual(len(sizes_seg), 1)
 
@@ -55,103 +68,190 @@ class UCIHARTest(unittest.TestCase):
             with self.subTest(f'include_gravity: {include_gravity}'):
                 raw = load_raw(self.path, include_gravity=include_gravity)
 
-                # check raw data
+                # raw
+                ## type check
                 self.assertIsInstance(raw, tuple)
+
+                ## shape check
                 self.assertEqual(len(raw), 2)
 
                 data, meta = raw
 
-                # compare with data and meta
+                # compare between data and meta
                 self.assertEqual(len(data), len(meta))
 
-                # check meta
+                # meta
+                ## type check
                 self.assertIsInstance(meta, pd.DataFrame)
+
+                ## shape and column check
                 self.assertSetEqual(set(meta.columns), set(['activity', 'person_id', 'train']))
+
+                ## data type check
+                flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes[:-1]]
+                self.assertTrue(all(flags_dtype), meta.dtypes[:-1])
+                self.assertTrue(meta.dtypes[-1] == np.dtype(bool), meta.dtypes[-1])
+                del flags_dtype
+
+                ## data check
+                self.assertSetEqual(set(np.unique(meta['activity'])), set(range(1, 6+1)))
+                self.assertSetEqual(set(np.unique(meta['person_id'])), set(range(1, 30+1)))
+                self.assertSetEqual(set(np.unique(meta['train'])), set([0, 1]))
+
+                # data
+                ## type check
                 self.assertIsInstance(data, np.ndarray)
                 self.assertTrue(all(isinstance(d, np.ndarray) for d in data))
+
+                ## data type check
                 flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes[:-1]]
                 self.assertTrue(all(flags_dtype), meta.dtypes[:-1])
                 self.assertTrue(meta.dtypes[-1] == np.dtype(bool), meta.dtypes[-1])
 
+                ## shape check
                 self.assertTupleEqual(data.shape[1:], (3, 128))
     
     def test_load_meta_fn(self):
         meta = load_meta(self.path)
+
+        ## type check
         self.assertIsInstance(meta, pd.DataFrame)
+
+        ## shape and column check
         self.assertSetEqual(set(meta.columns), set(['activity', 'person_id', 'train']))
+
+        ## data type check
         flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes[:-1]]
         self.assertTrue(all(flags_dtype), meta.dtypes[:-1])
         self.assertTrue(meta.dtypes[-1] == np.dtype(bool), meta.dtypes[-1])
+
+        ## data check
+        self.assertSetEqual(set(np.unique(meta['activity'])), set(range(1, 6+1)))
+        self.assertSetEqual(set(np.unique(meta['person_id'])), set(range(1, 30+1)))
+        self.assertSetEqual(set(np.unique(meta['train'])), set([0, 1]))
 
     def test_reformat_fn(self):
         for include_gravity in [True, False]:
             with self.subTest(f'include_gravity: {include_gravity}'):
                 data, meta = load(self.path, include_gravity=include_gravity)
 
-                # compare with data and meta
+                # compare between data and meta
                 self.assertEqual(len(data), len(meta))
 
-                # check meta
+                # meta
+                ## type check
                 self.assertIsInstance(meta, pd.DataFrame)
+
+                ## shape and column check
                 self.assertSetEqual(set(meta.columns), set(['activity', 'person_id', 'train']))
+
+                ## data type check
                 flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes[:-1]]
                 self.assertTrue(all(flags_dtype), meta.dtypes[:-1])
                 self.assertTrue(meta.dtypes[-1] == np.dtype(bool), meta.dtypes[-1])
 
+                ## data check
+                self.assertSetEqual(set(np.unique(meta['activity'])), set(range(1, 6+1)))
+                self.assertSetEqual(set(np.unique(meta['person_id'])), set(range(1, 30+1)))
+                self.assertSetEqual(set(np.unique(meta['train'])), set([0, 1]))
+
+                # data
+                ## type check
                 self.assertIsInstance(data, list)
                 self.assertTrue(all(isinstance(d, pd.DataFrame) for d in data))
 
-                # data
+                ## shape check
                 flgs_shape = [len(d.shape) == 2 for d in data]
                 self.assertTrue(all(flgs_shape))
                 flgs_shape_ax1 = [d.shape[1] == 3 for d in data]
                 self.assertTrue(all(flgs_shape_ax1))
 
+                # data check
                 sizes_seg = set(len(d) for d in data)
                 self.assertEqual(len(sizes_seg), 1)
 
     def test_ucihar_load_method_base(self):
         # train=True, include_gravity=True
         x, y = self.loader.load(train=True, person_list=None, include_gravity=True)
+
+        ## type check
+        self.assertIsInstance(x, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
+        ## shape check
         self.assertEqual(len(x.shape), 3)
         self.assertTupleEqual(x.shape[1:], (3, 128))
         self.assertEqual(len(y.shape), 2)
         self.assertEqual(y.shape[1], 3)
-        self.assertSetEqual(set(np.unique(y[:, 0])), set(range(6)))
-        self.assertSetEqual(set(np.unique(y[:, 1])), set([1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30]))
+
+        ## data type check
+        self.assertTrue(x.dtype == np.dtype(np.float32) or x.dtype == np.dtype(np.float64))
+        self.assertTrue(y.dtype == np.dtype(np.int8) or y.dtype == np.dtype(np.int16) or y.dtype == np.dtype(np.int32) or y.dtype == np.dtype(np.int64))
+
+        ## data check
+        self.assertSetEqual(set(np.unique(y[:, 0])), set(range(6))) # activity
+        self.assertSetEqual(set(np.unique(y[:, 1])), set([1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30]))   # person_id
+        self.assertSetEqual(set(np.unique(y[:, 2])), set([1]))   # train
 
         del x, y
 
         # train=True, include_gravity=False
         x, y = self.loader.load(train=True, person_list=None, include_gravity=False)
+
+        self.assertIsInstance(x, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
         self.assertEqual(len(x.shape), 3)
         self.assertTupleEqual(x.shape[1:], (3, 128))
         self.assertEqual(len(y.shape), 2)
         self.assertEqual(y.shape[1], 3)
+
+        self.assertTrue(x.dtype == np.dtype(np.float32) or x.dtype == np.dtype(np.float64))
+        self.assertTrue(y.dtype == np.dtype(np.int8) or y.dtype == np.dtype(np.int16) or y.dtype == np.dtype(np.int32) or y.dtype == np.dtype(np.int64))
+
         self.assertSetEqual(set(np.unique(y[:, 0])), set(range(6)))
-        self.assertSetEqual(set(np.unique(y[:, 1])), set([1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30]))
+        self.assertSetEqual(set(np.unique(y[:, 1])), set([1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30]))   
+        self.assertSetEqual(set(np.unique(y[:, 2])), set([1]))
 
         del x, y
 
         # train=False, include_gravity=True
         x, y = self.loader.load(train=False, person_list=None, include_gravity=True)
+
+        self.assertIsInstance(x, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
         self.assertEqual(len(x.shape), 3)
         self.assertTupleEqual(x.shape[1:], (3, 128))
         self.assertEqual(len(y.shape), 2)
         self.assertEqual(y.shape[1], 3)
+
+        self.assertTrue(x.dtype == np.dtype(np.float32) or x.dtype == np.dtype(np.float64))
+        self.assertTrue(y.dtype == np.dtype(np.int8) or y.dtype == np.dtype(np.int16) or y.dtype == np.dtype(np.int32) or y.dtype == np.dtype(np.int64))
+
         self.assertSetEqual(set(np.unique(y[:, 0])), set(range(6)))
         self.assertSetEqual(set(np.unique(y[:, 1])), set([2, 4, 9, 10, 12, 13, 18, 20, 24]))
+        self.assertSetEqual(set(np.unique(y[:, 2])), set([0]))
 
         del x, y
 
         # train=False, include_gravity=False
         x, y = self.loader.load(train=False, person_list=None, include_gravity=False)
+
+        self.assertIsInstance(x, np.ndarray)
+        self.assertIsInstance(y, np.ndarray)
+
         self.assertEqual(len(x.shape), 3)
         self.assertTupleEqual(x.shape[1:], (3, 128))
         self.assertEqual(len(y.shape), 2)
         self.assertEqual(y.shape[1], 3)
+
+        self.assertTrue(x.dtype == np.dtype(np.float32) or x.dtype == np.dtype(np.float64))
+        self.assertTrue(y.dtype == np.dtype(np.int8) or y.dtype == np.dtype(np.int16) or y.dtype == np.dtype(np.int32) or y.dtype == np.dtype(np.int64))
+
         self.assertSetEqual(set(np.unique(y[:, 0])), set(range(6)))
         self.assertSetEqual(set(np.unique(y[:, 1])), set([2, 4, 9, 10, 12, 13, 18, 20, 24]))
+        self.assertSetEqual(set(np.unique(y[:, 2])), set([0]))
 
         del x, y
 
@@ -161,6 +261,7 @@ class UCIHARTest(unittest.TestCase):
                 for include_gravity in [True, False]:
                     with self.subTest(f'pattern {i}, train: {train}, include_gravity: {include_gravity}'):
                         _, y = self.loader.load(train=train, person_list=subjects, include_gravity=include_gravity)
+                        ## data check
                         self.assertSetEqual(set(np.unique(y[:, 1])), set(subjects))
 
         # train=True

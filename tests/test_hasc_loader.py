@@ -33,22 +33,46 @@ class HASCTest(unittest.TestCase):
         return filed_meta
 
     def test_load_fn(self):
-        data, meta = load(self.path, meta=self._gen_small_meta(self.loader.meta.copy()))
+        meta_src = self._gen_small_meta(self.loader.meta.copy())
+        data, meta = load(self.path, meta=meta_src)
+
+        # data
+        ## type check
         self.assertIsInstance(data, list)
         self.assertTrue(all(isinstance(d, pd.DataFrame) for d in data))
+
+        # meta
+        ## type check
         self.assertIsInstance(meta, pd.DataFrame)
         self.assertEqual(len(data), len(meta))
+
+        ## data check
+        self.assertTrue(meta_src.equals(meta))
     
     def test_load_raw_fn_base(self):
         meta_src = self._gen_small_meta(self.loader.meta.copy())
         raw = load_raw(self.path, meta=meta_src)
+
+        # raw
+        ## type check
         self.assertIsInstance(raw, tuple)
+
+        ## shape check
         self.assertEqual(len(raw), 2)
+
         data, meta = raw
+
+        # data
+        ## type check
         self.assertIsInstance(data, list)
         self.assertTrue(all(isinstance(d, pd.DataFrame) for d in data))
+
+        # meta
+        ## type check
         self.assertIsInstance(meta, pd.DataFrame)
         self.assertEqual(len(data), len(meta))
+
+        ## data check
         self.assertTrue(meta_src.equals(meta))
 
     @unittest.skip
@@ -60,9 +84,17 @@ class HASCTest(unittest.TestCase):
     def test_reformat_fn(self):
         data, meta = load_raw(self.path, meta=self._gen_small_meta(self.loader.meta.copy()))
         data, _ = reformat(data, meta)
+
+        # data
+        ## type check
         self.assertIsInstance(data, list)
         self.assertTrue(all(isinstance(d, pd.DataFrame) for d in data))
+
+        # meta
+        ## type check
         self.assertIsInstance(meta, pd.DataFrame)
+
+        ## compare between data and meta
         self.assertEqual(len(data), len(meta))
     
     @unittest.skip
@@ -76,7 +108,11 @@ class HASCTest(unittest.TestCase):
         queries = None
         y_labels = ['activity', 'person']
         _, _, label_map = self.loader.load(window_size=256, stride=256, ftrim=5, btrim=5, queries=queries, y_labels=y_labels)
+
+        ## type check
         self.assertIsInstance(label_map, dict)
+
+        ## data check
         self.assertTrue(set(y_labels), set(label_map.keys()))
         for k in label_map:
             M = label_map[k]
@@ -89,6 +125,7 @@ class HASCTest(unittest.TestCase):
         queries = {'Person': 'Person in {}'.format(subjects)}
         y_labels = ['activity', 'person']
 
+        ## shape check
         for ws in [128, 256, 512]:
             x, _, _= self.loader.load(window_size=ws, stride=ws, ftrim=5, btrim=5, queries=queries, y_labels=y_labels)
             with self.subTest(f'window_size: {ws}'):
@@ -103,8 +140,14 @@ class HASCTest(unittest.TestCase):
             with self.subTest(f'number of y labels: {n}'):
                 Y = np.random.choice(y_labels, n)
                 _, y, label_map = self.loader.load(window_size=256, stride=256, ftrim=5, btrim=5, queries=queries, y_labels=Y)
+
+                ## type check
                 self.assertIsInstance(label_map, dict)
+
+                ## data check
                 self.assertTrue(set(y_labels), set(label_map.keys()))
+
+                ## shape check
                 self.assertEqual(y.shape[1], n)
 
     def test_hasc_load_method_filed_meta(self):
@@ -112,7 +155,11 @@ class HASCTest(unittest.TestCase):
         with self.subTest('filtered by activity'):
             queries = {'Person': 'Person in {}'.format(subjects)}
             _, y, label_map = self.loader.load(window_size=256, stride=256, ftrim=5, btrim=5, queries=queries, y_labels=['activity', 'frequency', 'gender', 'height', 'weight', 'person'])
+
+            # type check
             self.assertIsInstance(label_map, dict)
+
+            # data check
             self.assertSetEqual(set(label_map['activity'].keys()), set(['1_stay', '2_walk', '3_jog', '4_skip', '5_stUp', '6_stDown']))
             self.assertEqual(y[:, 0].min(), 0)
             self.assertEqual(y[:, 0].max(), 5)
