@@ -2,13 +2,13 @@ import re
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from typing import Union
+from typing import Union, List, Tuple
 from ..core import split_using_target, split_using_sliding_window
 
 from .base import BaseDataset
 
 
-__all__ = ['WISDM', 'load']
+__all__ = ['WISDM', 'load', 'load_raw']
 
 
 # Meta Info
@@ -47,17 +47,18 @@ class WISDM(BaseDataset):
             sliding-windowで切り出した入力とターゲットのフレームリスト
         """
 
-        segments = load(dataset_path=self.path)
+        segments, meta = load(path=self.path)
+        segments = [m.join(seg) for seg, m in zip(segments, meta)]
 
         x_frames, y_frames = [], []
         for seg in segments:
             fs = split_using_sliding_window(
-                seg, window_size=window_size, stride=stride,
+                np.array(seg), window_size=window_size, stride=stride,
                 ftrim=Sampling_Rate*ftrim_sec, btrim=Sampling_Rate*btrim_sec,
                 return_error_value=None)
             if fs is not None:
                 x_frames += [fs[:, :, 3:]]
-                y_frames += [fs[:, 0, 0:2][..., ::-1]] # 多分これでact, subjectの順に変わる
+                y_frames += [np.uint8(fs[:, 0, 0:2][..., ::-1])] # 多分これでact, subjectの順に変わる
             else:
                 # print('no frame')
                 pass
@@ -76,7 +77,16 @@ class WISDM(BaseDataset):
         return x_frames, y_frames
 
 
-def load(dataset_path:Path):
+def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    raw = load_raw(path)
+    data, meta = reformat(raw)
+    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
+    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
+    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
+    return data, meta
+
+
+def load_raw(dataset_path:Path) -> pd.DataFrame:
     """WISDMの読み込み
 
     Parameters
@@ -135,8 +145,14 @@ def load(dataset_path:Path):
 
     raw_data = raw_data.astype({'user': 'uint8', 'activity': 'uint8', 'timestamp': 'uint64', 'x-acceleration': 'float64', 'y-acceleration': 'float64', 'z-acceleration': 'float64'})
     raw_data[['x-acceleration', 'y-acceleration', 'z-acceleration']] = raw_data[['x-acceleration', 'y-acceleration', 'z-acceleration']].fillna(method='ffill')
+
+    return raw_data
+
+
+def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    raw_array = raw.to_numpy()
     
-    raw_array = raw_data.to_numpy()
+    # segmentへの分割(by user and activity)
     sdata_splited_by_subjects = split_using_target(src=raw_array, target=raw_array[:, 0])
     segments = []
     for sub_id in sdata_splited_by_subjects.keys():
@@ -144,9 +160,13 @@ def load(dataset_path:Path):
             splited = split_using_target(src=src, target=src[:, 1])
             for act_id in splited.keys():
                 segments += splited[act_id]
-    return segments
 
+    segments = list(map(lambda seg: pd.DataFrame(seg, columns=raw.columns).astype(raw.dtypes.to_dict()), segments))
+    data = list(map(lambda seg: pd.DataFrame(seg.iloc[:, 3:], columns=raw.columns[3:]), segments))
+    meta = list(map(lambda seg: pd.DataFrame(seg.iloc[:, :3], columns=raw.columns[:3]), segments))
+    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
 
+    return data, meta 
 
 
 
