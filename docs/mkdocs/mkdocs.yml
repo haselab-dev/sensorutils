@@ -1,0 +1,61 @@
+site_name: sensorutils v0.12.0
+site_author: hogedamari
+site_description: Documentation for sensorutils
+copyright: HaseLab@Fukui of University
+repo_name: 'Github'
+repo_url: https://github.com/haselab-dev/sensorutils
+# edit_url: null
+nav:
+    - Home: index.md
+    - Installation: install.md
+    - Quickstart: quickstart.md
+    - References: refs.md
+
+# plugins:
+#     - search
+#         lang: 
+#             - en
+#             - ja
+
+# readthedocs
+# theme:
+#   name: readthedocs
+#   locale: en
+#   highlightjs: true
+#   include_sidebar: false
+
+# material
+theme:
+    name: material
+    language: ja
+
+    # これ入れるとブラウザでエラーが出る
+    # features:
+    #     tabs: true
+
+markdown_extensions:
+    - pymdownx.highlight:
+        linenums: true
+    - pymdownx.superfences
+
+    # Noteとか警告文とか
+    - admonition
+
+    # 注釈
+    - footnotes
+
+    # 絵文字
+    - pymdownx.emoji
+
+    # Webアイコンフォント(要インストール)
+    # - fontawesome_markdown
+
+# bootstrap4
+# theme:
+#     name: bootstrap4
+#     suppress_nextprev: true
+
+# cinder
+# theme:
+#     name: null
+#     custom_dir: 'cinder-1.2.0/cinder'
