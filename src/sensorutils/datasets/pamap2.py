@@ -2,14 +2,15 @@ import numpy as np
 import pandas as pd
 
 import pickle
+import itertools
 from pathlib import Path
-from typing import Union, Optional
+from typing import List, Tuple, Union, Optional
 from ..core import split_using_target, split_using_sliding_window
 
 from .base import BaseDataset
 
 
-__all__ = ['PAMAP2', 'load']
+__all__ = ['PAMAP2', 'load', 'load_raw']
 
 
 # Meta Info
@@ -102,13 +103,17 @@ Columns = [
 
 
 class PAMAP2(BaseDataset):
+    supported_x_labels = tuple(set(Columns) - set(['activity_id', 'person_id']))
+    supported_y_labels = ('activity_id', 'person_id')
+
     def __init__(self, path:Path, cache_dir:Path=Path('./')):
         super().__init__(path)
         self.cache_dir = cache_dir
         self.data_cache = None
 
     def _load_segments(self):
-        segments = load(self.path)
+        data, meta = load(self.path)
+        segments = [m.join(seg) for seg, m in zip(data, meta)]
         self.min_max_vals = pd.concat(segments, axis=0).agg(['min', 'max'])
         return segments
     
@@ -139,7 +144,7 @@ class PAMAP2(BaseDataset):
             segments = self.data_cache
         return segments
     
-    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int, persons:Union[list, None]=None, norm:bool=False):
+    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=10, btrim_sec:int=10, persons:Optional[list]=None, norm:bool=False):
         """PAMAP2の読み込みとsliding-window
 
         Parameters
@@ -175,8 +180,23 @@ class PAMAP2(BaseDataset):
         if persons is not None:
             if not (set(persons) <= set(PERSONS)):
                 raise ValueError('detect unknown person, {}'.format(persons))
+
+        if x_labels is None:
+            x_labels = list(self.supported_x_labels)
+        if y_labels is None:
+            y_labels = list(self.supported_y_labels)
+        if not(set(x_labels) <= set(self.supported_x_labels)):
+            raise ValueError('unsupported x labels is included: {}'.format(
+                tuple(set(x_labels) - set(self.supported_x_labels).intersection(set(x_labels)))
+            ))
+        if not(set(y_labels) <= set(self.supported_y_labels)):
+            raise ValueError('unsupported y labels is included: {}'.format(
+                tuple(set(y_labels) - set(self.supported_y_labels).intersection(set(y_labels)))
+            ))
+
         # if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
         #     raise ValueError('x_labels or y_labels include non supported labels')
+
         # segments = self._load_segments()
         segments = self._load()
         segments = [seg[x_labels+y_labels+['person_id']] for seg in segments]
@@ -194,17 +214,29 @@ class PAMAP2(BaseDataset):
                 print('no frame')
         frames = np.concatenate(frames)
         assert frames.shape[-1] == len(x_labels) + len(y_labels) + 1, 'Extracted data shape does not match with the number of total labels'
-        x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., 0, len(x_labels):-1]
+        # x_labelsでサポートされているラベルはすべてfloat64で対応
+        # y_labelsでサポートされているラベルはすべてint8で対応可能
+        x_frames = np.float64(frames[:, :, :len(x_labels)]).transpose(0, 2, 1)
+        y_frames = np.int8(frames[:, 0, len(x_labels):-1])
 
+        # subject filtering
         if persons is not None:
             person_labels = frames[..., 0, -1]
             x_frames, y_frames = self._filter_by_person(x_frames, y_frames, person_labels, persons)
 
         return x_frames, y_frames
 
-    
-def load(path:Path) -> dict:
+
+def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    raw = load_raw(path)
+    data, meta = reformat(raw)
+    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
+    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
+    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
+    return data, meta
+
+
+def load_raw(path:Path) -> List[pd.DataFrame]:
     """PAMAP2の読み込み
 
     Parameters
@@ -218,14 +250,17 @@ def load(path:Path) -> dict:
         行動ラベルをもとにセグメンテーションされたデータ
     """
 
-    import itertools
-
-    def _load_raw_data(path):
+    def _load_raw_data(path, person_id):
         try:
             seg = pd.read_csv(str(path), sep='\s+', header=None)
             seg.columns = Columns
+            seg['person_id'] = person_id
             # 欠損値処理は暫定的
             seg = seg.fillna(method='ffill')
+            dtypes = dict(zip(Columns, list(np.float64 for _ in Columns)))
+            dtypes['activity_id'] = np.int8
+            dtypes['person_id'] = np.int8
+            seg = seg.astype(dtypes)
             return seg
         except FileNotFoundError:
             print(f'[load] {path} not found')
@@ -235,13 +270,19 @@ def load(path:Path) -> dict:
 
     pathes = [path / 'Protocol' / (person + '.dat') for person in PERSONS]
     # pathes = list(filter(lambda p: p.exists(), pathes))   # このケースが存在した場合エラーを吐きたい
-    chunks_per_persons = [_load_raw_data(path) for path in pathes]
+    chunks_per_persons = [_load_raw_data(path, p_id) for p_id, path in enumerate(pathes)]
+    return chunks_per_persons
+
+   
+def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    chunks_per_persons = raw
     segs = []
     for p_id, chunk in enumerate(chunks_per_persons):
-        chunk['person_id'] = p_id
+        # chunk['person_id'] = p_id
         sub_segs = split_using_target(np.array(chunk), np.array(chunk['activity_id']))
         sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
-        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
+        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns).astype(chunk.dtypes.to_dict()), sub_segs))
+
         # For debug
         for seg in sub_segs:
             label = seg['activity_id'].iloc[0]
@@ -249,6 +290,10 @@ def load(path:Path) -> dict:
                 raise RuntimeError('This is bug. Failed segmentation')
         segs += sub_segs
 
-    return segs
+    cols_meta = ['activity_id', 'person_id',]
+    cols_sensor = list(set(Columns) - set(cols_meta))
+    data = list(map(lambda seg: seg[cols_sensor], segs))
+    meta = list(map(lambda seg: seg[cols_meta], segs))
+    
+    return data, meta
 
-   
