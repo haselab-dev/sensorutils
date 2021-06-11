@@ -136,7 +136,7 @@ def load(path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame], pd.DataFr
     return data, meta
 
 
-def load_raw(dataset_path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray, pd.DataFrame], Tuple[List[pd.DataFrame], pd.DataFrame]]:
     """UniMib SHARの読み込み
 
     Parameters
@@ -242,16 +242,16 @@ def load_raw(dataset_path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame
             height_labels += [height[0][0]]*expand_size
             weight_labels += [weight[0][0]]*expand_size
         
-        activity_labels = np.array(activity_labels, dtype=np.uint8)
-        subject_labels = np.array(subject_labels, dtype=np.uint8)
-        trial_labels = np.array(trial_labels, dtype=np.uint8)
+        activity_labels = np.array(activity_labels, dtype=np.int8)
+        subject_labels = np.array(subject_labels, dtype=np.int8)
+        trial_labels = np.array(trial_labels, dtype=np.int8)
         gender_str_labels = np.array(gender_labels)
         gender_labels = np.zeros_like(gender_str_labels, dtype=np.int8)
         gender_labels[np.logical_or(gender_str_labels == 'M ', gender_str_labels == 'M ')] = GENDER['M']
         gender_labels[np.logical_or(gender_str_labels == 'F ', gender_str_labels == 'F ')] = GENDER['F']
-        age_labels = np.array(age_labels, dtype=np.uint8)
-        height_labels = np.array(height_labels, dtype=np.uint8)
-        weight_labels = np.array(weight_labels, dtype=np.uint8)
+        age_labels = np.array(age_labels, dtype=np.int8)
+        height_labels = np.array(height_labels, dtype=np.int8)
+        weight_labels = np.array(weight_labels, dtype=np.int8)
 
         assert len(sensor_data) == len(activity_labels)
         assert len(sensor_data) == len(subject_labels)
