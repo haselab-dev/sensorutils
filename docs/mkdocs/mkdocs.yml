@@ -33,7 +33,11 @@ theme:
     # features:
     #     tabs: true
 
+extra_javascript:
+    - http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+
 markdown_extensions:
+    - mdx_math
     - pymdownx.highlight:
         linenums: true
     - pymdownx.superfences

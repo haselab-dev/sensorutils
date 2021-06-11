@@ -8,7 +8,6 @@ sensorutilsはpipからインストールすることで利用できるように
 - numpy
 - pandas
 - scipy
-- ...etc
 
 
 ## Pip

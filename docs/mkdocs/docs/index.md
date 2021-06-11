@@ -1,6 +1,6 @@
 # sensorutils
 
-Welcome! This is the documentation for sensorutils v0.12.0 , last updated June 10, 2021.
+Welcome! This is the documentation for sensorutils v0.12.0 , last updated June 11, 2021.
 
 ## For users
 ---
@@ -12,7 +12,7 @@ sensorutilsをインストールする。
 とりあえず使ってみる。
 
 #### [Reference](refs.md)
-sensorutilsのReference
+sensorutilsのリファレンス
 
 ## For developers
 ---

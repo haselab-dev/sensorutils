@@ -12,6 +12,7 @@ HASCデータセットを読み込んで、
 3. (Optional) 16行目のキャッシュを作成するパスを変更
 
     デフォルトではスクリプトの実行ディレクトリ下に`hasc.csv`という名前でキャッシュが作成される。
+
 4. 実行!
 
 
@@ -65,7 +66,7 @@ hasc_path = Path('E:/<any where>/HASC-PAC2016/')
 hasc = HASC(hasc_path, Path('hasc.csv'))
 
 # クエリの作成
-# この5人の被験者のセンサデータのみを取得する
+# この6人の被験者のセンサデータのみを取得する
 persons = ['person01068', 'person03053', 'person02033', 'person01106', 'person03079', 'person02007']
 queries = {'Person': f'Person in {persons}'}
 
