@@ -4,14 +4,16 @@ Opportunity データの読み込みなど
 
 import numpy as np
 import pandas as pd
+import itertools
 from pathlib import Path
+from typing import List, Tuple, Optional
 from ..core import split_using_target, split_using_sliding_window
 #from collections import defaultdict
 
 from .base import BaseDataset
 
 
-__all__ = ['Opportunity', 'load']
+__all__ = ['Opportunity', 'load', 'load_raw']
 
 
 # Meta Info
@@ -130,7 +132,7 @@ ML_Both_Arms = {
     407521: 'Drink from Cup',
     405506: 'Toggle Switch',
 }
-PERSONS = [f'S{i+1}' for i in range(4)]
+PERSONS = [f'S{i}' for i in range(1, 4+1)]
 Sensors = {'Accelerometer', 'InertialMeasurementUnit', 'REED_SWITCH', 'LOCATION'}
 Attributes = {
     'acc',
@@ -441,7 +443,7 @@ Column = [
     'LL_Right_Arm',
     'LL_Right_Arm_Object',
     'ML_Both_Arms',
-    #'User',     # ユーザID(ローダ側で付与)
+    #'subject',     # ユーザID(ローダ側で付与)
 ]
 
 
@@ -487,10 +489,23 @@ class Opportunity(BaseDataset):
         'Accelerometer_MILK_accX',
     ]
 
+    x_labels = tuple(set(Column) - set(['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']))
+    supported_y_labels = ('Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms')
+
     def __init__(self, path:Path):
         super().__init__(path)
+        self.data_cache = None
     
-    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
+    def _load(self):
+        if self.data_cache is None:
+            data, meta = load(self.path)
+            segments = [seg.join(m) for seg, m in zip(data, meta)]
+            self.data_cache = segments
+        else:
+            segments = self.data_cache
+        return segments
+    
+    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=2, btrim_sec:int=2):
         """Opportunityの読み込み(ADL)とsliding-window
 
         Parameters
@@ -520,9 +535,25 @@ class Opportunity(BaseDataset):
             sliding-windowで切り出した入力とターゲットのフレームリスト
             y_framesはデータセット内の値をそのまま返すため，取り扱いには十分注意すること
         """
+
+        if x_labels is None:
+            x_labels = list(set(self.x_labels) - set(self.not_supported_labels))
+        if y_labels is None:
+            y_labels = list(self.supported_y_labels)
+
         if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
             raise ValueError('x_labels or y_labels include non supported labels')
-        segments = load(self.path)
+
+        if not(set(x_labels) <= set(self.x_labels)):
+            raise ValueError('unsupported x labels is included: {}'.format(
+                tuple(set(x_labels) - set(self.x_labels).intersection(set(x_labels)))
+            ))
+        if not(set(y_labels) <= set(self.supported_y_labels)):
+            raise ValueError('unsupported y labels is included: {}'.format(
+                tuple(set(y_labels) - set(self.supported_y_labels).intersection(set(y_labels)))
+            ))
+
+        segments = self._load()
         segments = [seg[x_labels+y_labels] for seg in segments]
         frames = []
         for seg in segments:
@@ -534,12 +565,21 @@ class Opportunity(BaseDataset):
                 frames += [fs]
         frames = np.concatenate(frames)
         assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
-        x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., 0, len(x_labels):]
+        x_frames = np.float64(frames[..., :len(x_labels)]).transpose(0, 2, 1)
+        y_frames = np.int32(frames[..., 0, len(x_labels):])
         return x_frames, y_frames
 
 
-def load(path:Path) -> dict:
+def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    raw = load_raw(path)
+    data, meta = reformat(raw)
+    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
+    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
+    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
+    return data, meta
+
+
+def load_raw(path:Path) -> List[pd.DataFrame]:
     """Opportunity の読み込み
 
     Parameters
@@ -552,7 +592,6 @@ def load(path:Path) -> dict:
     segments:
         Locomotionをもとにセグメンテーションされたデータ
     """
-    import itertools
     path = path / 'dataset'
     #segs = defaultdict(list)
     chunks = []
@@ -560,18 +599,35 @@ def load(path:Path) -> dict:
         datfiles = path.glob('{}-ADL*.dat'.format(person))
         for datfile in datfiles:
             print(datfile)
-            df = pd.read_csv(datfile, sep='\s+', header=None)
+            df = pd.read_csv(datfile, sep=r'\s+', header=None)
             df.columns = Column
-            df['User'] = p_id
+            df['subject'] = p_id + 1
             # 将来的には欠損値処理はもう少しきちんと行う必要がある
             df = df.fillna(method='ffill')  # NANは周辺の平均値で埋める
+            dtypes = dict(zip(Column, list(np.float64 for _ in Column)))
+            dtypes['Locomotion'] = np.int32
+            dtypes['subject'] = np.int32
+            dtypes['HL_Activity'] = np.int32
+            dtypes['LL_Left_Arm'] = np.int32
+            dtypes['LL_Left_Arm_Object'] = np.int32
+            dtypes['LL_Right_Arm'] = np.int32
+            dtypes['LL_Right_Arm_Object'] = np.int32
+            dtypes['ML_Both_Arms'] = np.int32
+            df = df.astype(dtypes)
+
             chunks.append(df)
 
+    return chunks
+
+
+def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    chunks = raw
     segs = []
     for chunk in chunks:
         sub_segs = split_using_target(np.array(chunk), np.array(chunk['Locomotion']))
         sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
         sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
+        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns).astype(chunk.dtypes.to_dict()), sub_segs))
         # For debug
         for seg in sub_segs:
             label = seg['Locomotion'].iloc[0]
@@ -579,5 +635,10 @@ def load(path:Path) -> dict:
                 raise RuntimeError('This is bug. Failed segmentation')
         segs += sub_segs
 
-    return segs
+    cols_meta = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+    cols_sensor = list(set(Column) - set(cols_meta))
+    data = list(map(lambda seg: seg[cols_sensor], segs))
+    meta = list(map(lambda seg: seg[cols_meta], segs))
+    
+    return data, meta
 
