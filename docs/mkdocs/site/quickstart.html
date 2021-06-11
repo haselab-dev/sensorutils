@@ -364,8 +364,10 @@
 <li>下記コードの<code>hasc_path</code>の箇所を取得したデータセットのパスに書き換える</li>
 <li>
 <p>(Optional) 16行目のキャッシュを作成するパスを変更</p>
-<p>デフォルトではスクリプトの実行ディレクトリ下に<code>hasc.csv</code>という名前でキャッシュが作成される。
-4. 実行!</p>
+<p>デフォルトではスクリプトの実行ディレクトリ下に<code>hasc.csv</code>という名前でキャッシュが作成される。</p>
+</li>
+<li>
+<p>実行!</p>
 </li>
 </ol>
 <div class="admonition warning">
@@ -460,7 +462,7 @@
 <span class="n">hasc</span> <span class="o">=</span> <span class="n">HASC</span><span class="p">(</span><span class="n">hasc_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;hasc.csv&#39;</span><span class="p">))</span>
 
 <span class="c1"># クエリの作成</span>
-<span class="c1"># この5人の被験者のセンサデータのみを取得する</span>
+<span class="c1"># この6人の被験者のセンサデータのみを取得する</span>
 <span class="n">persons</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;person01068&#39;</span><span class="p">,</span> <span class="s1">&#39;person03053&#39;</span><span class="p">,</span> <span class="s1">&#39;person02033&#39;</span><span class="p">,</span> <span class="s1">&#39;person01106&#39;</span><span class="p">,</span> <span class="s1">&#39;person03079&#39;</span><span class="p">,</span> <span class="s1">&#39;person02007&#39;</span><span class="p">]</span>
 <span class="n">queries</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Person&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Person in </span><span class="si">{</span><span class="n">persons</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}</span>
 
@@ -548,6 +550,8 @@
     
     
       <script src="assets/javascripts/bundle.76f349be.min.js"></script>
+      
+        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
     
   </body>
