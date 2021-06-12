@@ -153,6 +153,11 @@ class HHAR(BaseDataset):
         x_frames = np.float64(frames[:, :, :, :3]).reshape([N, ws, -1]).transpose(0, 2, 1)
         y_frames = np.int8(frames[:, 0, 0, 6:])
 
+        # remove data which activity label is 0
+        flgs = y_frames[:, -1] != 0
+        x_frames = x_frames[flgs]
+        y_frames = y_frames[flgs]
+
         # subject filtering
         if subjects is not None:
             flags = np.zeros(len(x_frames), dtype=bool)

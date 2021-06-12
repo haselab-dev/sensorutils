@@ -202,7 +202,7 @@ class PAMAP2(BaseDataset):
 
         # segments = self._load_segments()
         segments = self._load()
-        segments = [seg[x_labels+y_labels+['person_id']] for seg in segments]
+        segments = [seg[x_labels+y_labels+['activity_id', 'person_id']] for seg in segments]
         if norm:
             segments = [self._normalize_segment(seg) for seg in segments]
         frames = []
@@ -216,11 +216,16 @@ class PAMAP2(BaseDataset):
             else:
                 print('no frame')
         frames = np.concatenate(frames)
-        assert frames.shape[-1] == len(x_labels) + len(y_labels) + 1, 'Extracted data shape does not match with the number of total labels'
+        assert frames.shape[-1] == len(x_labels) + len(y_labels) + 2, 'Extracted data shape does not match with the number of total labels'
         # x_labelsでサポートされているラベルはすべてfloat64で対応
         # y_labelsでサポートされているラベルはすべてint8で対応可能
         x_frames = np.float64(frames[:, :, :len(x_labels)]).transpose(0, 2, 1)
-        y_frames = np.int8(frames[:, 0, len(x_labels):-1])
+        y_frames = np.int8(frames[:, 0, len(x_labels):-2])
+
+        # remove data which activity label is 0
+        flgs = frames[:, 0, -2] != 0
+        x_frames = x_frames[flgs]
+        y_frames = y_frames[flgs]
 
         # subject filtering
         if persons is not None:

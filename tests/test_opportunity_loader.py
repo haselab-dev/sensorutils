@@ -234,8 +234,9 @@ class OpportunityTest(unittest.TestCase):
                 self.assertEqual(y.shape[1], len(y_labels))
 
                 ## data check
-                ## x_labels, y_labelsによって変わるため要検討
-                self.assertSetEqual(set(np.unique(y[:, 0])), set(self.activities)) # activity(protocol): performed activities + others
+                ### x_labels, y_labelsによって変わるため要検討
+                ### otherのデータが除去されていることも確認
+                self.assertSetEqual(set(np.unique(y[:, 0])), set(self.activities)-set([0])) # activity(protocol): performed activities
                 self.assertSetEqual(set(np.unique(y[:, 1])), set(self.subjects)) # subject
 
                 del x, y

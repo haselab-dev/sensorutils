@@ -222,7 +222,8 @@ class HHARTest(unittest.TestCase):
                         raise RuntimeError
                 else:
                     raise RuntimeError
-                self.assertSetEqual(set(np.unique(y[:, 3])), set(ACTIVITIES.values())) # gt(activity)
+                ### activity=nullのデータが除去されていることも確認
+                self.assertSetEqual(set(np.unique(y[:, 3])), set(ACTIVITIES.values())-set([ACTIVITIES['null']])) # gt(activity)
 
                 del x, y
 

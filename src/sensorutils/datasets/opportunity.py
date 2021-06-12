@@ -558,7 +558,7 @@ class Opportunity(BaseDataset):
             ))
 
         segments = self._load()
-        segments = [seg[x_labels+y_labels] for seg in segments]
+        segments = [seg[x_labels+y_labels+['Locomotion']] for seg in segments]
         frames = []
         for seg in segments:
             fs = split_using_sliding_window(
@@ -568,9 +568,15 @@ class Opportunity(BaseDataset):
             if fs is not None:
                 frames += [fs]
         frames = np.concatenate(frames)
-        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
+        assert frames.shape[-1] == len(x_labels) + len(y_labels) + 1, 'Extracted data shape does not match with the number of total labels'
         x_frames = np.float64(frames[..., :len(x_labels)]).transpose(0, 2, 1)
         y_frames = np.int32(frames[..., 0, len(x_labels):])
+
+        # remove data which activity label is 0
+        flgs = y_frames[:, -1] != 0
+        x_frames = x_frames[flgs]
+        y_frames = y_frames[flgs][:, :-1]
+
         return x_frames, y_frames
 
 
