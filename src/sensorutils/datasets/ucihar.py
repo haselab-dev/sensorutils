@@ -1,3 +1,7 @@
+"""UCI Smartphone Dataset
+URL of dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip
+"""
+
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -34,8 +38,10 @@ class UCIHAR(BaseDataset):
         ----------
         train: bool
             select train data or test data. if True then return train data.
+
         person_list: Option[list]
             specify persons.
+
         include_gravity: bool
             select whether or not include gravity information.
        
@@ -84,27 +90,44 @@ class UCIHAR(BaseDataset):
 
 
 def load(path:Path, include_gravity:bool) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
-    raw = load_raw(path, include_gravity=include_gravity)
-    data, meta = reformat(raw)
-    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
-    # assert isinstance(meta, pd.DataFrame), '[debug] different type on "meta", meta: {}'.format(type(meta))
-    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), meta.shape)
-    return data, meta
-
-
-def load_meta(path:Path) -> pd.DataFrame:
-    """UCIHAR の meta ファイルを読み込む
+    """Function for loading UCI Smartphone dataset
 
     Parameters
     ----------
     path: Path
-        UCIHAR ファイルのパス。trainやtestディレクトリがあるパスを指定する
+        Directory path of UCI Smartphone dataset.
 
     Returns
     -------
-    metas: pd.DataFrame
-        trainとtestのmeta情報
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject.
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
     """
+
+    raw = load_raw(path, include_gravity=include_gravity)
+    data, meta = reformat(raw)
+    return data, meta
+
+
+def load_meta(path:Path) -> pd.DataFrame:
+    """Function for loading meta data of UCI Smartphone dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of UCI Smartphone dataset, which includes 'train' and 'test' directory.
+
+    Returns
+    -------
+    metas: pd.DataFrame:
+        meta data of HASC dataset.
+    """
+
     # train
     train_labels = pd.read_csv(str(path/'train'/'y_train.txt'), header=None)
     train_subjects = pd.read_csv(str(path/'train'/'subject_train.txt'), header=None)
@@ -127,21 +150,22 @@ def load_meta(path:Path) -> pd.DataFrame:
 
 
 def load_raw(path:Path, include_gravity:bool) -> Tuple[np.ndarray, pd.DataFrame]:
-    """UCIHAR の センサデータを読み込む
+    """Function for loading raw data of UCI Smartphone dataset
 
     Parameters
     ----------
     path: Path
-        UCIHAR ファイルのパス。trainやtestディレクトリがあるパスを指定する
-    
+        Directory path of UCI Smartphone dataset, which includes 'train' and 'test' directory.
+
     include_gravity: bool
-        姿勢情報(第0周波数成分)を含むかのフラグ
+        Flag whether attitude information (0th frequency component) is included.
 
     Returns
     -------
-    sensor_data, meta: Tuple[np.ndarray, pd.DataFrame]
-        Shape of sensor_data is (?, 3, 128).
+    sensor_data, meta: np.ndarray, pd.DataFrame
+        raw data of UCI Smartphone dataset
 
+        Shape of sensor_data is (?, 3, 128).
     """
 
     if include_gravity:
@@ -171,8 +195,26 @@ def load_raw(path:Path, include_gravity:bool) -> Tuple[np.ndarray, pd.DataFrame]
 
  
 def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
+
     data, meta = raw
-    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
     data = list(map(lambda x: pd.DataFrame(x.T, columns=['x', 'y', 'z']), data))
     return data, meta
 

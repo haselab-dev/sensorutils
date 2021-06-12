@@ -1,3 +1,7 @@
+"""HHAR Dataset
+URL of dataset: http://archive.ics.uci.edu/ml/machine-learning-databases/00344/Activity%20recognition%20exp.zip
+"""
+
 import numpy as np
 import pandas as pd
 from scipy.fftpack import fft, ifft, fftfreq
@@ -160,6 +164,197 @@ class HHAR(BaseDataset):
         return x_frames, y_frames
 
 
+def load(path:Path, sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for loading HHAR dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of HHAR dataset
+    
+    sensor_type: str
+        "accelerometer" or "gyroscope"
+        
+    device_type: str
+        "Watch" or "Phone"
+
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity, subject, and device
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
+
+    if (device_type[0] == 'w') or (device_type[0] == 'W'):
+        device_type = DEVICE_TYPES[1]
+    else:
+        device_type = DEVICE_TYPES[0] # default
+
+    if isinstance(sensor_type, (list, tuple, np.ndarray)):
+        if len(sensor_type) == 0:
+            raise ValueError('specified at least one type')
+        if not (set(sensor_type) <= set(SENSOR_TYPES)):
+            raise ValueError('include unknown sensor type, {}'.format(sensor_type))
+    elif isinstance(sensor_type, str):
+        if sensor_type not in SENSOR_TYPES:
+            raise ValueError('unknown sensor type, {}'.format(sensor_type))
+    else:
+        raise TypeError('expected type of "sensor_type" is list, tuple, numpy.ndarray or str, but got {}'.format(type(sensor_type)))
+
+    raw = load_raw(path, sensor_type, device_type)
+    data, meta = reformat(raw)
+    return data, meta
+
+
+def load_raw(path:Path, sensor_type:str, device_type:str='Watch') -> pd.DataFrame:
+    """Function for loading raw data of HHAR dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of HHAR dataset
+    
+    sensor_type: str
+        "accelerometer" or "gyroscope"
+        
+    device_type: str
+        "Watch" or "Phone"
+
+    Returns
+    -------
+    raw_data: pd.DataFrame
+        raw data of HHAR dataset
+    """
+
+    # prepare csv path
+    sensor_type_list = [sensor_type] if isinstance(sensor_type, str) else sensor_type
+    sensor_type_list = sorted(sensor_type_list) # accelerometer, gyroの順になることを保証する
+    if device_type == DEVICE_TYPES[0]:
+        csv_files = list(path / (f'Phones_{sensor_type}.csv') for sensor_type in sensor_type_list)
+    elif device_type == DEVICE_TYPES[1]:
+        csv_files = list(path / (f'Watch_{sensor_type}.csv') for sensor_type in sensor_type_list)
+
+    if len(sensor_type_list) == 1:
+        raw_data = _load_as_dataframe(csv_files[0], device_type)
+        return raw_data
+    else:
+        raise RuntimeError('specifing multiple devices is deprecated now.')
+
+
+    # 複数センサをまとめてロードする機能は一旦廃止
+    """
+    elif set(sensor_type_list) == set(SENSOR_TYPES):
+        raise RuntimeError('specifing multiple devices is deprecated now.')
+        segs = [_load_segments(csv_path, sensor_type, device_type) for sensor_type, csv_path in zip(sensor_type_list, csv_files)]
+        segs_acc_sub_dev_act, segs_gyro_sub_dev_act = segs
+
+        if device_type == DEVICE_TYPES[0]:
+            n_dev, base = 8, 0
+        elif device_type == DEVICE_TYPES[1]:
+            n_dev, base = 4, 8
+
+        # concat acc and gyro
+        segments = []
+        patterns = list(itertools.product(range(9), range(base, base+n_dev), range(7))) # subject, device, activity
+        for sub, dev, act in patterns:
+            s_accs, s_gyros = segs_acc_sub_dev_act[sub][dev][act], segs_gyro_sub_dev_act[sub][dev][act]
+
+            # このパターンは主に欠損値でヒット
+            if s_accs is None or s_gyros is None:
+                # print(' > [skip] ({})-({})-({}), seg_acc = {}, seg_gyro = {}'.format(sub, dev, act, type(s_accs), type(s_gyros)))
+                continue
+    
+            # このパターンでは加速度とジャイロでセグメント数がずれているときにヒット
+            # ただし，セグメント数のずれはわずかなラベリングのずれによる者であるので大部分の対応関係は保たれているはず
+            if len(s_accs) != len(s_gyros):
+                # print(' > [Warning] length of s_accs and s_gyros are different, {}, {}'.format(len(s_accs), len(s_gyros)))
+                continue
+            
+            for s_acc, s_gyro in zip(s_accs, s_gyros):
+
+                # s3_1とs3_2は加速度センサとジャイロセンサのサンプリング周波数が異なるためダウンサンプリングで対応
+                # このパターンはcreation_timeのずれが大きいためこれを許容するかは検討の余地がある
+                if device_type == DEVICE_TYPES[0] and s_acc[0, -2] in [2, 3]:
+                    assert s_gyro[0, -2] in [2, 3], 'this is bug'
+                    # s_gyro[:, 3] = _lpf(s_gyro[:, 3], fpass=150, fs=200)
+                    # s_gyro[:, 4] = _lpf(s_gyro[:, 4], fpass=150, fs=200)
+                    # s_gyro[:, 5] = _lpf(s_gyro[:, 5], fpass=150, fs=200)
+                    # s_gyro = s_gyro[::2]
+                    continue
+                
+                try:
+                    s_acc, s_gyro = _align_creation_time(s_acc, s_gyro)
+                except RuntimeError as e:
+                    # Watchではなぜかこれに引っかかるsegmentが多数ある
+                    print(f'>>> {e}')
+                    continue
+
+                segs = [s_acc, s_gyro]
+                min_seg_idx = 0 if len(s_acc) - len(s_gyro) <= 0 else 1
+                other_idx = (min_seg_idx + 1) % 2
+                min_len_seg = len(segs[min_seg_idx])
+
+                # segmentの長さを比較
+                # print('diff of length of segments: {}, {} ns'.format(len(segs[0]) - len(segs[1]), (segs[0][0, 2]-segs[1][0, 2])*1e-9))
+
+                # 各セグメントの先頭のcreation timeにほとんど差がないため，
+                # 先頭をそろえて長さを短いほうに合わせることで対応
+                segs[other_idx] = segs[other_idx][:min_len_seg]
+
+                # 先頭のcreation timeを比較
+                # d = (segs[min_seg_idx][0, 2] - segs[other_idx][0, 2]) * 1e-9
+                # if abs(d) > 1e-3:
+                #     print('diff of creation time in front: {} ns'.format(d))
+
+                segs = np.concatenate([np.expand_dims(segs[0], 1), np.expand_dims(segs[1], 1)], axis=1)
+                segments += [segs]
+    
+    return segments
+    """
+
+
+def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity, subject, and device
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
+
+    df = raw
+
+    # split by activity(gt), user, device
+    domains = (df['gt'] + df['User']*10 + df['Device']*100).to_numpy()
+    segments = split_using_target(df.to_numpy(), domains)
+    segments = list(itertools.chain(*list(segments.values())))
+    segments = list(map(lambda x: pd.DataFrame(x, columns=df.columns).astype(df.dtypes.to_dict()), segments))
+
+    # reformat
+    cols_sensor = ['x', 'y', 'z']
+    cols_meta = ['Index', 'Arrival_Time', 'Creation_Time', 'User', 'Model', 'Device', 'gt']
+    data = list(map(lambda seg: seg[cols_sensor], segments))
+    meta = list(map(lambda seg: seg[cols_meta], segments))
+
+    return data, meta
+
+
 def _load_as_dataframe(path:Path, device_type:str):
     df = pd.read_csv(path)
     df['gt'] = df['gt'].fillna('null')
@@ -271,162 +466,4 @@ def _align_creation_time(seg_acc, seg_gyro):
             else:
                 segs[fst] = segs[fst][i:]
             return segs
-
-
-def load(path:Path, sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
-    if (device_type[0] == 'w') or (device_type[0] == 'W'):
-        device_type = DEVICE_TYPES[1]
-    else:
-        device_type = DEVICE_TYPES[0] # default
-    # print('Device: {}'.format(device_type))
-
-    if isinstance(sensor_type, (list, tuple, np.ndarray)):
-        if len(sensor_type) == 0:
-            raise ValueError('specified at least one type')
-        if not (set(sensor_type) <= set(SENSOR_TYPES)):
-            raise ValueError('include unknown sensor type, {}'.format(sensor_type))
-    elif isinstance(sensor_type, str):
-        if sensor_type not in SENSOR_TYPES:
-            raise ValueError('unknown sensor type, {}'.format(sensor_type))
-    else:
-        raise TypeError('expected type of "sensor_type" is list, tuple, numpy.ndarray or str, but got {}'.format(type(sensor_type)))
-    # print('Sensor type: {}'.format(sensor_type))
-
-    raw = load_raw(path, sensor_type, device_type)
-    data, meta = reformat(raw)
-    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
-    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
-    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
-    return data, meta
-
-
-def load_raw(path:Path, sensor_type:str, device_type:str='Watch') -> pd.DataFrame:
-    """HHAR の加速度センサデータの読み込み関数
-
-    Parameters
-    ----------
-    path: Path
-        HHARデータセットのディレクトリ
-    
-    sensor_type:
-        "accelerometer" or "gyroscope" or ["accelerometer", "gyroscope"]
-        
-        [Caution!!!]
-        "accelerometer"と"gyroscope"の同時指定は非推奨．
-    
-    device_type:
-        "Watch" or "Phone"
-
-    Returns
-    -------
-    segments: list
-        被験者・デバイス・行動ラベルをもとにセグメンテーションされたデータ
-
-    See Also
-    --------
-    HHARデータセットは加速度センサデータとジャイロセンサデータを同時に入力として用いることをあまり想定していない(っぽい)．
-    そのため，厳密に加速度とジャイロセンサデータの連結しよとすると非常にコストが高い．
-    そこで今回は精度を犠牲にして計算コストを下げている．
-    """
-
-    # prepare csv path
-    sensor_type_list = [sensor_type] if isinstance(sensor_type, str) else sensor_type
-    sensor_type_list = sorted(sensor_type_list) # accelerometer, gyroの順になることを保証する
-    if device_type == DEVICE_TYPES[0]:
-        csv_files = list(path / (f'Phones_{sensor_type}.csv') for sensor_type in sensor_type_list)
-    elif device_type == DEVICE_TYPES[1]:
-        csv_files = list(path / (f'Watch_{sensor_type}.csv') for sensor_type in sensor_type_list)
-
-    if len(sensor_type_list) == 1:
-        df = _load_as_dataframe(csv_files[0], device_type)
-        return df
-
-    ### 以下のコードは実行されない ###
-
-    # 複数センサをまとめてロードする機能は一旦廃止
-    elif set(sensor_type_list) == set(SENSOR_TYPES):
-        raise RuntimeError('specifing multiple devices is deprecated now.')
-        segs = [_load_segments(csv_path, sensor_type, device_type) for sensor_type, csv_path in zip(sensor_type_list, csv_files)]
-        segs_acc_sub_dev_act, segs_gyro_sub_dev_act = segs
-
-        if device_type == DEVICE_TYPES[0]:
-            n_dev, base = 8, 0
-        elif device_type == DEVICE_TYPES[1]:
-            n_dev, base = 4, 8
-
-        # concat acc and gyro
-        segments = []
-        patterns = list(itertools.product(range(9), range(base, base+n_dev), range(7))) # subject, device, activity
-        for sub, dev, act in patterns:
-            s_accs, s_gyros = segs_acc_sub_dev_act[sub][dev][act], segs_gyro_sub_dev_act[sub][dev][act]
-
-            # このパターンは主に欠損値でヒット
-            if s_accs is None or s_gyros is None:
-                # print(' > [skip] ({})-({})-({}), seg_acc = {}, seg_gyro = {}'.format(sub, dev, act, type(s_accs), type(s_gyros)))
-                continue
-    
-            # このパターンでは加速度とジャイロでセグメント数がずれているときにヒット
-            # ただし，セグメント数のずれはわずかなラベリングのずれによる者であるので大部分の対応関係は保たれているはず
-            if len(s_accs) != len(s_gyros):
-                # print(' > [Warning] length of s_accs and s_gyros are different, {}, {}'.format(len(s_accs), len(s_gyros)))
-                continue
-            
-            for s_acc, s_gyro in zip(s_accs, s_gyros):
-
-                # s3_1とs3_2は加速度センサとジャイロセンサのサンプリング周波数が異なるためダウンサンプリングで対応
-                # このパターンはcreation_timeのずれが大きいためこれを許容するかは検討の余地がある
-                if device_type == DEVICE_TYPES[0] and s_acc[0, -2] in [2, 3]:
-                    assert s_gyro[0, -2] in [2, 3], 'this is bug'
-                    # s_gyro[:, 3] = _lpf(s_gyro[:, 3], fpass=150, fs=200)
-                    # s_gyro[:, 4] = _lpf(s_gyro[:, 4], fpass=150, fs=200)
-                    # s_gyro[:, 5] = _lpf(s_gyro[:, 5], fpass=150, fs=200)
-                    # s_gyro = s_gyro[::2]
-                    continue
-                
-                try:
-                    s_acc, s_gyro = _align_creation_time(s_acc, s_gyro)
-                except RuntimeError as e:
-                    # Watchではなぜかこれに引っかかるsegmentが多数ある
-                    print(f'>>> {e}')
-                    continue
-
-                segs = [s_acc, s_gyro]
-                min_seg_idx = 0 if len(s_acc) - len(s_gyro) <= 0 else 1
-                other_idx = (min_seg_idx + 1) % 2
-                min_len_seg = len(segs[min_seg_idx])
-
-                # segmentの長さを比較
-                # print('diff of length of segments: {}, {} ns'.format(len(segs[0]) - len(segs[1]), (segs[0][0, 2]-segs[1][0, 2])*1e-9))
-
-                # 各セグメントの先頭のcreation timeにほとんど差がないため，
-                # 先頭をそろえて長さを短いほうに合わせることで対応
-                segs[other_idx] = segs[other_idx][:min_len_seg]
-
-                # 先頭のcreation timeを比較
-                # d = (segs[min_seg_idx][0, 2] - segs[other_idx][0, 2]) * 1e-9
-                # if abs(d) > 1e-3:
-                #     print('diff of creation time in front: {} ns'.format(d))
-
-                segs = np.concatenate([np.expand_dims(segs[0], 1), np.expand_dims(segs[1], 1)], axis=1)
-                segments += [segs]
-    
-    return segments
-
-
-def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
-    df = raw
-
-    # split by activity(gt), user, device
-    domains = (df['gt'] + df['User']*10 + df['Device']*100).to_numpy()
-    segments = split_using_target(df.to_numpy(), domains)
-    segments = list(itertools.chain(*list(segments.values())))
-    segments = list(map(lambda x: pd.DataFrame(x, columns=df.columns).astype(df.dtypes.to_dict()), segments))
-
-    # reformat
-    cols_sensor = ['x', 'y', 'z']
-    cols_meta = ['Index', 'Arrival_Time', 'Creation_Time', 'User', 'Model', 'Device', 'gt']
-    data = list(map(lambda seg: seg[cols_sensor], segments))
-    meta = list(map(lambda seg: seg[cols_meta], segments))
-
-    return data, meta
 

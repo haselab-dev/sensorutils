@@ -1,10 +1,13 @@
+"""PAMAP2 Dataset
+URL of dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/00231/PAMAP2_Dataset.zip
+"""
+
 import numpy as np
 import pandas as pd
 
-import pickle
 import itertools
 from pathlib import Path
-from typing import List, Tuple, Union, Optional
+from typing import List, Tuple, Optional
 from ..core import split_using_target, split_using_sliding_window
 
 from .base import BaseDataset
@@ -228,26 +231,42 @@ class PAMAP2(BaseDataset):
 
 
 def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
-    raw = load_raw(path)
-    data, meta = reformat(raw)
-    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
-    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
-    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
-    return data, meta
-
-
-def load_raw(path:Path) -> List[pd.DataFrame]:
-    """PAMAP2の読み込み
+    """Function for loading PAMAP2 dataset
 
     Parameters
     ----------
     path: Path
-        PAMAP2データセットのディレクトリ(PAMAP2_Datasetディレクトリ)
+        Directory path of PAMAP2 dataset
 
     Returns
     -------
-    segments: list
-        行動ラベルをもとにセグメンテーションされたデータ
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity and subject
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
+
+    raw = load_raw(path)
+    data, meta = reformat(raw)
+    return data, meta
+
+
+def load_raw(path:Path) -> List[pd.DataFrame]:
+    """Function for loading raw data of PAMAP2 dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of PAMAP2 dataset("PAMAP2_Dataset")
+
+    Returns
+    -------
+    chunks_per_persons: List[pd.DataFrame]
+        Sensor data segmented by subject
     """
 
     def _load_raw_data(path, person_id):
@@ -275,6 +294,25 @@ def load_raw(path:Path) -> List[pd.DataFrame]:
 
    
 def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity and subject
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
+
     chunks_per_persons = raw
     segs = []
     for p_id, chunk in enumerate(chunks_per_persons):

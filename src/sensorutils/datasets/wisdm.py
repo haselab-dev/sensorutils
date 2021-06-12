@@ -1,3 +1,8 @@
+"""WISDM dataset
+
+URL of dataset: https://www.cis.fordham.edu/wisdm/includes/datasets/latest/WISDM_ar_latest.tar.gz
+"""
+
 import re
 import numpy as np
 import pandas as pd
@@ -78,27 +83,42 @@ class WISDM(BaseDataset):
 
 
 def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for loading WISDM dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of WISDM dataset('data' directory)
+
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity and subject
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
     raw = load_raw(path)
     data, meta = reformat(raw)
-    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
-    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
-    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
     return data, meta
 
 
 def load_raw(dataset_path:Path) -> pd.DataFrame:
-    """WISDMの読み込み
+    """Function for loading raw data of WISDM dataset
 
     Parameters
     ----------
-    dataset_path: Path
-        WISDMデータセットのディレクトリ(dataディレクトリ)
-    
+    path: Path
+        Directory path of WISDM dataset('data' directory)
+
     Returns
     -------
-    segments: list
-        segments. This is splited by subjects and activities.
-    
+    raw_data : pd.DataFrame
+        raw data of WISDM dataset
+
     See Also
     --------
     Structure of one segment:
@@ -150,6 +170,25 @@ def load_raw(dataset_path:Path) -> pd.DataFrame:
 
 
 def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity and subject
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
+
     raw_array = raw.to_numpy()
     
     # segmentへの分割(by user and activity)
@@ -164,9 +203,6 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     segments = list(map(lambda seg: pd.DataFrame(seg, columns=raw.columns).astype(raw.dtypes.to_dict()), segments))
     data = list(map(lambda seg: pd.DataFrame(seg.iloc[:, 3:], columns=raw.columns[3:]), segments))
     meta = list(map(lambda seg: pd.DataFrame(seg.iloc[:, :3], columns=raw.columns[:3]), segments))
-    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
 
     return data, meta 
-
-
 

@@ -1,25 +1,7 @@
-import numpy as np
-import pandas as pd
-from scipy.io import loadmat
+"""UniMib SHAR Dataset
 
-from pathlib import Path
-from typing import List, Tuple, Union, Optional
-from ..core import split_using_sliding_window
+URL of dataset: https://www.dropbox.com/s/x2fpfqj0bpf8ep6/UniMiB-SHAR.zip?dl=0
 
-from .base import BaseDataset
-
-
-__all__ = ['UniMib', 'load', 'load_raw']
-
-
-# Meta Info
-SUBJECTS = tuple(range(1, 30+1))
-ACTIVITIES = tuple(['StandingUpFS', 'StandingUpFL', 'Walking', 'Running', 'GoingUpS', 'Jumping', 'GoingDownS', 'LyingDownFS', 'SittingDown', 'FallingForw', 'FallingRight', 'FallingBack', 'HittingObstacle', 'FallingWithPS', 'FallingBackSC', 'Syncope', 'FallingLeft'])
-GENDER = {'M': 0, 'F': 1}
-Sampling_Rate = 50 # Hz
-
-
-"""
 + UniMibの基本データ構造
 
 x_data.mat (xはacc or adl or fall):
@@ -46,8 +28,30 @@ UniMibのdataディレクトリには大きく分けてacc, adl, fallの3種類�
 fullというのもあるが構造は不明．
 
 簡潔に説明すると，UniMibではacc = adl + fallである．
-
 """
+
+import numpy as np
+import pandas as pd
+from scipy.io import loadmat
+
+from pathlib import Path
+from typing import List, Tuple, Union, Optional
+from ..core import split_using_sliding_window
+
+from .base import BaseDataset
+
+
+__all__ = ['UniMib', 'load', 'load_raw']
+
+
+# Meta Info
+SUBJECTS = tuple(range(1, 30+1))
+ACTIVITIES = tuple(['StandingUpFS', 'StandingUpFL', 'Walking', 'Running', 'GoingUpS', 'Jumping', 'GoingDownS', 'LyingDownFS', 'SittingDown', 'FallingForw', 'FallingRight', 'FallingBack', 'HittingObstacle', 'FallingWithPS', 'FallingBackSC', 'Syncope', 'FallingLeft'])
+GENDER = {'M': 0, 'F': 1}
+Sampling_Rate = 50 # Hz
+
+
+
 
 class UniMib(BaseDataset):
     def __init__(self, path:Path):
@@ -128,24 +132,39 @@ class UniMib(BaseDataset):
 
 
 def load(path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for loading UniMib SHAR dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of UniMib SHAR dataset('data' directory).
+
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject.
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
     raw = load_raw(path, data_type)
     data, meta = reformat(raw)
-    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
-    # assert isinstance(meta, pd.DataFrame), '[debug] different type on "meta", meta: {}'.format(type(meta))
-    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), meta.shape)
     return data, meta
 
 
 def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray, pd.DataFrame], Tuple[List[pd.DataFrame], pd.DataFrame]]:
-    """UniMib SHARの読み込み
+    """Function for loading raw data of UniMib SHAR dataset
 
     Parameters
     ----------
-    dataset_path: Path
-        UniMib SHARデータセットのディレクトリ(dataディレクトリ)
-    
+    path: Path
+        Directory path of UniMib SHAR dataset('data' directory).
+
     data_type: str
-        ロードするデータの種類を指定
+        Data type
         'full': segmented sensor data which contain all activities
         'adl' : segmented sensor data which contain ADL activities
         'fall': segmented sensor data which contain fall activities
@@ -155,14 +174,14 @@ def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray,
     -------
     * If data_type = 'full', 'adl' or 'fall'
 
-    data, meta: Tuple[NDArray, pd.DataFrame]
+    data, meta: Tuple[np.ndarray, pd.DataFrame]
         Sensor data and meta data.
         Data shape is (?, 151, 3), and the second axis shows frames.
         Third axis is channel axis, which indicates x, y and z acceleration.
     
     * If data_type = 'raw'
 
-    data, meta: Tuple[List[NDArray], pd.DataFrame]
+    data, meta: Tuple[List[np.ndarray], pd.DataFrame]
         Sensor data and meta data.
         Data shape is (?, ?, 3), and the second axis shows segments which is variable length.
         Third axis is channel, which indicates x, y and z acceleration.
@@ -211,10 +230,6 @@ def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray,
         labels = loadmat(str(dataset_path / f'{prefix}_labels.mat'))[f'{prefix}_labels']    # (?, 3)
         # activity_labels, subject_labels, trial_labels = labels[:, 0], labels[:, 1], labels[:, 2]
         # descriptions, class_names = loadmat(str(dataset_path / f'{prefix}_names.mat'))[f'{prefix}_names']
-
-        # assert len(data) == len(activity_labels)
-        # assert len(data) == len(subject_labels)
-        # assert len(data) == len(trial_labels)
 
         meta = labels
         meta = pd.DataFrame(meta, columns=['activity', 'subject', 'trial_id'])
@@ -271,10 +286,26 @@ def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray,
 
 
 def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
+
     data, meta = raw
-    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
-    # assert len(data[0].shape) == 2, 'shape of data[0]: {}'.format(data[0].shape)
-    # assert data[0].shape[0] == 3
     data = list(map(lambda x: pd.DataFrame(x.T, columns=['x', 'y', 'z']), data))
     return data, meta
 

@@ -6,12 +6,12 @@ hasc 読み込み関数
 
 import functools
 from pathlib import Path
-import typing
+from typing import List, Tuple, Union, Optional, Iterable
 
 import numpy as np
 import pandas as pd
 import pickle
-from ..core import split_using_target, split_using_sliding_window
+from ..core import split_using_sliding_window
 
 from .base import BaseDataset
 
@@ -81,7 +81,7 @@ class HASC(BaseDataset):
         filed_meta = self.meta.query(query_string)
         return filed_meta
     
-    def __extract_targets(self, y_labels:typing.Iterable, meta_row:pd.Series) -> np.ndarray:
+    def __extract_targets(self, y_labels:Iterable, meta_row:pd.Series) -> np.ndarray:
         if not isinstance(meta_row, pd.Series):
             raise TypeError('meta_row must be "pd.Series", but {}'.format(type(meta_row)))
         targets = []
@@ -114,7 +114,7 @@ class HASC(BaseDataset):
         return np.array(targets)
 
     # フィルタリング周りの実装は暫定的
-    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:dict=None, y_labels:typing.Union[str, list]='activity'):
+    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:dict=None, y_labels:Union[str, list]='activity'):
         """HASCデータの読み込みとsliding-window
 
         Parameters
@@ -199,28 +199,48 @@ class HASC(BaseDataset):
         return x_frames, y_frames, self.label_map
 
 
-def load(path:Path, meta:pd.DataFrame) -> typing.Tuple[typing.List[pd.DataFrame], pd.DataFrame]:
-    raw = load_raw(path, meta)
-    data, meta = reformat(raw)
-    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
-    # assert isinstance(meta, pd.DataFrame), '[debug] different type on "meta", meta: {}'.format(type(meta))
-    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), meta.shape)
-    return data, meta
-
-
-def load_meta(path:Path) -> pd.DataFrame:
-    """HASC の meta ファイルを読み込む。
+def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for loading HASC dataset
 
     Parameters
     ----------
     path: Path
-        HASC ファイルのパス。BasicActivity のあるディレクトリを指定すること。
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory
+    
+    meta: pd.DataFrame
+        meta data loaded by 'load_meta'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        raw data of HASC dataset
+    
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
+
+    raw = load_raw(path, meta)
+    data, meta = reformat(raw)
+    return data, meta
+
+
+def load_meta(path:Path) -> pd.DataFrame:
+    """Function for loading meta data of HASC dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory
 
     Returns
     -------
-    pd.DataFrame:
-        meta ファイルの DataFrame。
+    metas: pd.DataFrame:
+        meta data of HASC dataset
     """
+
     def replace_meta_str(s:str) -> str:
         s = s.replace('：', ':')
         s = s.replace('TerminalPosition:TerminalPosition:',
@@ -254,26 +274,29 @@ def load_meta(path:Path) -> pd.DataFrame:
     return metas
 
 
-def load_raw(path:Path, meta:typing.Optional[pd.DataFrame]=None) -> typing.Tuple[typing.List[pd.DataFrame], pd.DataFrame]:
-    """HASC の行動加速度センサデータの読み込み関数。
-    予め meta を読み込む必要がある。
-
-    pd.DataFrame の itertuple が順序を守っていたはずなので、
-    返すデータのリストの順番は meta ファイルと一致する。
+def load_raw(path:Path, meta:Optional[pd.DataFrame]=None) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for loading raw data of HASC dataset
 
     Parameters
     ----------
     path: Path
-        BasicActivity がある HASC のファイルパス
-
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory
+    
     meta: pd.DataFrame
-        load_meta 関数で返された meta ファイル
-
+        meta data loaded by 'load_meta'
+    
     Returns
     -------
-    Tuple[List[pd.DataFrame], pd.DataFrame]:
-        行動加速度センサデータのリスト。
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        raw data of HASC dataset
+    
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
     """
+
     def read_acc(path:Path) -> pd.DataFrame:
         if path.exists():
             try:
@@ -297,8 +320,25 @@ def load_raw(path:Path, meta:typing.Optional[pd.DataFrame]=None) -> typing.Tuple
     return data, meta
 
 
-def reformat(raw) -> typing.Tuple[typing.List[pd.DataFrame], pd.DataFrame]:
+def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity, subject, and device
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
     data, meta = raw
-    # assert len(data) == len(meta), 'data and meta are not same length ({}, {})'.format(len(data), len(meta))
     return data, meta
 

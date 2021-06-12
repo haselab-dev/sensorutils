@@ -2,7 +2,6 @@
 データセットローダの抽象クラス
 """
 
-import typing
 from pathlib import Path
 
 class BaseDataset(object):
