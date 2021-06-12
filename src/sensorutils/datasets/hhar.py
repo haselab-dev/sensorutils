@@ -11,7 +11,7 @@ from typing import Union, List, Dict, Tuple
 from .base import BaseDataset
 
 
-__all__ = ['HHAR', 'load']
+__all__ = ['HHAR', 'load', 'load_raw']
 
 
 # Meta Info
@@ -43,6 +43,11 @@ WATCH_DEVICES = {
     'lgwatch_1': 10, 'lgwatch_2': 11,
 }
 
+MODELS = {
+    'nexus4': 0, 's3': 1, 's3mini': 2,
+    'samsungold': 3, 'gear': 4, 'lgwatch': 5
+}
+
 Column = [
     'Index', 
     'Arrival_Time', 
@@ -53,14 +58,6 @@ Column = [
     'User',
     'Model', 'Device', 'gt',
 ]
-
-def __id2act(act_id:int) -> str:
-    return ACTIVITIES[act_id]
-
-def __act2id(act:str) -> int:
-    if act in ACTIVITIES:
-        return ACTIVITIES[act]
-    raise ValueError(f'Unknown activity ({act})')
 
 def __name2id(name:str, name_list:Dict[str, int]) -> int:
     if name in name_list:
@@ -130,9 +127,10 @@ class HHAR(BaseDataset):
 
         segments = []
         for dev_type in device_types:
-            segments += load(self.path, sensor_type=sensor_types, device_type=dev_type)
+            data, meta = load(self.path, sensor_type=sensor_types, device_type=dev_type)
+            segments += [seg.join(m) for seg, m in zip(data, meta)]
         n_ch = len(sensor_types)
-        segments = [seg.reshape(-1, n_ch*10) for seg in segments]
+        segments = [np.array(seg).reshape(-1, n_ch*10) for seg in segments]
 
         frames = []
         for seg in segments:
@@ -148,12 +146,12 @@ class HHAR(BaseDataset):
         frames = np.concatenate(frames)
         N, ws, _ = frames.shape
         frames = frames.reshape([N, ws, n_ch, 10])
-        x_frames = frames[:, :, :, 3:6].reshape([N, ws, -1])
-        y_frames = frames[:, 0, 0, 6:]
+        x_frames = np.float64(frames[:, :, :, :3]).reshape([N, ws, -1]).transpose(0, 2, 1)
+        y_frames = np.int8(frames[:, 0, 0, 6:])
 
         # subject filtering
         if subjects is not None:
-            flags = np.zeros(len(x_frames), dtype=np.bool)
+            flags = np.zeros(len(x_frames), dtype=bool)
             for sub in subjects:
                 flags = np.logical_or(flags, y_frames[:, 0] == SUBJECTS[sub])
             x_frames = x_frames[flags]
@@ -165,10 +163,17 @@ class HHAR(BaseDataset):
 def _load_as_dataframe(path:Path, device_type:str):
     df = pd.read_csv(path)
     df['gt'] = df['gt'].fillna('null')
-    df['gt'] = df['gt'].map(__act2id)
+    df['gt'] = df['gt'].map(lambda x: __name2id(x, ACTIVITIES))
     df['User'] = df['User'].map(lambda x: __name2id(x, SUBJECTS))
     dev_list = copy.deepcopy(PHONE_DEVICES) if device_type == DEVICE_TYPES[0] else copy.deepcopy(WATCH_DEVICES)
     df['Device'] = df['Device'].map(lambda x: __name2id(x, dev_list))
+    df['Model'] = df['Model'].map(lambda x: __name2id(x, MODELS))
+    dtypes = {
+        'Index': np.int32, 'Arrival_Time': np.int64, 'Creation_Time': np.int64,
+        'User': np.int8, 'Model': np.int8, 'Device': np.int8, 'gt': np.int8,
+        'x': np.float64, 'y': np.float64, 'z': np.float64,
+    }
+    df = df.astype(dtypes)
     return df
 
 def _load_segments(path:Path, sensor_type:str, device_type:str):
@@ -267,7 +272,35 @@ def _align_creation_time(seg_acc, seg_gyro):
                 segs[fst] = segs[fst][i:]
             return segs
 
-def load(path:Path, sensor_type:Union[str, List[str]], device_type:str='Watch') -> List[np.ndarray]:
+
+def load(path:Path, sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    if (device_type[0] == 'w') or (device_type[0] == 'W'):
+        device_type = DEVICE_TYPES[1]
+    else:
+        device_type = DEVICE_TYPES[0] # default
+    # print('Device: {}'.format(device_type))
+
+    if isinstance(sensor_type, (list, tuple, np.ndarray)):
+        if len(sensor_type) == 0:
+            raise ValueError('specified at least one type')
+        if not (set(sensor_type) <= set(SENSOR_TYPES)):
+            raise ValueError('include unknown sensor type, {}'.format(sensor_type))
+    elif isinstance(sensor_type, str):
+        if sensor_type not in SENSOR_TYPES:
+            raise ValueError('unknown sensor type, {}'.format(sensor_type))
+    else:
+        raise TypeError('expected type of "sensor_type" is list, tuple, numpy.ndarray or str, but got {}'.format(type(sensor_type)))
+    # print('Sensor type: {}'.format(sensor_type))
+
+    raw = load_raw(path, sensor_type, device_type)
+    data, meta = reformat(raw)
+    # assert isinstance(data, list) and all(isinstance(d, pd.DataFrame) for d in data), '[debug] different type on "data", data: {}[{}]'.format(type(data), type(data[0]))
+    # assert isinstance(meta, list) and all(isinstance(m, pd.DataFrame) for m in meta), '[debug] different type on "meta", meta: {}[{}]'.format(type(meta), type(meta[0]))
+    # assert len(data) == len(meta), '[debug] different shape, data: {}, meta: {}'.format(len(data), len(meta))
+    return data, meta
+
+
+def load_raw(path:Path, sensor_type:str, device_type:str='Watch') -> pd.DataFrame:
     """HHAR の加速度センサデータの読み込み関数
 
     Parameters
@@ -295,23 +328,6 @@ def load(path:Path, sensor_type:Union[str, List[str]], device_type:str='Watch') 
     そのため，厳密に加速度とジャイロセンサデータの連結しよとすると非常にコストが高い．
     そこで今回は精度を犠牲にして計算コストを下げている．
     """
-    if (device_type[0] == 'w') or (device_type[0] == 'W'):
-        device_type = DEVICE_TYPES[1]
-    else:
-        device_type = DEVICE_TYPES[0] # default
-    print('Device: {}'.format(device_type))
-
-    if isinstance(sensor_type, (list, tuple, np.ndarray)):
-        if len(sensor_type) == 0:
-            raise ValueError('specified at least one type')
-        if not (set(sensor_type) <= set(SENSOR_TYPES)):
-            raise ValueError('include unknown sensor type, {}'.format(sensor_type))
-    elif isinstance(sensor_type, str):
-        if sensor_type not in SENSOR_TYPES:
-            raise ValueError('unknown sensor type, {}'.format(sensor_type))
-    else:
-        raise TypeError('expected type of "sensor_type" is list, tuple, numpy.ndarray or str, but got {}'.format(type(sensor_type)))
-    print('Sensor type: {}'.format(sensor_type))
 
     # prepare csv path
     sensor_type_list = [sensor_type] if isinstance(sensor_type, str) else sensor_type
@@ -323,10 +339,13 @@ def load(path:Path, sensor_type:Union[str, List[str]], device_type:str='Watch') 
 
     if len(sensor_type_list) == 1:
         df = _load_as_dataframe(csv_files[0], device_type)
-        domains = (df['gt'] + df['User']*10 + df['Device']*100).to_numpy()
-        segments = split_using_target(df.to_numpy(), domains)
-        segments = list(itertools.chain(*list(segments.values())))
+        return df
+
+    ### 以下のコードは実行されない ###
+
+    # 複数センサをまとめてロードする機能は一旦廃止
     elif set(sensor_type_list) == set(SENSOR_TYPES):
+        raise RuntimeError('specifing multiple devices is deprecated now.')
         segs = [_load_segments(csv_path, sensor_type, device_type) for sensor_type, csv_path in zip(sensor_type_list, csv_files)]
         segs_acc_sub_dev_act, segs_gyro_sub_dev_act = segs
 
@@ -392,3 +411,22 @@ def load(path:Path, sensor_type:Union[str, List[str]], device_type:str='Watch') 
                 segments += [segs]
     
     return segments
+
+
+def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    df = raw
+
+    # split by activity(gt), user, device
+    domains = (df['gt'] + df['User']*10 + df['Device']*100).to_numpy()
+    segments = split_using_target(df.to_numpy(), domains)
+    segments = list(itertools.chain(*list(segments.values())))
+    segments = list(map(lambda x: pd.DataFrame(x, columns=df.columns).astype(df.dtypes.to_dict()), segments))
+
+    # reformat
+    cols_sensor = ['x', 'y', 'z']
+    cols_meta = ['Index', 'Arrival_Time', 'Creation_Time', 'User', 'Model', 'Device', 'gt']
+    data = list(map(lambda seg: seg[cols_sensor], segments))
+    meta = list(map(lambda seg: seg[cols_meta], segments))
+
+    return data, meta
+
