@@ -24,13 +24,6 @@ class UCIHAR(BaseDataset):
         super().__init__(path)
         # self.load_meta()
     
-    # 廃止予定
-    def load_meta(self):
-        # meta = load_meta(self.path)
-        # self.train_metas = meta['train']
-        # self.test_metas = meta['test']
-        self.metas = load_meta(self.path)
-   
     def load(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> tuple:
         """Sliding-Windowをロード
 
