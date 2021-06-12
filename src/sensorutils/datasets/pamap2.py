@@ -129,7 +129,7 @@ class PAMAP2(BaseDataset):
     
     def _filter_by_person(self, x_frames, y_frames, person_labels, persons):
         p2id = dict(zip(PERSONS, list(range(len(PERSONS)))))
-        p_flags = np.zeros(len(x_frames), dtype=np.bool)
+        p_flags = np.zeros(len(x_frames), dtype=bool)
         for person in persons:
             p_flags = np.logical_or(p_flags, person_labels == p2id[person])
         flags = p_flags

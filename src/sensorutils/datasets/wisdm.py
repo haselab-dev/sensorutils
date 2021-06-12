@@ -72,7 +72,7 @@ class WISDM(BaseDataset):
 
         # subject filtering
         if subjects is not None:
-            flags = np.zeros(len(x_frames), dtype=np.bool)
+            flags = np.zeros(len(x_frames), dtype=bool)
             for sub in subjects:
                 flags = np.logical_or(flags, y_frames[:, 1] == sub)
                 # flags = np.logical_or(flags, y_frames[:, 0] == sub)
