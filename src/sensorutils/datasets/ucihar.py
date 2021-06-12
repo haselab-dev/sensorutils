@@ -61,7 +61,7 @@ class UCIHAR(BaseDataset):
             sdata, metas = load(self.path, include_gravity=False)
  
         sdata = np.stack(sdata).transpose(0, 2, 1)
-        flags = np.zeros((sdata.shape[0],), dtype=np.bool)
+        flags = np.zeros((sdata.shape[0],), dtype=bool)
         if person_list is None: person_list = np.array(PERSONS)
         for person_id in person_list:
             flags = np.logical_or(flags, np.array(metas['person_id'] == person_id))
@@ -70,7 +70,7 @@ class UCIHAR(BaseDataset):
         labels = metas['activity'].to_numpy()[flags]
         labels -= 1 # scale: [1, 6] => scale: [0, 5]
         person_id_list = np.array(metas.iloc[flags]['person_id'])
-        train_flags = np.array(metas['train'].iloc[flags], dtype=np.int)
+        train_flags = np.array(metas['train'].iloc[flags], dtype=np.int8)
         targets = np.stack([labels, person_id_list, train_flags]).T
 
         if train:
@@ -120,6 +120,8 @@ def load_meta(path:Path) -> pd.DataFrame:
     test_metas['train'] = False
 
     metas = pd.concat([train_metas, test_metas], axis=0)
+    dtypes = {'activity': np.int8, 'person_id': np.int8, 'train': bool}
+    metas = metas.astype(dtypes)
 
     return metas
 
@@ -162,6 +164,7 @@ def load_raw(path:Path, include_gravity:bool) -> Tuple[np.ndarray, pd.DataFrame]
     z = np.concatenate([z_tr, z_ts], axis=0)
 
     sensor_data = np.concatenate([x[:, np.newaxis, :], y[:, np.newaxis, :], z[:, np.newaxis, :]], axis=1)
+    sensor_data = sensor_data.astype(np.float64)
     meta = load_meta(path)
 
     return sensor_data, meta

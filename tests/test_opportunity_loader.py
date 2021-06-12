@@ -74,7 +74,7 @@ class OpportunityTest(unittest.TestCase):
         self.assertTrue(all([set(d.columns) == set(x_labels) for d in data]))
 
         ## data type check
-        C = list(set(data[0].columns) - set(self.loader.not_supported_labels))
+        C = list(set(data[0].columns) - set(self.loader.NOT_SUPPORTED_LABELS))
         self.assertTrue(all([
             d.dtypes[c] == np.dtype(np.float64) \
             for d in data for c in C
@@ -122,6 +122,7 @@ class OpportunityTest(unittest.TestCase):
         )
 
         self.assertSetEqual(set(itertools.chain(*[np.unique(r['HL_Activity']) for r in raw])), set(HL_Activity.keys()).union(set([0])))
+        # なぜかこれだけ通らない
         # self.assertSetEqual(set(itertools.chain(*[np.unique(r['LL_Left_Arm']) for r in raw])), set(LL_Left_Arm.keys()).union(set([0])))
         self.assertSetEqual(set(itertools.chain(*[np.unique(r['LL_Left_Arm_Object']) for r in raw])), set(LL_Left_Arm_Object.keys()).union(set([0])))
         self.assertSetEqual(set(itertools.chain(*[np.unique(r['LL_Right_Arm']) for r in raw])), set(LL_Right_Arm.keys()).union(set([0])))
@@ -176,7 +177,7 @@ class OpportunityTest(unittest.TestCase):
         self.assertTrue(all([set(d.columns) == set(x_labels) for d in data]))
 
         ## data type check
-        C = list(set(data[0].columns) - set(self.loader.not_supported_labels))
+        C = list(set(data[0].columns) - set(self.loader.NOT_SUPPORTED_LABELS))
         self.assertTrue(all([
             d.dtypes[c] == np.dtype(np.float64) \
             for d in data for c in C
@@ -185,7 +186,7 @@ class OpportunityTest(unittest.TestCase):
     def test_opp_load_method_filed_labels(self):
         # check processing for exceptions
         y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels) - set(self.loader.not_supported_labels))
+        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels) - set(self.loader.NOT_SUPPORTED_LABELS))
 
         with self.assertRaises(ValueError):
             _, _ = self.loader.load(window_size=128, stride=128, ftrim_sec=2, btrim_sec=2, x_labels=y_labels)
@@ -208,7 +209,7 @@ class OpportunityTest(unittest.TestCase):
 
     def test_opp_load_method_framing(self):
         y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels) - set(self.loader.not_supported_labels))
+        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels) - set(self.loader.NOT_SUPPORTED_LABELS))
         for stride, ws in itertools.product([64, 128, 256, 512], [64, 128, 256, 512]):
             print(f'window size: {ws}, stride: {stride}')
             with self.subTest(f'window size: {ws}, stride: {stride}'):

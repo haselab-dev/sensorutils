@@ -42,7 +42,8 @@ class UniMibTest(unittest.TestCase):
                 self.fail(f'Unexpected case, dtype: {dtype}')
             
             ## data type check
-            flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes]
+            # flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes]
+            flags_dtype = [dt == np.dtype(np.int8) for dt in meta.dtypes]
             self.assertTrue(all(flags_dtype))
 
             ## data check
@@ -75,6 +76,9 @@ class UniMibTest(unittest.TestCase):
             self.assertTrue(all(flgs_shape))
             flgs_shape_ax1 = [d.shape[1] == 3 for d in data]
             self.assertTrue(all(flgs_shape_ax1))
+            self.assertTrue(all(
+                [set(d.columns) == set(['x', 'y', 'z']) for d in data]
+            ))
 
         data_types = ['full', 'adl', 'fall']
         for dtype in data_types:
@@ -119,7 +123,8 @@ class UniMibTest(unittest.TestCase):
                 self.fail(f'Unexpected case, dtype: {dtype}')
 
             ## data type check
-            flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes]
+            # flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes]
+            flags_dtype = [dt == np.dtype(np.int8) for dt in meta.dtypes]
             self.assertTrue(all(flags_dtype))
 
             ## data check
@@ -203,7 +208,8 @@ class UniMibTest(unittest.TestCase):
                 self.fail(f'Unexpected case, dtype: {dtype}')
 
             ## data type check
-            flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes]
+            # flags_dtype = [dt == np.dtype(np.int8) or dt == np.dtype(np.int16) or dt == np.dtype(np.int32) or dt == np.dtype(np.int64) for dt in meta.dtypes]
+            flags_dtype = [dt == np.dtype(np.int8) for dt in meta.dtypes]
             self.assertTrue(all(flags_dtype))
 
             ## data check
@@ -236,6 +242,9 @@ class UniMibTest(unittest.TestCase):
             self.assertTrue(all(flgs_shape))
             flgs_shape_ax1 = [d.shape[1] == 3 for d in data]    # different point
             self.assertTrue(all(flgs_shape_ax1))
+            self.assertTrue(all(
+                [set(d.columns) == set(['x', 'y', 'z']) for d in data]
+            ))
 
         data_types = ['full', 'adl', 'fall']
         for dtype in data_types:

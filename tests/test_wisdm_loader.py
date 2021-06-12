@@ -46,6 +46,14 @@ class WISDMTest(unittest.TestCase):
         )))
         self.assertTrue(all([m.dtypes[-1] == np.dtype(np.uint64) for m in meta]))
 
+        ## data check
+        self.assertTrue(all([
+            [set(np.unique(m['user'])) == set([m['user'].iloc[0]]) for m in meta]
+        ]))
+        self.assertTrue(all([
+            [set(np.unique(m['activity'])) == set([m['activity'].iloc[0]]) for m in meta]
+        ]))
+
         # data
         ## type check
         self.assertIsInstance(data, list)
@@ -54,14 +62,7 @@ class WISDMTest(unittest.TestCase):
         ## shape and column check
         self.assertTrue(all([len(d.shape) == 2 for d in data]))
         self.assertTrue(all([d.shape[1] == 3 for d in data]))
-
-        ## data check
-        self.assertTrue(all([
-            [set(np.unique(m['user'])) == set([m['user'].iloc[0]]) for m in meta]
-        ]))
-        self.assertTrue(all([
-            [set(np.unique(m['activity'])) == set([m['activity'].iloc[0]]) for m in meta]
-        ]))
+        self.assertTrue(all([set(d.columns) == set(['x-acceleration', 'y-acceleration', 'z-acceleration']) for d in data]))
 
     def test_load_raw_fn(self):
         raw = load_raw(self.path)
@@ -103,6 +104,14 @@ class WISDMTest(unittest.TestCase):
         )))
         self.assertTrue(all([m.dtypes[-1] == np.dtype(np.uint64) for m in meta]))
 
+        ## data check
+        self.assertTrue(all([
+            [set(np.unique(m['user'])) == set([m['user'].iloc[0]]) for m in meta]
+        ]))
+        self.assertTrue(all([
+            [set(np.unique(m['activity'])) == set([m['activity'].iloc[0]]) for m in meta]
+        ]))
+
         # data
         ## type check
         self.assertIsInstance(data, list)
@@ -111,14 +120,7 @@ class WISDMTest(unittest.TestCase):
         ## shape and column check
         self.assertTrue(all([len(d.shape) == 2 for d in data]))
         self.assertTrue(all([d.shape[1] == 3 for d in data]))
-
-        ## data check
-        self.assertTrue(all([
-            [set(np.unique(m['user'])) == set([m['user'].iloc[0]]) for m in meta]
-        ]))
-        self.assertTrue(all([
-            [set(np.unique(m['activity'])) == set([m['activity'].iloc[0]]) for m in meta]
-        ]))
+        self.assertTrue(all([set(d.columns) == set(['x-acceleration', 'y-acceleration', 'z-acceleration']) for d in data]))
 
     def test_wisdm_load_method_framing(self):
         for stride, ws in itertools.product([64, 128, 256, 512], [64, 128, 256, 512]):

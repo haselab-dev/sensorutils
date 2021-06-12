@@ -10,7 +10,6 @@ from pathlib import Path
 sys.path.append('../src/')
 from sensorutils.datasets.pamap2 import PAMAP2, load, load_raw, reformat
 
-import pickle
 
 class PAMAP2Test(unittest.TestCase):
     path = None
@@ -30,14 +29,7 @@ class PAMAP2Test(unittest.TestCase):
         pass
 
     def test_load_fn(self):
-        cache_path = Path('cache_pamap2_load_fn.pkl')
-        if cache_path.exists():
-            with cache_path.open('rb') as fp:
-                data, meta = pickle.load(fp)
-        else:
-            with cache_path.open('wb') as fp:
-                data, meta = load(self.path)
-                pickle.dump((data, meta), fp)
+        data, meta = load(self.path)
 
         # compare between data and meta
         self.assertEqual(len(data), len(meta))
@@ -84,14 +76,7 @@ class PAMAP2Test(unittest.TestCase):
         ]))
 
     def test_load_raw_fn(self):
-        cache_path = Path('cache_pamap2_load_raw_fn.pkl')
-        if cache_path.exists():
-            with cache_path.open('rb') as fp:
-                raw = pickle.load(fp)
-        else:
-            with cache_path.open('wb') as fp:
-                raw = load_raw(self.path)
-                pickle.dump(raw, fp)
+        raw = load_raw(self.path)
 
         # raw
         ## type check
@@ -142,17 +127,8 @@ class PAMAP2Test(unittest.TestCase):
         )
 
     def test_reformat_fn(self):
-        cache_path = Path('cache_pamap2_load_raw_fn.pkl')
-        if cache_path.exists():
-            with cache_path.open('rb') as fp:
-                raw = pickle.load(fp)
-                data, meta = reformat(raw)
-        else:
-            with cache_path.open('wb') as fp:
-                raw = load_raw(self.path)
-                pickle.dump(raw, fp)
-                data, meta = reformat(raw)
-
+        raw = load_raw(self.path)
+        data, meta = reformat(raw)
 
         # compare between data and meta
         self.assertEqual(len(data), len(meta))

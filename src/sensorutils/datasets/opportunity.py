@@ -474,7 +474,7 @@ class Opportunity(BaseDataset):
     not_supported_labels: サポートしていないラベルの一覧。
     """
 
-    not_supported_labels = [
+    NOT_SUPPORTED_LABELS = [
         'Accelerometer_CHEESE_accX',
         'Accelerometer_SPOON_accX',
         'Accelerometer_KNIFE1_accX',
@@ -489,8 +489,8 @@ class Opportunity(BaseDataset):
         'Accelerometer_MILK_accX',
     ]
 
-    x_labels = tuple(set(Column) - set(['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']))
-    supported_y_labels = ('Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms')
+    X_LABELS = tuple(set(Column) - set(['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']))
+    SUPPORTED_Y_LABELS = ('Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms')
 
     def __init__(self, path:Path):
         super().__init__(path)
@@ -537,20 +537,20 @@ class Opportunity(BaseDataset):
         """
 
         if x_labels is None:
-            x_labels = list(set(self.x_labels) - set(self.not_supported_labels))
+            x_labels = list(set(Opportunity.X_LABELS) - set(Opportunity.NOT_SUPPORTED_LABELS))
         if y_labels is None:
-            y_labels = list(self.supported_y_labels)
+            y_labels = list(Opportunity.SUPPORTED_Y_LABELS)
 
-        if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
+        if not set(Opportunity.NOT_SUPPORTED_LABELS).isdisjoint(set(x_labels+y_labels)):
             raise ValueError('x_labels or y_labels include non supported labels')
 
-        if not(set(x_labels) <= set(self.x_labels)):
+        if not(set(x_labels) <= set(Opportunity.X_LABELS)):
             raise ValueError('unsupported x labels is included: {}'.format(
-                tuple(set(x_labels) - set(self.x_labels).intersection(set(x_labels)))
+                tuple(set(x_labels) - set(Opportunity.X_LABELS).intersection(set(x_labels)))
             ))
-        if not(set(y_labels) <= set(self.supported_y_labels)):
+        if not(set(y_labels) <= set(Opportunity.SUPPORTED_Y_LABELS)):
             raise ValueError('unsupported y labels is included: {}'.format(
-                tuple(set(y_labels) - set(self.supported_y_labels).intersection(set(y_labels)))
+                tuple(set(y_labels) - set(Opportunity.SUPPORTED_Y_LABELS).intersection(set(y_labels)))
             ))
 
         segments = self._load()
