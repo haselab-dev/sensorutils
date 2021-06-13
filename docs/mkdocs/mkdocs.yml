@@ -17,6 +17,7 @@
 
 
 site_name: sensorutils v0.12.0
+# site_url: https://haselab-dev.github.io/sensorutils/mkdocs/site/
 site_author: hogedamari
 site_description: Documentation for sensorutils
 copyright: HaseLab@University of Fukui
@@ -28,6 +29,7 @@ nav:
     - Installation: install.md
     - Quickstart: quickstart.md
     - References: refs.md
+    - DEBUG PAGE: debug.md
 
 plugins:
     - search
@@ -64,10 +66,15 @@ theme:
     #     tabs: true
 
 extra_javascript:
-    - http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+    - javascripts/config.js
+    - https://polyfill.io/v3/polyfill.min.js?features=es6
+    - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 markdown_extensions:
-    - mdx_math
+    # - mdx_math
+    - pymdownx.arithmatex:
+        generic: true
+
     - pymdownx.highlight:
         linenums: true
     - pymdownx.superfences
