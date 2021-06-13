@@ -221,17 +221,20 @@ class PAMAP2(BaseDataset):
         # x_labelsでサポートされているラベルはすべてfloat64で対応
         # y_labelsでサポートされているラベルはすべてint8で対応可能
         x_frames = np.float64(frames[:, :, :len(x_labels)]).transpose(0, 2, 1)
-        y_frames = np.int8(frames[:, 0, len(x_labels):-2])
+        y_frames = np.int8(frames[:, 0, len(x_labels):])
 
         # remove data which activity label is 0
-        flgs = frames[:, 0, -2] != 0
+        flgs = y_frames[:, -2] != 0
         x_frames = x_frames[flgs]
         y_frames = y_frames[flgs]
 
         # subject filtering
         if persons is not None:
-            person_labels = frames[..., 0, -1]
+            person_labels = y_frames[:, -1]
             x_frames, y_frames = self._filter_by_person(x_frames, y_frames, person_labels, persons)
+        
+        # remove tail columns(activity_id, person_id)
+        y_frames = y_frames[:, :-2]
 
         return x_frames, y_frames
 
