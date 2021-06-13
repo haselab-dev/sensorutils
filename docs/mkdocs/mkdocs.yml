@@ -1,3 +1,21 @@
+# Configure of MkDocs
+#
+# Requirements
+# - mkdocs
+# - mkdocs-material
+# - python-markdown-math
+# - mkdocstrings
+# - pytkdocs[numpy-style]
+#
+#     mkdocstringsの依存パッケージだがmkdocstringのインストール時には
+#     pytkdocsの追加機能numpy-styleがインストールされないため，
+#     追加機能を含むpytkdocsを改めてインストールする．
+#
+#     c.f.
+#
+#     https://github.com/mkdocstrings/pytkdocs/issues/104
+
+
 site_name: sensorutils v0.12.0
 site_author: hogedamari
 site_description: Documentation for sensorutils
@@ -11,11 +29,23 @@ nav:
     - Quickstart: quickstart.md
     - References: refs.md
 
-# plugins:
-#     - search
-#         lang: 
-#             - en
-#             - ja
+plugins:
+    - search
+    - mkdocstrings:
+        default_handler: python
+        handlers:
+            python:
+                setup_commands:
+                    - import sys
+                    - sys.path.append('../../src/')
+                selection:
+                    docstring_style: numpy
+                rendering:
+                    show_source: false
+                    show_root_heading: true
+                    show_root_full_path: false
+                    show_category_heading: false
+                    heading_level: 2
 
 # readthedocs
 # theme:

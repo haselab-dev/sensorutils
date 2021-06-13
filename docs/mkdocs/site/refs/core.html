@@ -40,6 +40,8 @@
     
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
     
       
     
@@ -270,6 +272,77 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames" class="md-nav__link">
+    to_frames()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames_using_reshape" class="md-nav__link">
+    to_frames_using_reshape()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames_using_index" class="md-nav__link">
+    to_frames_using_index()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames_using_nptricks" class="md-nav__link">
+    to_frames_using_nptricks()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.split_using_sliding_window" class="md-nav__link">
+    split_using_sliding_window()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.split_using_target" class="md-nav__link">
+    split_using_target()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.interpolate" class="md-nav__link">
+    interpolate()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.pickle_dump" class="md-nav__link">
+    pickle_dump()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.pickle_load" class="md-nav__link">
+    pickle_load()
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -287,6 +360,600 @@
                 
                 <h1 id="sensorutilscore">sensorutils.core</h1>
 <p>Under construction...</p>
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">stride_mode</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int</code></td>
+        <td><p>stride is int more than 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride_mode</code></td>
+        <td><code>str</code></td>
+        <td><p>'index' or 'nptrick'. it is used <code>to_frames_*</code> method when window_size != stride.</p></td>
+        <td><code>&#39;index&#39;</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // stride + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames_using_reshape" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames_using_reshape</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
+<p>分割に <code>reshape</code> を使用。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size. stride = window_size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // window_size + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames_using_index" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames_using_index</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
+<p>分割にインデックスを使用。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int</code></td>
+        <td><p>stride is int more than 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // stride + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames_using_nptricks" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames_using_nptricks</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
+<p>分割に <code>np.lib.stride_tricks.as_strided</code> 関数を使用。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int</code></td>
+        <td><p>stride is int more than 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // stride + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.split_using_sliding_window" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">split_using_sliding_window</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>segment をフレーム分けする。</p>
+<p>各シェープは以下のようになる。</p>
+<p>segment: (segment_size, ch)</p>
+<p>frames: (num_frames, window_size, ch)</p>
+<p>ch はいくらでも対応しているため、ラベルを ch に追加しておけばラベルもフレーム分けできる。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>segments</code></td>
+        <td><code>np.ndarray</code></td>
+        <td><p>分割対象のデータ。
+len(segment.shape) == 2 であること。</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int, default=512</code></td>
+        <td><p>フレーム分けするサンプルサイズ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int, default=None</code></td>
+        <td><p>None は window_size となる。</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>ftrim</code></td>
+        <td><code>int, default=5</code></td>
+        <td><p>最初の {ftrim} サンプルをとばす</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>btrim</code></td>
+        <td><code>int, default=5</code></td>
+        <td><p>最後の {btrim} サンプルをとばす</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>return_error_value</code></td>
+        <td><code>None</code></td>
+        <td><p>エラーの時の返り値</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>フレーム分けした結果。失敗したら None を返す</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.split_using_target" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">split_using_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>target のデータを元に src の分割を行う。</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">tgt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+<span class="k">assert</span> <span class="n">split_from_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])],</span> <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">])],</span> <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])]}</span>
+</code></pre></div>
+</td></tr></table>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>分割するデータ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>target</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>ラベルデータ（一次元配列）</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Dict[int, List[numpy.ndarray]]</code></td>
+      <td><p>key はラベル、value はデータのリスト。</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.interpolate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">interpolate</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>interpolation function.</p>
+<p>(use scipy.interpolate.interp1d)</p>
+<p>example: (linear interpolation)
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[0, 2, 4] - x2 -&gt; [0, 1, 2, 3, 4]
+[0, 3, 6] - x3 -&gt; [0, 1, 2, 3, 4, 5, 6]
+</code></pre></div>
+</td></tr></table></p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>interpolation source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>rate</code></td>
+        <td><code>int</code></td>
+        <td><p>rate.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>kind</code></td>
+        <td><code>str</code></td>
+        <td><p>Specifies the kind of interpolation as a string (‘linear’, ‘nearest’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, ‘next’, where ‘zero’, ‘slinear’, ‘quadratic’ and ‘cubic’ refer to a spline interpolation of zeroth, first, second or third order; ‘previous’ and ‘next’ simply return the previous or next value of the point) or as an integer specifying the order of the spline interpolator to use. Default is ‘linear’.</p></td>
+        <td><code>&#39;linear&#39;</code></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td><code>int</code></td>
+        <td><p>Specifies the axis of y along which to interpolate. Interpolation defaults to the last axis of y.</p></td>
+        <td><code>-1</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>shape[axis] - 1 == rate * ft.shape[axis]</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.pickle_dump" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pickle_dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>object dump using pickle.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>obj</code></td>
+        <td><code>Any</code></td>
+        <td><p>any object.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>path</code></td>
+        <td><code>Union[str, pathlib.Path]</code></td>
+        <td><p>save path.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.pickle_load" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pickle_load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>object load using pickle.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>path</code></td>
+        <td><code>Path</code></td>
+        <td><p>a saved object pickle path.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
                 
               
               

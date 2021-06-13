@@ -40,6 +40,8 @@
     
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
     
       
     
@@ -270,6 +272,28 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.mae" class="md-nav__link">
+    mae()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.mape" class="md-nav__link">
+    mape()
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -286,11 +310,131 @@
                 
                 
                 <h1 id="sensorutilsmetrics">sensorutils.metrics</h1>
+<p>Under construction...</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>可能ならsklearn.metricsを使用したほうが良い</p>
 </div>
-<p>Under construction...</p>
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.mae" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">mae</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>to calc Mean Absolute Error.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{1}{N}\sum_{i=0}^{N} |\hat{y}_i - y_i|
+</code></pre></div>
+</td></tr></table>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>true data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>predicted data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.mape" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">mape</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>to calc Mean Absolute Persentage Error.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{100}{N}\sum_{i=0}^{N} \left| rac{\hat{y}_i - y_i}{y_i} 
+ight|
+</code></pre></div>
+</td></tr></table>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>true data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>predicted data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<!-- ---
+::: sensorutils.metrics.mse
+
+---
+::: sensorutils.metrics.rmse
+
+---
+::: sensorutils.metrics.rmspe
+
+---
+::: sensorutils.metrics.rmsle
+
+---
+::: sensorutils.metrics.r2
+
+---
+::: sensorutils.metrics.snr
+
+---
+::: sensorutils.metrics.lsd -->
                 
               
               
