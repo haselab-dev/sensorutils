@@ -205,15 +205,15 @@ def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame
     Parameters
     ----------
     path: Path
-        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
     
     meta: pd.DataFrame
-        meta data loaded by 'load_meta'
+        meta data loaded by 'load_meta'.
     
     Returns
     -------
     data, meta: List[pd.DataFrame], pd.DataFrame
-        raw data of HASC dataset
+        Sensor data segmented by activity and subject.
     
     See Alos
     --------
@@ -233,12 +233,12 @@ def load_meta(path:Path) -> pd.DataFrame:
     Parameters
     ----------
     path: Path
-        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
 
     Returns
     -------
     metas: pd.DataFrame:
-        meta data of HASC dataset
+        meta data of HASC dataset.
     """
 
     def replace_meta_str(s:str) -> str:
@@ -280,15 +280,17 @@ def load_raw(path:Path, meta:Optional[pd.DataFrame]=None) -> Tuple[List[pd.DataF
     Parameters
     ----------
     path: Path
-        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
     
     meta: pd.DataFrame
-        meta data loaded by 'load_meta'
+        meta data loaded by 'load_meta'.
     
     Returns
     -------
     data, meta: List[pd.DataFrame], pd.DataFrame
-        raw data of HASC dataset
+        raw data of HASC dataset.
+
+        Each item in 'data' is a part of dataset, which is splited by subject.
     
     See Alos
     --------
@@ -330,8 +332,8 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     
     Returns
     -------
-    data, meta: List[pd.DataFrame], List[pd.DataFrame]
-        Sensor data segmented by activity, subject, and device
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject.
 
     See Alos
     --------

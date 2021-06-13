@@ -1,4 +1,5 @@
 """UCI Smartphone Dataset
+
 URL of dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip
 """
 

@@ -1,4 +1,5 @@
 """PAMAP2 Dataset
+
 URL of dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/00231/PAMAP2_Dataset.zip
 """
 
@@ -241,12 +242,12 @@ def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     Parameters
     ----------
     path: Path
-        Directory path of PAMAP2 dataset
+        Directory path of PAMAP2 dataset.
 
     Returns
     -------
     data, meta: List[pd.DataFrame], List[pd.DataFrame]
-        Sensor data segmented by activity and subject
+        Sensor data segmented by activity and subject.
 
     See Alos
     --------
@@ -266,12 +267,14 @@ def load_raw(path:Path) -> List[pd.DataFrame]:
     Parameters
     ----------
     path: Path
-        Directory path of PAMAP2 dataset("PAMAP2_Dataset")
+        Directory path of PAMAP2 dataset("PAMAP2_Dataset").
 
     Returns
     -------
     chunks_per_persons: List[pd.DataFrame]
-        Sensor data segmented by subject
+        Raw data of PAMAP2 dataset.
+
+        Each item in 'chunks_per_persons' is a part of dataset, which is splited by subject.
     """
 
     def _load_raw_data(path, person_id):

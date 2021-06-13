@@ -1,4 +1,5 @@
 """HHAR Dataset
+
 URL of dataset: http://archive.ics.uci.edu/ml/machine-learning-databases/00344/Activity%20recognition%20exp.zip
 """
 
@@ -175,18 +176,18 @@ def load(path:Path, sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.D
     Parameters
     ----------
     path: Path
-        Directory path of HHAR dataset
+        Directory path of HHAR dataset.
     
     sensor_type: str
-        "accelerometer" or "gyroscope"
+        "accelerometer" or "gyroscope".
         
     device_type: str
-        "Watch" or "Phone"
+        "Watch" or "Phone".
 
     Returns
     -------
     data, meta: List[pd.DataFrame], List[pd.DataFrame]
-        Sensor data segmented by activity, subject, and device
+        Sensor data segmented by activity, subject, and device.
 
     See Alos
     --------
@@ -222,13 +223,13 @@ def load_raw(path:Path, sensor_type:str, device_type:str='Watch') -> pd.DataFram
     Parameters
     ----------
     path: Path
-        Directory path of HHAR dataset
+        Directory path of HHAR dataset.
     
     sensor_type: str
-        "accelerometer" or "gyroscope"
+        "accelerometer" or "gyroscope".
         
     device_type: str
-        "Watch" or "Phone"
+        "Watch" or "Phone".
 
     Returns
     -------
@@ -329,12 +330,12 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     Parameters
     ----------
     raw:
-        data loaded by 'load_raw'
+        data loaded by 'load_raw'.
     
     Returns
     -------
     data, meta: List[pd.DataFrame], List[pd.DataFrame]
-        Sensor data segmented by activity, subject, and device
+        Sensor data segmented by activity, subject, and device.
 
     See Alos
     --------

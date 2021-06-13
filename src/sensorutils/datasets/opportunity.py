@@ -1,4 +1,5 @@
 """Opportunity(UCI) Dataset
+
 URL of dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/00226/OpportunityUCIDataset.zip
 """
 
@@ -591,7 +592,7 @@ def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     Returns
     -------
     data, meta: List[pd.DataFrame], List[pd.DataFrame]
-        Sensor data segmented by Locomotion and subject.
+        Sensor data segmented by activity(Locomotion) and subject.
 
     See Alos
     --------
@@ -616,7 +617,9 @@ def load_raw(path:Path) -> List[pd.DataFrame]:
     Returns
     -------
     chunks: List[pd.DataFrame]
-        Sensor data segmented by subject.
+        Raw data of Opportunity dataset.
+
+        Each item in 'chunks' is a part of dataset, which is splited by subject.
     """
 
     path = path / 'dataset'
@@ -658,7 +661,7 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     Returns
     -------
     data, meta: List[pd.DataFrame], List[pd.DataFrame]
-        Sensor data segmented by Locomotion and subject.
+        Sensor data segmented by activity(Locomotion) and subject.
 
     See Alos
     --------
