@@ -253,6 +253,21 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug.html" class="md-nav__link">
+        DEBUG PAGE
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -338,7 +353,7 @@
     <div class="doc doc-contents first">
 
       <p>ラグが k の自己相関を求める。</p>
-<p>時系列データ <code>$S = \{s_1, s_2, \dots, s_n\}$' に対して、ラグ</code>$k$' として
+<p>時系列データ <code>$S = \{s_1, s_2, \dots, s_n\}$' に対して、ラグ</code><span class="arithmatex">\(k\)</span>' として
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{\mathrm{Cov}[s_i, s_{i-k}]}{\sqrt{\mathrm{Var}[s_i]\mathrm{Var}[s_{i-k}]}}
 </code></pre></div>
 </td></tr></table></p>
@@ -388,7 +403,7 @@
     <div class="doc doc-contents first">
 
       <p>相関比の計算を行う。</p>
-<p>カテゴリ <code>$c$' におけるサンプル数</code>$N_c$'、平均値 <code>$\mu_c$'、i 番目の要素</code>$x_{ci}$'、また全てのカテゴリを含めた平均値 `$\mu$' として,
+<p>カテゴリ <code>$c$' におけるサンプル数</code><span class="arithmatex">\(N_c\)</span>'、平均値 <code>$\mu_c$'、i 番目の要素</code><span class="arithmatex">\(x_{ci}\)</span>'、また全てのカテゴリを含めた平均値 `<span class="arithmatex">\(\mu\)</span>' として,
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
 </code></pre></div>
 </td></tr></table>
@@ -522,7 +537,11 @@ val = List[src,...]</p></td>
     
       <script src="../assets/javascripts/bundle.76f349be.min.js"></script>
       
-        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
