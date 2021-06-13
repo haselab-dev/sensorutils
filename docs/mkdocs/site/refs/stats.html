@@ -40,6 +40,8 @@
     
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
     
       
     
@@ -270,6 +272,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.stats.autocorrelation" class="md-nav__link">
+    autocorrelation()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.stats.correlation_rate" class="md-nav__link">
+    correlation_rate()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.stats.cv" class="md-nav__link">
+    cv()
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -286,11 +317,167 @@
                 
                 
                 <h1 id="sensorutilsstats">sensorutils.stats</h1>
+<p>Under construction...</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>可能ならpandasのgoupbyやrolling関数を用いたほうが良い</p>
 </div>
-<p>Under construction...</p>
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.stats.autocorrelation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">autocorrelation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>ラグが k の自己相関を求める。</p>
+<p>時系列データ <code>$S = \{s_1, s_2, \dots, s_n\}$' に対して、ラグ</code>$k$' として
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{\mathrm{Cov}[s_i, s_{i-k}]}{\sqrt{\mathrm{Var}[s_i]\mathrm{Var}[s_{i-k}]}}
+</code></pre></div>
+</td></tr></table></p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>data</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>一次元データ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>k</code></td>
+        <td><code>int</code></td>
+        <td><p>ラグ</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.stats.correlation_rate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">correlation_rate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>相関比の計算を行う。</p>
+<p>カテゴリ <code>$c$' におけるサンプル数</code>$N_c$'、平均値 <code>$\mu_c$'、i 番目の要素</code>$x_{ci}$'、また全てのカテゴリを含めた平均値 `$\mu$' として,
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
+</code></pre></div>
+</td></tr></table>
+を計算する。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>data</code></td>
+        <td><code>dict</code></td>
+        <td><p>key = category
+val = List[src,...]</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.stats.cv" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">cv</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>変動係数の計算。</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>frame</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>計算対象のデータ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>計算対象とする軸。</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>float</code></td>
+      <td><p>変動係数</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
                 
               
               
