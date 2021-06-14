@@ -54,24 +54,38 @@ Sampling_Rate = 50 # Hz
 
 
 class UniMib(BaseDataset):
+    """
+    UniMib SHARデータセットに記録されているセンサデータとメタデータを読み込む．
+
+    Parameters
+    ----------
+    path: Path
+        UniMib SHARデータセットのパス(path/to/dataset/data)．
+    """
+
     def __init__(self, path:Path):
         super().__init__(path)
     
-    def load(self, data_type:str, window_size:Optional[int]=None, stride:Optional[int]=None, ftrim_sec:int=3, btrim_sec:int=3, subjects:Optional[list]=None):
-        """UniMibの読み込みとsliding-window
+    def load(self, data_type:str, window_size:Optional[int]=None, stride:Optional[int]=None, ftrim_sec:int=3, btrim_sec:int=3, subjects:Optional[list]=None) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        UniMib SHARデータセットを読み込み，sliding-window処理を行ったデータを返す．
 
         Parameters
         ----------
         data_type: str
-            ロードするデータの種類(adl, fall, full, raw)を選択．
-            full = adl + fall．
-            rawは公式が提供している前処理済みデータではない真のrawデータを扱う．
+            ロードするデータの種類(adl, fall, full, raw)を選択する(full = adl + fall)．
+            rawは前処理済みデータではない生のデータを扱う．
 
         window_size: int
             フレーム分けするサンプルサイズ
+            data_type != 'raw'の場合は強制的に151となるが，
+            data_type == 'raw'の場合は必ず指定する必要がある．
 
         stride: int
             ウィンドウの移動幅
+
+            data_type != 'raw'の場合は指定する必要はないが，
+            data_type == 'raw'の場合は必ず指定する必要がある．
 
         ftrim_sec: int
             セグメント先頭のトリミングサイズ(単位は秒)
@@ -79,14 +93,41 @@ class UniMib(BaseDataset):
         btrim_sec: int
             セグメント末尾のトリミングサイズ(単位は秒)
         
-        subjects: list
-            ロードする被験者を指定
+        subjects: Optional[list]
+            ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
+            被験者は計9名おり，それぞれに整数のIDが割り当てられている．
+            
+            被験者ID: [1, 2, ..., 30]
 
         Returns
         -------
-        (x_frames, y_frames): tuple
+        (x_frames, y_frames): Tuple[np.ndarray, np.ndarray]
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsは加速度センサの軸を表しており，先頭からx, y, zである．
+            また，このローダはdata_typeによってwindow_sizeの挙動が変わり，
+            data_type != 'raw'の場合はwindow_sizeは強制的に151となる．
+
+            y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
+            Labelsは先頭からactivity，subjectを表している．
+
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
+
+        Examples
+        --------
+        >>> unimib_path = Path('path/to/dataset')
+        >>> unimib = UniMib(unimib_path)
+        >>>
+        >>> subjects = [1, 2, 3]
+        >>>
+        >>> x, y = unimib.load(data_type='full', subjects=subjects)
+        >>> print('full - x: {}, y: {}'.format(x.shape, y.shape))
+        >>> # > full - x: (?, 3, 151), y: (?, 2)
+        >>>
+        >>> x, y = unimib.load(data_type='raw', window_size=64, stride=64, ftrim_sec=0, btrim_sec=0, subjects=subjects)
+        >>> print('raw - x: {}, y: {}'.format(x.shape, y.shape))
+        >>> # > raw - x: (?, 3, 64), y: (?, 2)
         """
 
         if data_type != 'raw':
@@ -155,7 +196,7 @@ def load(path:Path, data_type:str='full') -> Tuple[List[pd.DataFrame], pd.DataFr
     return data, meta
 
 
-def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray, pd.DataFrame], Tuple[List[pd.DataFrame], pd.DataFrame]]:
+def load_raw(path:Path, data_type:str='full') -> Union[Tuple[np.ndarray, pd.DataFrame], Tuple[List[pd.DataFrame], pd.DataFrame]]:
     """Function for loading raw data of UniMib SHAR dataset
 
     Parameters
@@ -226,16 +267,16 @@ def load_raw(dataset_path:Path, data_type:str='full') -> Union[Tuple[np.ndarray,
     #     # not reach
 
     if data_type != 'raw':
-        data = loadmat(str(dataset_path / f'{prefix}_data.mat'))[f'{prefix}_data'].reshape([-1, 3, 151])    # (?, 3, 151)
-        labels = loadmat(str(dataset_path / f'{prefix}_labels.mat'))[f'{prefix}_labels']    # (?, 3)
+        data = loadmat(str(path / f'{prefix}_data.mat'))[f'{prefix}_data'].reshape([-1, 3, 151])    # (?, 3, 151)
+        labels = loadmat(str(path / f'{prefix}_labels.mat'))[f'{prefix}_labels']    # (?, 3)
         # activity_labels, subject_labels, trial_labels = labels[:, 0], labels[:, 1], labels[:, 2]
-        # descriptions, class_names = loadmat(str(dataset_path / f'{prefix}_names.mat'))[f'{prefix}_names']
+        # descriptions, class_names = loadmat(str(path / f'{prefix}_names.mat'))[f'{prefix}_names']
 
         meta = labels
         meta = pd.DataFrame(meta, columns=['activity', 'subject', 'trial_id'])
         meta = meta.astype({'activity': np.int8, 'subject': np.int8, 'trial_id': np.int8})
     else:
-        full_data = loadmat(str(dataset_path / f'{prefix}_data.mat'))[f'{prefix}_data']
+        full_data = loadmat(str(path / f'{prefix}_data.mat'))[f'{prefix}_data']
         sensor_data, activity_labels, subject_labels, trial_labels = [], [], [], []
         gender_labels, age_labels, height_labels, weight_labels = [], [], [], []
         for subject_id, d0 in enumerate(full_data):

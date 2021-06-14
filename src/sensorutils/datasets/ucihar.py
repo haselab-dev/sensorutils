@@ -20,32 +20,50 @@ ACTIVITIES = ['WALKING', 'WALKING_UPSTAIRS', 'WALKING_DOWNSTAIRS', 'SITTING', 'S
 
 
 class UCIHAR(BaseDataset):
+    """
+    UCI Smartphoneデータセットに記録されているセンサデータとメタデータを読み込む．
+
+    Parameters
+    ----------
+    path: Path
+        UCI Smartphoneデータセットのパス．
+        'train'と'test'ディレクトリが置かれているディレクトリを指定する．
+    """
+
     def __init__(self, path:Union[str, Path]):
         if type(path) == str: path = Path(path)
         super().__init__(path)
         # self.load_meta()
     
-    def load(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> tuple:
-        """Sliding-Windowをロード
+    def load(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        UCI Smartphoneデータセットを読み込み，sliding-window処理を行ったデータを返す．
 
         Parameters
         ----------
         train: bool
-            select train data or test data. if True then return train data.
+            訓練データとテストデータのどちらを読み込むか選択する．
+            (Caution) このパラメータは今後廃止する予定．
 
         person_list: Option[list]
-            specify persons.
+            ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
+            被験者は計9名おり，それぞれに整数のIDが割り当てられている．
 
         include_gravity: bool
-            select whether or not include gravity information.
+            姿勢情報(第0周波数成分)を含むかどうかのフラグ．
        
         Returns
         -------
-        sensor_data:
-            sliding-windows
-        targets:
-            activity and subject labels
-            subjectラベルはデータセット内の値をそのまま返すため，分類等で用いる際はラベルの再割り当てが必要となることに注意
+        sdata, targets: Tuple[np.ndarray, np.ndarray]
+            sliding-windowで切り出した入力とターゲットのフレームリスト
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsは加速度センサの軸を表しており，先頭からx, y, zである．
+
+            y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
+            Labelsは先頭からactivity，subject，trainフラグを表している．
+
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
         
         See Also
         --------
@@ -53,6 +71,17 @@ class UCIHAR(BaseDataset):
         Range of subject label :
             if train is True: [1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30] (21 subjects)
             else : [2, 4, 9, 10, 12, 13, 18, 20, 24] (9 subjects)
+        
+        Examples
+        --------
+        >>> ucihar_path = Path('path/to/dataset')
+        >>> ucihar = UCIHAR(ucihar_path)
+        >>>
+        >>> person_list = [1, 2, 5, 7, 9]
+        >>> x, y = ucihar.load(train=True, person_list=person_list, include_gravity=True)
+        >>> print(f'x: {x.shape}, y: {y.shape}')
+        >>>
+        >>> # > x: (?, 3, 128), y: (?, 3)
         """
 
         if include_gravity:

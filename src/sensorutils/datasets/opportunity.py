@@ -465,13 +465,25 @@ Accelerometer_MILK_accX 3
 """
 
 class Opportunity(BaseDataset):
-    """Opportunity
+    """
+    Opportunityデータセットに記録されているセンサデータとメタデータを読み込む．
 
-    Opportunity データセットの行動分類を行うためのローダクラス。
+    Parameters
+    ----------
+    path: Path
+        Opportunity(UCI)データセットのパス．
+        "dataset"ディレクトリの親ディレクトリを指定する．
 
     Attributes
     ----------
-    not_supported_labels: サポートしていないラベルの一覧。
+    NOT_SUPPORTED_LABELS: List[str]
+        サポートしていないラベルのリスト
+
+    X_LABELS: List[str]
+        ターゲット以外のすべてのラベルのリスト
+
+    SUPPORTED_Y_LABELS: List[str]
+        ターゲットラベルのリスト
     """
 
     NOT_SUPPORTED_LABELS = [
@@ -505,8 +517,10 @@ class Opportunity(BaseDataset):
             segments = self.data_cache
         return segments
     
-    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=2, btrim_sec:int=2):
-        """Opportunityの読み込み(ADL)とsliding-window
+    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=2, btrim_sec:int=2) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Opportunity(UCI)データセットを読み込み，sliding-window処理を行ったデータを返す．
+        ここではADLのみをサポートしている．
 
         Parameters
         ----------
@@ -516,17 +530,14 @@ class Opportunity(BaseDataset):
         stride: int
             ウィンドウの移動幅
 
-        x_labels: list
+        x_labels: Optional[list]
             入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠)
-
             ここで指定したラベルのデータが入力として取り出される．
 
-            一部サポートしていないラベルがあるの注意
+            一部サポートしていないラベルがあることに注意．
 
-        y_labels: list
-            ターゲットのラベルリスト
-            
-            使用方法はx_labelsと同様
+        y_labels: Optional[list]
+            ターゲットのラベルリスト(使用方法はx_labelsと同様)．
 
         ftrim_sec: int
             セグメント先頭のトリミングサイズ(単位は秒)
@@ -536,9 +547,36 @@ class Opportunity(BaseDataset):
 
         Returns
         -------
-        (x_frames, y_frames): tuple
+        (x_frames, y_frames): Tuple[np.ndarray, np.ndarray]
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，取り扱いには十分注意すること
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsはx_labelsで指定したものが格納される．
+
+            y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
+            Labelsはy_labelsで指定したものが格納される．
+
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
+        
+        Examples
+        --------
+        >>> opportunity_path = Path('path/to/dataset')
+        >>> opportunity = Opportunity(opportunity_path)
+        >>>
+        >>> x_labels = [
+        >>>     'Accelerometer_RKN^_accX',
+        >>>     'Accelerometer_RKN^_accY',
+        >>>     'Accelerometer_RKN^_accZ',
+        >>>     'Accelerometer_HIP_accX',
+        >>>     'Accelerometer_HIP_accY',
+        >>>     'Accelerometer_HIP_accZ',
+        >>> ]
+        >>> y_labels = ['Locomotion', 'subject']    # 基本行動と被験者をターゲットラベルとして取り出す
+        >>>
+        >>> x, y = opportunity.load(window_size=256, stride=256, x_labels=xlabels, y_labels=ylabels, ftrim_sec=2, btrim_sec=2)
+        >>> print(f'x: {x.shape}, y: {y.shape}')
+        >>>
+        >>> # > x: (?, 6, 256), y: (?, 2)
         """
 
         if x_labels is None:

@@ -1,6 +1,8 @@
 """HHAR Dataset
 
 URL of dataset: http://archive.ics.uci.edu/ml/machine-learning-databases/00344/Activity%20recognition%20exp.zip
+
+Description: https://archive.ics.uci.edu/ml/datasets/Heterogeneity+Activity+Recognition
 """
 
 import numpy as np
@@ -11,7 +13,7 @@ import copy
 
 from pathlib import Path
 from ..core import split_using_sliding_window, split_using_target
-from typing import Union, List, Dict, Tuple
+from typing import Optional, Union, List, Dict, Tuple
 
 from .base import BaseDataset
 
@@ -71,33 +73,29 @@ def __name2id(name:str, name_list:Dict[str, int]) -> int:
 
 
 class HHAR(BaseDataset):
-    """HHAR 
-    
-    HHAR <https://archive.ics.uci.edu/ml/datasets/Heterogeneity+Activity+Recognition> データセットの行動分類を行うためのローダクラス
+    """
+    HHARデータセットに記録されているセンサデータとメタデータを読み込む．
+
+    Parameters
+    ----------
+    path: Union[str,Path]
+        HHARデータセットのパス．
+        Phones_[accelerometer,gyroscope].csv, Watch_[accelerometer,gyroscope].csvが置かれているディレクトリパスを指定する．
     """
 
     def __init__(self, path:Union[str,Path]):
-        """
-        Parameters
-        ----------
-        path : Union[str,Path]
-            Directory Path that include csv file: Phones_[accelerometer,gyroscope].csv, Watch_[accelerometer,gyroscope].csv
-        """
-
         if type(path) is str:
             path = Path(path)
         super().__init__(path)
     
-    def load(self, sensor_types:Union[List[str], str], device_types:Union[List[str], str], window_size:int, stride:int, subjects:Union[list, None]=None):
-        """HHARの読み込みとsliding-window
+    def load(self, sensor_types:Union[List[str], str], device_types:Union[List[str], str], window_size:int, stride:int, subjects:Optional[list]=None) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        HHARデータセットを読み込み，sliding-window処理を行ったデータを返す．
 
         Parameters
         ----------
         sensor_type:
-            センサタイプ．"acceleromter" or "gyroscope" or ["acceleromter", "gyroscope"]
-
-            [Caution!!!]
-            "accelerometer"と"gyroscope"の同時指定は非推奨．
+            センサタイプ．"acceleromter" or "gyroscope"
 
         device_type:
             デバイスタイプ．"Phone" or "Watch"
@@ -109,16 +107,34 @@ class HHAR(BaseDataset):
             ウィンドウの移動幅
 
         subjects:
-            ロードする被験者を指定
+            ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
+            被験者は計9名おり，それぞれに文字列のIDが割り当てられている．
+            
+            被験者ID: ['a','b','c','d','e','f','g','h','i']
 
         Returns
         -------
-        (x_frames, y_frames): tuple
+        (x_frames, y_frames): Tuple[np.ndarray, np.ndarray]
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsは加速度センサの軸を表しており，先頭からx, y, zである．
 
             y_framesのshapeは(*, 4)であり，axis=1ではUser, Model, Device, Activityの順でデータが格納されている．
-        
+
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
+
+        Examples
+        --------
+        >>> hhar_path = Path('path/to/dataset')
+        >>> hhar = HHAR(hhar_path)
+        >>>
+        >>> # 被験者'a'，'b'，'c'，'d'のみを読み込む
+        >>> subjects = ['a','b','c','d']
+        >>> x, y = hhar.load(sensor_types='accelerometer', device_types='Watch', window_size=256, stride=128, subjects=subjects)
+        >>> print(f'x: {x.shape}, y: {y.shape}')
+        >>>
+        >>> # > x: (?, 3, 256), y: (?, 4)
         """
 
         if isinstance(sensor_types, str):

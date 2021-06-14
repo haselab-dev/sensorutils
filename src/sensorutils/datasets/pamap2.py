@@ -107,6 +107,23 @@ Columns = [
 
 
 class PAMAP2(BaseDataset):
+    """
+    PAMAP2データセットに記録されているセンサデータとメタデータを読み込む．
+
+    Parameters
+    ----------
+    path: Path
+        PAMAP2データセットのパス(path/to/dataset/PAMAP2_Dataset").
+
+    Attributes
+    ----------
+    supported_x_labels: List[str]
+        ターゲット以外のすべてのラベルのリスト
+
+    supported_y_labels: List[str]
+        ターゲットラベルのリスト
+    """
+
     supported_x_labels = tuple(set(Columns) - set(['activity_id', 'person_id']))
     supported_y_labels = ('activity_id', 'person_id')
 
@@ -148,8 +165,9 @@ class PAMAP2(BaseDataset):
             segments = self.data_cache
         return segments
     
-    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=10, btrim_sec:int=10, persons:Optional[list]=None, norm:bool=False):
-        """PAMAP2の読み込みとsliding-window
+    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=10, btrim_sec:int=10, persons:Optional[list]=None, norm:bool=False) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        PAMAP2データセットを読み込み，sliding-window処理を行ったデータを返す．
 
         Parameters
         ----------
@@ -159,11 +177,10 @@ class PAMAP2(BaseDataset):
         stride: int
             ウィンドウの移動幅
 
-        x_labels: list
+        x_labels: Optional[list]
             入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠)．ここで指定したラベルのデータが入力として取り出される．
-            一部サポートしていないラベルがあるの注意
 
-        y_labels: list
+        y_labels: Optional[list]
             ターゲットのラベルリスト(仕様はx_labelsと同様)
 
         ftrim_sec: int
@@ -172,11 +189,46 @@ class PAMAP2(BaseDataset):
         btrim_sec: int
             セグメント末尾のトリミングサイズ(単位は秒)
 
+        persons:
+            ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
+            被験者は計9名おり，それぞれに文字列のIDが割り当てられている．
+            
+            被験者ID: ['subject101', 'subject102', 'subject103', 'subject104', 'subject105', 'subject106', 'subject107', 'subject108', 'subject109']
+        
+        norm: bool
+            (beta) センサデータの標準化を行うかどうかのフラグ．
+
+            この機能はあまり確認ができていないので，使用する際は注意を払うこと．
+
         Returns
         -------
-        (x_frames, y_frames): tuple
+        (x_frames, y_frames): Tuple[np.ndarray, np.ndarray]
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsはx_labelsで指定したものが格納される．
+
+            y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
+            Labelsはy_labelsで指定したものが格納される．
+
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
+        
+        See Also
+        --------
+        一度loadメソッドを読みだすと内部にキャッシュを作成するため2回目以降のloadメソッドの読みだしは比較的速くなる．
+
+        Examples
+        --------
+        >>> pamap2_path = Path('path/to/dataset/PAMAP2_Dataset/')
+        >>> pamap2 = PAMAP2(pamap2_path)
+        >>>
+        >>> x_labels = ['IMU_chest_acc1_x', 'IMU_chest_acc1_y', 'IMU_chest_acc1_z']
+        >>> y_labels = ['activity_id']
+        >>> subjects = ['subject101', 'subject102', 'subject103']
+        >>> x, y = pamap2.load(window_size=256, stride=128, x_labels=xlabels, y_labels=y_labels, ftrim_sec=2, btrim_sec=2, persons=subjects)
+        >>> print(f'x: {x.shape}, y: {y.shape}')
+        >>>
+        >>> # > x: (?, 3, 256), y: (?, 1)
         """
 
         if not isinstance(persons, list) and persons is not None:
