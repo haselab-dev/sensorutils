@@ -45,6 +45,11 @@ def autocorrelation(data:np.ndarray, k:int) -> np.ndarray:
         一次元データ
     k: int
         ラグ
+
+    Returns
+    -------
+    : np.ndarray
+        ラグkの自己相関
     """
     x1 = data[k:]
     x2 = data[:k]
@@ -71,6 +76,11 @@ def correlation_rate(data:dict) -> float:
         key = category
 
         val = List[src,...]
+
+    Returns
+    -------
+    : float
+        相関比
     """
     all_mean = np.mean(np.concatenate(list(data.values())))
     means = list()
