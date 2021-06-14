@@ -31,12 +31,13 @@ import numpy as np
 #    denominator = [(data[i] - avg)**2 for i in range(len(data))]
 #    denominator = np.sum(denominator)
 #    return covariance / denominator
-def autocorrelation(data:np.ndarray, k:int):
-    """ラグが k の自己相関を求める。
-    時系列データ `$S = \{s_1, s_2, \dots, s_n\}$' に対して、ラグ `$k$' として
-    ```math
-    \frac{\mathrm{Cov}[s_i, s_{i-k}]}{\sqrt{\mathrm{Var}[s_i]\mathrm{Var}[s_{i-k}]}}
-    ```
+def autocorrelation(data:np.ndarray, k:int) -> np.ndarray:
+    """ラグがkの自己相関を求める．
+    時系列データ$S = \{s_1, s_2, \dots, s_n\}$に対して，ラグ$k$として
+
+    $$
+    \\frac{\mathrm{Cov}[s_i, s_{i-k}]}{\sqrt{\mathrm{Var}[s_i]\mathrm{Var}[s_{i-k}]}}
+    $$
 
     Parameters
     ----------
@@ -55,17 +56,20 @@ def autocorrelation(data:np.ndarray, k:int):
 
 
 def correlation_rate(data:dict) -> float:
-    """相関比の計算を行う。
-    カテゴリ `$c$' におけるサンプル数 `$N_c$'、平均値 `$\mu_c$'、i 番目の要素 `$x_{ci}$'、また全てのカテゴリを含めた平均値 `$\mu$' として,
-    ```math
-    \frac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
-    ```
-    を計算する。
+    """相関比の計算を行う．
+    カテゴリ$c$におけるサンプル数$N_c$，平均値$\mu_c$，i番目の要素$x_{ci}$，また全てのカテゴリを含めた平均値$\mu$として，
+
+    $$
+    \\frac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
+    $$
+
+    を計算する．
 
     Parameters
     ----------
     data: dict
         key = category
+
         val = List[src,...]
     """
     all_mean = np.mean(np.concatenate(list(data.values())))
@@ -84,7 +88,7 @@ def correlation_rate(data:dict) -> float:
 
 
 def cv(frame:np.ndarray, axis:typing.Optional[int]=None) -> float:
-    """変動係数の計算。
+    """変動係数の計算
 
     Parameters
     ----------
@@ -92,7 +96,7 @@ def cv(frame:np.ndarray, axis:typing.Optional[int]=None) -> float:
         計算対象のデータ
 
     axis: Optional[int]
-        計算対象とする軸。
+        計算対象とする軸
 
     Returns
     -------

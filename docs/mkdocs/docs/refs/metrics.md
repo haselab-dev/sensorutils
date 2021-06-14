@@ -1,9 +1,7 @@
 # sensorutils.metrics
 
-Under construction...
-
 !!! Note
-    可能ならsklearn.metricsを使用したほうが良い
+    可能なら`sklearn.metrics`を使用したほうが良い
 
 ---
 ::: sensorutils.metrics.mae
@@ -11,7 +9,7 @@ Under construction...
 ---
 ::: sensorutils.metrics.mape
 
-<!-- ---
+---
 ::: sensorutils.metrics.mse
 
 ---
@@ -30,5 +28,5 @@ Under construction...
 ::: sensorutils.metrics.snr
 
 ---
-::: sensorutils.metrics.lsd -->
+::: sensorutils.metrics.lsd
 

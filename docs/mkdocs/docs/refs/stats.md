@@ -1,7 +1,5 @@
 # sensorutils.stats
 
-Under construction...
-
 !!! Note
     可能ならpandasのgoupbyやrolling関数を用いたほうが良い
 

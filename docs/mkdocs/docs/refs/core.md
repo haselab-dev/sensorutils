@@ -1,7 +1,5 @@
 # sensorutils.core
 
-Under construction...
-
 ---
 ::: sensorutils.core.to_frames
 
