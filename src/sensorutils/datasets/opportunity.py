@@ -1,17 +1,19 @@
-"""
-Opportunity データの読み込みなど
+"""Opportunity(UCI) Dataset
+
+URL of dataset: https://archive.ics.uci.edu/ml/machine-learning-databases/00226/OpportunityUCIDataset.zip
 """
 
 import numpy as np
 import pandas as pd
+import itertools
 from pathlib import Path
+from typing import List, Tuple, Optional
 from ..core import split_using_target, split_using_sliding_window
-#from collections import defaultdict
 
 from .base import BaseDataset
 
 
-__all__ = ['Opportunity', 'load']
+__all__ = ['Opportunity', 'load', 'load_raw']
 
 
 # Meta Info
@@ -130,7 +132,7 @@ ML_Both_Arms = {
     407521: 'Drink from Cup',
     405506: 'Toggle Switch',
 }
-PERSONS = [f'S{i+1}' for i in range(4)]
+PERSONS = [f'S{i}' for i in range(1, 4+1)]
 Sensors = {'Accelerometer', 'InertialMeasurementUnit', 'REED_SWITCH', 'LOCATION'}
 Attributes = {
     'acc',
@@ -441,7 +443,7 @@ Column = [
     'LL_Right_Arm',
     'LL_Right_Arm_Object',
     'ML_Both_Arms',
-    #'User',     # ユーザID(ローダ側で付与)
+    #'subject',     # ユーザID(ローダ側で付与)
 ]
 
 
@@ -463,16 +465,28 @@ Accelerometer_MILK_accX 3
 """
 
 class Opportunity(BaseDataset):
-    """Opportunity
+    """
+    Opportunityデータセットに記録されているセンサデータとメタデータを読み込む．
 
-    Opportunity データセットの行動分類を行うためのローダクラス。
+    Parameters
+    ----------
+    path: Path
+        Opportunity(UCI)データセットのパス．
+        "dataset"ディレクトリの親ディレクトリを指定する．
 
     Attributes
     ----------
-    not_supported_labels: サポートしていないラベルの一覧。
+    NOT_SUPPORTED_LABELS: List[str]
+        サポートしていないラベルのリスト
+
+    X_LABELS: List[str]
+        ターゲット以外のすべてのラベルのリスト
+
+    SUPPORTED_Y_LABELS: List[str]
+        ターゲットラベルのリスト
     """
 
-    not_supported_labels = [
+    NOT_SUPPORTED_LABELS = [
         'Accelerometer_CHEESE_accX',
         'Accelerometer_SPOON_accX',
         'Accelerometer_KNIFE1_accX',
@@ -487,11 +501,26 @@ class Opportunity(BaseDataset):
         'Accelerometer_MILK_accX',
     ]
 
+    X_LABELS = tuple(set(Column) - set(['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']))
+    SUPPORTED_Y_LABELS = ('Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms')
+
     def __init__(self, path:Path):
         super().__init__(path)
+        self.data_cache = None
     
-    def load(self, window_size:int, stride:int, x_labels:list, y_labels:list, ftrim_sec:int, btrim_sec:int):
-        """Opportunityの読み込み(ADL)とsliding-window
+    def _load(self):
+        if self.data_cache is None:
+            data, meta = load(self.path)
+            segments = [seg.join(m) for seg, m in zip(data, meta)]
+            self.data_cache = segments
+        else:
+            segments = self.data_cache
+        return segments
+    
+    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=2, btrim_sec:int=2) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Opportunity(UCI)データセットを読み込み，sliding-window処理を行ったデータを返す．
+        ここではADLのみをサポートしている．
 
         Parameters
         ----------
@@ -501,29 +530,74 @@ class Opportunity(BaseDataset):
         stride: int
             ウィンドウの移動幅
 
-        x_labels: list
-            入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠。)。ここで指定したラベルのデータが入力として取り出される。
-            一部サポートしていないラベルがあるの注意。
+        x_labels: Optional[list]
+            入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠)
+            ここで指定したラベルのデータが入力として取り出される．
 
-        y_labels: list
-            ターゲットのラベルリスト。使用はx_labelsと同様。
+            一部サポートしていないラベルがあることに注意．
+
+        y_labels: Optional[list]
+            ターゲットのラベルリスト(使用方法はx_labelsと同様)．
 
         ftrim_sec: int
-            セグメント先頭のトリミングサイズ。単位は秒。
+            セグメント先頭のトリミングサイズ(単位は秒)
 
         btrim_sec: int
-            セグメント末尾のトリミングサイズ。単位は秒。
+            セグメント末尾のトリミングサイズ(単位は秒)
 
         Returns
         -------
-        (x_frames, y_frames): tuple
+        (x_frames, y_frames): Tuple[np.ndarray, np.ndarray]
             sliding-windowで切り出した入力とターゲットのフレームリスト
-            y_framesはデータセット内の値をそのまま返すため，取り扱いには十分注意すること
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsはx_labelsで指定したものが格納される．
+
+            y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
+            Labelsはy_labelsで指定したものが格納される．
+
+            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
+        
+        Examples
+        --------
+        >>> opportunity_path = Path('path/to/dataset')
+        >>> opportunity = Opportunity(opportunity_path)
+        >>>
+        >>> x_labels = [
+        >>>     'Accelerometer_RKN^_accX',
+        >>>     'Accelerometer_RKN^_accY',
+        >>>     'Accelerometer_RKN^_accZ',
+        >>>     'Accelerometer_HIP_accX',
+        >>>     'Accelerometer_HIP_accY',
+        >>>     'Accelerometer_HIP_accZ',
+        >>> ]
+        >>> y_labels = ['Locomotion', 'subject']    # 基本行動と被験者をターゲットラベルとして取り出す
+        >>>
+        >>> x, y = opportunity.load(window_size=256, stride=256, x_labels=xlabels, y_labels=ylabels, ftrim_sec=2, btrim_sec=2)
+        >>> print(f'x: {x.shape}, y: {y.shape}')
+        >>>
+        >>> # > x: (?, 6, 256), y: (?, 2)
         """
-        if not set(self.not_supported_labels).isdisjoint(set(x_labels+y_labels)):
+
+        if x_labels is None:
+            x_labels = list(set(Opportunity.X_LABELS) - set(Opportunity.NOT_SUPPORTED_LABELS))
+        if y_labels is None:
+            y_labels = list(Opportunity.SUPPORTED_Y_LABELS)
+
+        if not set(Opportunity.NOT_SUPPORTED_LABELS).isdisjoint(set(x_labels+y_labels)):
             raise ValueError('x_labels or y_labels include non supported labels')
-        segments = load(self.path)
-        segments = [seg[x_labels+y_labels] for seg in segments]
+
+        if not(set(x_labels) <= set(Opportunity.X_LABELS)):
+            raise ValueError('unsupported x labels is included: {}'.format(
+                tuple(set(x_labels) - set(Opportunity.X_LABELS).intersection(set(x_labels)))
+            ))
+        if not(set(y_labels) <= set(Opportunity.SUPPORTED_Y_LABELS)):
+            raise ValueError('unsupported y labels is included: {}'.format(
+                tuple(set(y_labels) - set(Opportunity.SUPPORTED_Y_LABELS).intersection(set(y_labels)))
+            ))
+
+        segments = self._load()
+        segments = [seg[x_labels+y_labels+['Locomotion']] for seg in segments]
         frames = []
         for seg in segments:
             fs = split_using_sliding_window(
@@ -533,26 +607,59 @@ class Opportunity(BaseDataset):
             if fs is not None:
                 frames += [fs]
         frames = np.concatenate(frames)
-        assert frames.shape[-1] == len(x_labels) + len(y_labels), 'Extracted data shape does not match with the number of total labels'
-        x_frames = frames[..., :len(x_labels)]
-        y_frames = frames[..., 0, len(x_labels):]
+        assert frames.shape[-1] == len(x_labels) + len(y_labels) + 1, 'Extracted data shape does not match with the number of total labels'
+        x_frames = np.float64(frames[..., :len(x_labels)]).transpose(0, 2, 1)
+        y_frames = np.int32(frames[..., 0, len(x_labels):])
+
+        # remove data which activity label is 0
+        flgs = y_frames[:, -1] != 0
+        x_frames = x_frames[flgs]
+        y_frames = y_frames[flgs][:, :-1]
+
         return x_frames, y_frames
 
 
-def load(path:Path) -> dict:
-    """Opportunity の読み込み
+def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for loading Opportunity dataset
 
     Parameters
     ----------
     path: Path
-        Opportunity(UCI)のdatasetディレクトリがあるディレクトリ
+        Directory path of Opportunity(UCI) dataset, which is parent directory of "dataset" directory.
 
     Returns
     -------
-    segments:
-        Locomotionをもとにセグメンテーションされたデータ
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity(Locomotion) and subject.
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
     """
-    import itertools
+
+    raw = load_raw(path)
+    data, meta = reformat(raw)
+    return data, meta
+
+
+def load_raw(path:Path) -> List[pd.DataFrame]:
+    """Function for loading raw data of Opportunity dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of Opportunity(UCI) dataset, which is parent directory of "dataset" directory.
+
+    Returns
+    -------
+    chunks: List[pd.DataFrame]
+        Raw data of Opportunity dataset.
+
+        Each item in 'chunks' is a part of dataset, which is splited by subject.
+    """
+
     path = path / 'dataset'
     #segs = defaultdict(list)
     chunks = []
@@ -560,18 +667,54 @@ def load(path:Path) -> dict:
         datfiles = path.glob('{}-ADL*.dat'.format(person))
         for datfile in datfiles:
             print(datfile)
-            df = pd.read_csv(datfile, sep='\s+', header=None)
+            df = pd.read_csv(datfile, sep=r'\s+', header=None)
             df.columns = Column
-            df['User'] = p_id
+            df['subject'] = p_id + 1
             # 将来的には欠損値処理はもう少しきちんと行う必要がある
             df = df.fillna(method='ffill')  # NANは周辺の平均値で埋める
+            dtypes = dict(zip(Column, list(np.float64 for _ in Column)))
+            dtypes['Locomotion'] = np.int32
+            dtypes['subject'] = np.int32
+            dtypes['HL_Activity'] = np.int32
+            dtypes['LL_Left_Arm'] = np.int32
+            dtypes['LL_Left_Arm_Object'] = np.int32
+            dtypes['LL_Right_Arm'] = np.int32
+            dtypes['LL_Right_Arm_Object'] = np.int32
+            dtypes['ML_Both_Arms'] = np.int32
+            df = df.astype(dtypes)
+
             chunks.append(df)
 
+    return chunks
+
+
+def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'.
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], List[pd.DataFrame]
+        Sensor data segmented by activity(Locomotion) and subject.
+
+    See Alos
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta[0] is meta data of data[0].
+    """
+
+    chunks = raw
     segs = []
     for chunk in chunks:
         sub_segs = split_using_target(np.array(chunk), np.array(chunk['Locomotion']))
         sub_segs = list(itertools.chain(*[sub_segs[k] for k in sub_segs.keys()]))  # 連結
         sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns), sub_segs))
+        sub_segs = list(map(lambda x: pd.DataFrame(x, columns=chunk.columns).astype(chunk.dtypes.to_dict()), sub_segs))
         # For debug
         for seg in sub_segs:
             label = seg['Locomotion'].iloc[0]
@@ -579,5 +722,10 @@ def load(path:Path) -> dict:
                 raise RuntimeError('This is bug. Failed segmentation')
         segs += sub_segs
 
-    return segs
+    cols_meta = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+    cols_sensor = list(set(Column) - set(cols_meta))
+    data = list(map(lambda seg: seg[cols_sensor], segs))
+    meta = list(map(lambda seg: seg[cols_meta], segs))
+    
+    return data, meta
 

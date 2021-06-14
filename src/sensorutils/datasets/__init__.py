@@ -7,14 +7,20 @@
 
 対応データセット
 * HASC
+* HHAR
 * Opportunity
 * PAMAP2
 * UCIHAR
+* UniMib
+* WISDM
 """
 
 from . import (
     hasc,
+    hhar,
     opportunity,
     pamap2,
     ucihar,
+    unimib,
+    wisdm
 )

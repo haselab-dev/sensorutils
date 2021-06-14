@@ -1,28 +1,40 @@
-"""
-hasc challenge
+"""HASC dataset
 
-hasc 読み込み関数
+http://hasc.jp/
 """
 
 import functools
 from pathlib import Path
-import typing
+from typing import List, Tuple, Union, Optional, Iterable
 
 import numpy as np
 import pandas as pd
 import pickle
-from ..core import split_using_target, split_using_sliding_window
+from ..core import split_using_sliding_window
 
 from .base import BaseDataset
 
 
-__all__ = ['HASC', 'load_meta', 'load']
+__all__ = ['HASC', 'load', 'load_raw', 'load_meta']
 
 
 class HASC(BaseDataset):
-    """HASC
+    """
+    HASCデータセット(HASC-PAC2016)に記録されているセンサデータとメタデータを読み込む．
 
-    HASCデータセット(HASC-PAC2016)の行動分類を行うためのローダクラス
+    Parameters
+    ----------
+    path: Path
+        HASCデータセットのパス．BasicActivityディレクトリの親ディレクトリのパスを指定する．
+    
+    cache_dir_meta: Optional[Path]
+        メタデータのキャッシュファイルのパス．
+        何も指定されない場合(cache_dir_meta=None)，メタデータの作成を行うが，キャッシュファイルは作成しない．
+        ファイル名が指定された場合，そのファイルが存在すればそこからメタデータを読み込み，存在しなければメタデータの作成を行い指定したファイルパスにダンプする．
+
+    See Also
+    --------
+    メタデータの読み込みは非常に時間がかかるため，キャッシュファイルを活用することをおすすめする．
     """
 
     supported_queries = [
@@ -35,7 +47,7 @@ class HASC(BaseDataset):
 
     supported_target_labels = ['activity', 'frequency', 'gender', 'height', 'weight', 'person']
 
-    def __init__(self, path:Path, cache_dir_meta:Path=None):
+    def __init__(self, path:Path, cache_dir_meta:Optional[Path]=None):
         super().__init__(path)
         self.cache_dir_meta = cache_dir_meta
 
@@ -81,7 +93,7 @@ class HASC(BaseDataset):
         filed_meta = self.meta.query(query_string)
         return filed_meta
     
-    def __extract_targets(self, y_labels:typing.Iterable, meta_row:pd.Series) -> np.ndarray:
+    def __extract_targets(self, y_labels:Iterable, meta_row:pd.Series) -> np.ndarray:
         if not isinstance(meta_row, pd.Series):
             raise TypeError('meta_row must be "pd.Series", but {}'.format(type(meta_row)))
         targets = []
@@ -114,8 +126,10 @@ class HASC(BaseDataset):
         return np.array(targets)
 
     # フィルタリング周りの実装は暫定的
-    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:dict=None, y_labels:typing.Union[str, list]='activity'):
-        """HASCデータの読み込みとsliding-window
+    def load(self, window_size:int, stride:int, ftrim:int=0, btrim:int=0, queries:Optional[dict]=None, y_labels:Union[str, list]='activity') -> Tuple[np.ndarray, np.ndarray]:
+        """
+        HASCデータセットを読み込み，sliding-window処理を行ったデータを返す．
+        ここでは3軸加速度センサデータのみを扱う．
 
         Parameters
         ----------
@@ -132,20 +146,18 @@ class HASC(BaseDataset):
             セグメント末尾のトリミングサイズ
         
         queries: dict
-            メタ情報に基づいてフィルタリングを行うためのクエリ。
-            Keyはフィルタリングのラベル(Supported: Frequency, Height, Weight)
+            メタ情報に基づいてフィルタリングを行うためのクエリ．
+
+            Keyはフィルタリングのラベル(Supported: Frequency, Height, Weight, Gender)
+
             Valueはクエリ文字列(DataFrame.queryに準拠)
-            e.g.
-            # サンプリングレートが100Hz and 身長が170cmより大きい and 体重が100kg以上でフィルタリング
-            queries = {
-                'Frequency': 'Frequency == 100', # サンプリングレートが100Hzのデータのみを取得
-                'Height': 'Height > 170',   # 身長が170cmより大きい人
-                'Weight': 'Weight >= 100',   # 体重が100kg以上の人
-            }
+
+            詳しい使い方は後述．
         
         y_labels: Union[str, list]
 
             ターゲットデータとしてロードするデータの種類を指定．
+            listで指定した場合，その順序が返されるターゲットラベルにも反映される．
             サポートする種類は以下の通り(今後拡張予定)．
 
             - 'activity'
@@ -157,8 +169,33 @@ class HASC(BaseDataset):
 
         Returns
         -------
-        (x_frames, y_frames): tuple
-            sliding-windowで切り出した入力とターゲットのフレームリスト
+        (x_frames, y_frames): Tuple[np.ndarray, np.ndarray]
+            sliding-windowで切り出した入力とターゲットのフレームリスト．
+
+            x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
+            Channelsは加速度センサの軸を表しており，先頭からx, y, zである．
+
+            y_framesはy_labelsで指定したターゲットラベルであり，
+            y_frames(axis=1)のラベルの順序はy_labelsのものが保持されている．
+        
+        Examples
+        --------
+        サンプリングレートが100Hz and 身長が170cmより大きい and 体重が100kg以上でフィルタリング
+        >>> hasc_path = Path('/path/to/dataset/HASC-PAC2016/')  # HASCデータセットパス
+        >>> hasc = HASC(hasc_path, Path('D:/datasets/HASC-PAC2016/BasicActivity/hasc.csv'))
+        >>> queries = {
+        >>>     'Frequency': 'Frequency == 100', # サンプリングレートが100Hzのデータのみを取得
+        >>>     'Height': 'Height > 170',   # 身長が170cmより大きい人
+        >>>     'Weight': 'Weight >= 100',   # 体重が100kg以上の人
+        >>> }
+        >>>
+        >>> y_labels = ['activity', 'person']    # ターゲットラベルとしてacitivityとpersonを取り出す
+        >>>
+        >>> # yのaxis=1にはactivity, personの順でターゲットラベルが格納されている．
+        >>> x, y, act2id = hasc.load(window_size=256, stride=256, queries=queries, ftrim=2*100, btrim=2*100, y_labels=y_labels)
+        >>>
+        >>> print(f'x: {x.shape}, y: {y.shape}')
+        >>> # > x: (?, 3, 256), y: (?, 2)
         """
 
         if isinstance(y_labels, str):
@@ -171,7 +208,7 @@ class HASC(BaseDataset):
         else:
             filed_meta = self._filter_with_meta(queries)
         
-        segments = load(self.path, filed_meta)
+        segments, _ = load(self.path, meta=filed_meta)
         x_frames = []
         y_frames = []
         self.maps = [{} for _ in y_labels]
@@ -190,6 +227,7 @@ class HASC(BaseDataset):
                 x_frames += [fs]
                 y_frames += [np.expand_dims(ys, axis=0).repeat(len(fs), axis=0)]
         x_frames = np.concatenate(x_frames)
+        x_frames = x_frames.transpose(0, 2, 1)
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
 
@@ -198,19 +236,48 @@ class HASC(BaseDataset):
         return x_frames, y_frames, self.label_map
 
 
-def load_meta(path:Path) -> pd.DataFrame:
-    """HASC の meta ファイルを読み込む。
+def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for loading HASC dataset
 
     Parameters
     ----------
     path: Path
-        HASC ファイルのパス。BasicActivity のあるディレクトリを指定すること。
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
+    
+    meta: pd.DataFrame
+        meta data loaded by 'load_meta'.
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject.
+    
+    See Also
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
+
+    raw = load_raw(path, meta)
+    data, meta = reformat(raw)
+    return data, meta
+
+
+def load_meta(path:Path) -> pd.DataFrame:
+    """Function for loading meta data of HASC dataset
+
+    Parameters
+    ----------
+    path: Path
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
 
     Returns
     -------
-    pd.DataFrame:
-        meta ファイルの DataFrame。
+    metas: pd.DataFrame:
+        meta data of HASC dataset.
     """
+
     def replace_meta_str(s:str) -> str:
         s = s.replace('：', ':')
         s = s.replace('TerminalPosition:TerminalPosition:',
@@ -244,26 +311,31 @@ def load_meta(path:Path) -> pd.DataFrame:
     return metas
 
 
-def load(path:Path, meta:pd.DataFrame) -> typing.List[pd.DataFrame]:
-    """HASC の行動加速度センサデータの読み込み関数。
-    予め meta を読み込む必要がある。
-
-    pd.DataFrame の itertuple が順序を守っていたはずなので、
-    返すデータのリストの順番は meta ファイルと一致する。
+def load_raw(path:Path, meta:Optional[pd.DataFrame]=None) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for loading raw data of HASC dataset
 
     Parameters
     ----------
     path: Path
-        BasicActivity がある HASC のファイルパス
-
+        Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
+    
     meta: pd.DataFrame
-        load_meta 関数で返された meta ファイル
-
+        meta data loaded by 'load_meta'.
+    
     Returns
     -------
-    List[pd.DataFrame]:
-        行動加速度センサデータのリスト。
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        raw data of HASC dataset.
+
+        Each item in 'data' is a part of dataset, which is splited by subject.
+    
+    See Also
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
     """
+
     def read_acc(path:Path) -> pd.DataFrame:
         if path.exists():
             try:
@@ -274,10 +346,38 @@ def load(path:Path, meta:pd.DataFrame) -> typing.List[pd.DataFrame]:
         else:
             print('[load] not found:', str(path))
         return pd.DataFrame()
+    
+    if meta is None:
+        meta = load_meta(path)
 
     path = path / 'BasicActivity'
     data = [
         read_acc(path / row.act / row.person / '{}-acc.csv'.format(row.file))
         for row in meta.itertuples()
     ]
-    return data
+
+    return data, meta
+
+
+def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+    """Function for reformating
+
+    Parameters
+    ----------
+    raw:
+        data loaded by 'load_raw'
+    
+    Returns
+    -------
+    data, meta: List[pd.DataFrame], pd.DataFrame
+        Sensor data segmented by activity and subject.
+
+    See Also
+    --------
+    The order of 'data' and 'meta' correspond.
+
+    e.g. meta.iloc[0] is meta data of data[0].
+    """
+    data, meta = raw
+    return data, meta
+
