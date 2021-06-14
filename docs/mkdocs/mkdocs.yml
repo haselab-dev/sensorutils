@@ -27,9 +27,10 @@ repo_url: https://github.com/haselab-dev/sensorutils
 nav:
     - Home: index.md
     - Installation: install.md
-    - Quickstart: quickstart.md
+    - User Guide: guide.md
     - References: refs.md
-    - DEBUG PAGE: debug.md
+    - Dataset Loader: refs/datasets.md
+    # - DEBUG PAGE: debug.md
 
 plugins:
     - search
@@ -60,6 +61,8 @@ plugins:
 theme:
     name: material
     language: ja
+    favicon: favicon.ico
+    logo: favicon.png
 
     # これ入れるとブラウザでエラーが出る
     # features:

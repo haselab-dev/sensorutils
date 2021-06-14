@@ -13,12 +13,12 @@
         <meta name="author" content="hogedamari">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="favicon.ico">
       <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
       
-        <title>Quickstart - sensorutils v0.12.0</title>
+        <title>User Guide - sensorutils v0.12.0</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#quickstart" class="md-skip">
+        <a href="#user-guide" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -78,8 +78,7 @@
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
     <a href="index.html" title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <img src="favicon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -95,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Quickstart
+              User Guide
             
           </span>
         </div>
@@ -171,8 +170,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="index.html" title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <img src="favicon.png" alt="logo">
 
     </a>
     sensorutils v0.12.0
@@ -241,12 +239,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Quickstart
+          User Guide
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="quickstart.html" class="md-nav__link md-nav__link--active">
-        Quickstart
+      <a href="guide.html" class="md-nav__link md-nav__link--active">
+        User Guide
       </a>
       
         
@@ -264,16 +262,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-hasc" class="md-nav__link">
-    1. とにかくHASCデータセットをロードしてみる
+  <a href="#sensorutilscore" class="md-nav__link">
+    sensorutils.coreの利用
   </a>
+  
+    <nav class="md-nav" aria-label="sensorutils.coreの利用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    ターゲットラベルをもとにデータを分割する
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numpysliding-window" class="md-nav__link">
+    Numpy配列に対してsliding-window処理を行う
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-hasc" class="md-nav__link">
-    2. HASCデータセットを被験者でフィルタリングして読み込む
+  <a href="#_2" class="md-nav__link">
+    データセットローダの利用
   </a>
+  
+    <nav class="md-nav" aria-label="データセットローダの利用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hasc" class="md-nav__link">
+    HASCデータセットをロードしてみる
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hasc_1" class="md-nav__link">
+    HASCデータセットを被験者でフィルタリングして読み込む
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -308,8 +346,8 @@
   
   
     <li class="md-nav__item">
-      <a href="debug.html" class="md-nav__link">
-        DEBUG PAGE
+      <a href="refs/datasets.html" class="md-nav__link">
+        Dataset Loader
       </a>
     </li>
   
@@ -341,16 +379,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-hasc" class="md-nav__link">
-    1. とにかくHASCデータセットをロードしてみる
+  <a href="#sensorutilscore" class="md-nav__link">
+    sensorutils.coreの利用
   </a>
+  
+    <nav class="md-nav" aria-label="sensorutils.coreの利用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    ターゲットラベルをもとにデータを分割する
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numpysliding-window" class="md-nav__link">
+    Numpy配列に対してsliding-window処理を行う
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-hasc" class="md-nav__link">
-    2. HASCデータセットを被験者でフィルタリングして読み込む
+  <a href="#_2" class="md-nav__link">
+    データセットローダの利用
   </a>
+  
+    <nav class="md-nav" aria-label="データセットローダの利用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hasc" class="md-nav__link">
+    HASCデータセットをロードしてみる
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hasc_1" class="md-nav__link">
+    HASCデータセットを被験者でフィルタリングして読み込む
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -366,22 +444,88 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/quickstart.md" title="編集" class="md-content__button md-icon">
+                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/guide.md" title="編集" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="quickstart">Quickstart</h1>
-<h2 id="1-hasc">1. とにかくHASCデータセットをロードしてみる</h2>
-<p>HASCデータセットを読み込んで、
-ウィンドウ幅256、ストライド幅256でsliding-window処理したデータを取得する。</p>
+                <h1 id="user-guide">User Guide</h1>
+<p>このページではsensorutilsの代表的なツールの利用方法を紹介しています．</p>
+<h2 id="sensorutilscore">sensorutils.coreの利用</h2>
+<h3 id="_1">ターゲットラベルをもとにデータを分割する</h3>
+<p>行動認識データセットでは，すべてのデータが一つのCSVファイルにまとめられていることがあり，このデータから行動ごとのセンサデータを取り出すには行動ラベルをもとに配列を分割する必要があります．</p>
+<p>sensorutilsでは<code>split_using_target</code>関数を用いることでラベルをもとにした配列の分割を高速に実行することが可能です．次のコードは<code>split_using_target</code>関数の簡単な利用例です．</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sensorutils.core</span> <span class="kn">import</span> <span class="n">split_using_target</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>    <span class="c1"># ターゲットラベル</span>
+<span class="n">source</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>    <span class="c1"># 分割する配列</span>
+<span class="n">splited</span> <span class="o">=</span> <span class="n">split_from_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">splited</span><span class="p">)</span>
+
+<span class="c1"># splited == {</span>
+<span class="c1">#    0: [np.array([1, 2])],</span>
+<span class="c1">#    1: [np.array([3, 4]), np.array([7])],</span>
+<span class="c1">#    2: [np.array([5, 6])]</span>
+<span class="c1"># }</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="numpysliding-window">Numpy配列に対してsliding-window処理を行う</h3>
+<p>機械学習モデルや深層学習モデルへの入力は多くの場合一定のサイズである必要がありますが，センサデータは可変長の時系列データであるため，そのままではモデルへ入力することができません．そこでセンサを用いた行動認識では，可変長の時系列データからスライディングウィンドウを用いて一定サイズの部分系列を取り出すことでモデルへの入力を作成します．</p>
+<p>sensorutilsでは<code>to_frames</code>関数を用いることで高速なsliding-window処理を簡単に実行することが可能です．次のコードは<code>to_frames</code>関数の使用例です．</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sensorutils.core</span> <span class="kn">import</span> <span class="n">to_frames</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>    <span class="c1"># 分割する配列</span>
+<span class="n">window_size</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">stride</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="n">to_frames</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">)</span>
+
+<span class="c1"># frames == np.array([</span>
+<span class="c1">#     [1, 2, 3],</span>
+<span class="c1">#     [3, 4, 5],</span>
+<span class="c1">#     [5, 6, 7],</span>
+<span class="c1"># ])</span>
+</code></pre></div>
+</td></tr></table>
+<hr />
+<h2 id="_2">データセットローダの利用</h2>
+<p>センサに関するオープンなベンチマークデータセットを利用するには，提供されているデータセットを読み込むコードを実装する必要があります．しかし，行動認識データセットなどのデータセットは画像系のデータセットと異なり，データセットによって提供される形が大きく異なるため，読み込みコードの実装は煩雑な作業となります．</p>
+<p>sensorutilsでは，読み込みコードの実装の手間を削減するために代表的なセンサ系のベンチマークデータセットのローダを提供しています．これを活用することで，読み込みコードの実装の手間を減らし，より本質的な作業に注力することが可能です．</p>
+<p>以下では実装が非常に厄介なHASCデータセットの読み込みをsensorutilsを利用して行います．</p>
+<h3 id="hasc">HASCデータセットをロードしてみる</h3>
+<p>HASCデータセットを読み込んで、ウィンドウ幅256、ストライド幅256でsliding-window処理したデータを取得します．</p>
 <p><strong>手順</strong></p>
 <ol>
-<li>HASCデータセットを取得する</li>
-<li>下記コードの<code>hasc_path</code>の箇所を取得したデータセットのパスに書き換える</li>
+<li>HASCデータセットを取得する．</li>
+<li>下記コードの<code>hasc_path</code>の箇所を取得したデータセットのパスに書き換える．</li>
 <li>
 <p>(Optional) 16行目のキャッシュを作成するパスを変更</p>
-<p>デフォルトではスクリプトの実行ディレクトリ下に<code>hasc.csv</code>という名前でキャッシュが作成される。</p>
+<p>デフォルトではスクリプトの実行ディレクトリ下に<code>hasc.csv</code>という名前でキャッシュが作成される．</p>
 </li>
 <li>
 <p>実行!</p>
@@ -389,7 +533,7 @@
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>初回の実行ではメタデータの収集と統合の処理を行うため時間がかかる。</p>
+<p>初回の実行ではメタデータの収集と統合の処理を行うため時間がかかります．</p>
 </div>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -434,8 +578,8 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;y: </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
-<h2 id="2-hasc">2. HASCデータセットを被験者でフィルタリングして読み込む</h2>
-<p>手順は1.と同じ</p>
+<h3 id="hasc_1">HASCデータセットを被験者でフィルタリングして読み込む</h3>
+<p>手順は"HASCデータセットをロードしてみる"と同様です．</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>

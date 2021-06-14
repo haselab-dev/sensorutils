@@ -13,7 +13,7 @@
         <meta name="author" content="hogedamari">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../favicon.ico">
       <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
@@ -78,8 +78,7 @@
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
     <a href="../index.html" title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <img src="../favicon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -171,8 +170,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../index.html" title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <img src="../favicon.png" alt="logo">
 
     </a>
     sensorutils v0.12.0
@@ -231,8 +229,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart.html" class="md-nav__link">
-        Quickstart
+      <a href="../guide.html" class="md-nav__link">
+        User Guide
       </a>
     </li>
   
@@ -261,8 +259,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../debug.html" class="md-nav__link">
-        DEBUG PAGE
+      <a href="datasets.html" class="md-nav__link">
+        Dataset Loader
       </a>
     </li>
   
@@ -374,7 +372,6 @@
                 
                 
                 <h1 id="sensorutilscore">sensorutils.core</h1>
-<p>Under construction...</p>
 <hr />
 
 
@@ -390,7 +387,7 @@
 
     <div class="doc doc-contents first">
 
-      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
+      <p>np.ndarrayをフレーム分けするプリミティブな実装で，stride_modeで分割アルゴリズムを指定することが可能．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -463,8 +460,8 @@
 
     <div class="doc doc-contents first">
 
-      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
-<p>分割に <code>reshape</code> を使用。</p>
+      <p>np.ndarrayをフレーム分けするプリミティブな実装で，ウィンドウサイズとストライド幅が同じ場合に利用することが可能．</p>
+<p>分割に<code>np.reshape</code>を使用しており，非常に高速なsliding-window処理を実行可能．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -525,8 +522,7 @@
 
     <div class="doc doc-contents first">
 
-      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
-<p>分割にインデックスを使用。</p>
+      <p>np.ndarray をフレーム分けするプリミティブな実装で，分割にindexingを使用している．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -593,8 +589,7 @@
 
     <div class="doc doc-contents first">
 
-      <p>np.ndarray をフレーム分けするプリミティブな実装。</p>
-<p>分割に <code>np.lib.stride_tricks.as_strided</code> 関数を使用。</p>
+      <p>np.ndarray をフレーム分けするプリミティブな実装で，分割に<code>np.lib.stride_tricks.as_strided</code>関数を使用しており，indexingを使用する<code>to_frames_using_index</code>より高速である．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -661,11 +656,13 @@
 
     <div class="doc doc-contents first">
 
-      <p>segment をフレーム分けする。</p>
-<p>各シェープは以下のようになる。</p>
+      <p>可変サイズのsegmentからsliding-window方式で一定サイズのフレームを抽出する．</p>
+<p>各shapeは以下のようになる．</p>
 <p>segment: (segment_size, ch)</p>
 <p>frames: (num_frames, window_size, ch)</p>
-<p>ch はいくらでも対応しているため、ラベルを ch に追加しておけばラベルもフレーム分けできる。</p>
+<p>segmentの第2軸(axis=1)以降のshapeは任意であり，
+例えば，shapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
+(num_frames, window_size, ch1, ch2)のデータを取得することができる．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -681,8 +678,7 @@
       <tr>
         <td><code>segments</code></td>
         <td><code>np.ndarray</code></td>
-        <td><p>分割対象のデータ。
-len(segment.shape) == 2 であること。</p></td>
+        <td><p>分割対象のデータ</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -694,19 +690,19 @@ len(segment.shape) == 2 であること。</p></td>
       <tr>
         <td><code>stride</code></td>
         <td><code>int, default=None</code></td>
-        <td><p>None は window_size となる。</p></td>
+        <td><p>strideがNoneはwindow_sizeが指定される．</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>ftrim</code></td>
-        <td><code>int, default=5</code></td>
-        <td><p>最初の {ftrim} サンプルをとばす</p></td>
+        <td><code>int</code></td>
+        <td><p>最初のftrimサンプルをとばす(default=5)．</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
         <td><code>btrim</code></td>
-        <td><code>int, default=5</code></td>
-        <td><p>最後の {btrim} サンプルをとばす</p></td>
+        <td><code>int</code></td>
+        <td><p>最後のbtrimサンプルをとばす(default=5)．</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -728,7 +724,8 @@ len(segment.shape) == 2 であること。</p></td>
   <tbody>
     <tr>
       <td><code>ndarray</code></td>
-      <td><p>フレーム分けした結果。失敗したら None を返す</p></td>
+      <td><p>sliding-window方式で抽出下フレーム</p>
+<p>失敗したら<code>return_error_value</code>で指定された値を返す．</p></td>
     </tr>
   </tbody>
 </table>
@@ -751,14 +748,7 @@ len(segment.shape) == 2 であること。</p></td>
 
     <div class="doc doc-contents first">
 
-      <p>target のデータを元に src の分割を行う。</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">tgt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
-<span class="k">assert</span> <span class="n">split_from_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])],</span> <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">])],</span> <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])]}</span>
-</code></pre></div>
-</td></tr></table>
+      <p>targetのデータを元にsrcの分割を行う．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -780,11 +770,23 @@ len(segment.shape) == 2 であること。</p></td>
       <tr>
         <td><code>target</code></td>
         <td><code>ndarray</code></td>
-        <td><p>ラベルデータ（一次元配列）</p></td>
+        <td><p>ラベルデータ(一次元配列)</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">tgt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">splited</span> <span class="o">=</span> <span class="n">split_from_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># splited == {</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#    0: [np.array([1, 2])],</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#    1: [np.array([3, 4]), np.array([7])],</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#    2: [np.array([5, 6])]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># }</span>
+</code></pre></div>
+
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -796,7 +798,7 @@ len(segment.shape) == 2 であること。</p></td>
   <tbody>
     <tr>
       <td><code>Dict[int, List[numpy.ndarray]]</code></td>
-      <td><p>key はラベル、value はデータのリスト。</p></td>
+      <td><p>keyはラベル，valueはデータのリスト．</p></td>
     </tr>
   </tbody>
 </table>
@@ -820,13 +822,7 @@ len(segment.shape) == 2 であること。</p></td>
     <div class="doc doc-contents first">
 
       <p>interpolation function.</p>
-<p>(use scipy.interpolate.interp1d)</p>
-<p>example: (linear interpolation)
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[0, 2, 4] - x2 -&gt; [0, 1, 2, 3, 4]
-[0, 3, 6] - x3 -&gt; [0, 1, 2, 3, 4, 5, 6]
-</code></pre></div>
-</td></tr></table></p>
+<p>Use <code>scipy.interpolate.interp1d</code> in this function.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -865,6 +861,14 @@ len(segment.shape) == 2 であること。</p></td>
       </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <p>Linear interpolation
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[0, 2, 4] - x2 -&gt; [0, 1, 2, 3, 4]
+[0, 3, 6] - x3 -&gt; [0, 1, 2, 3, 4, 5, 6]
+</code></pre></div>
+</td></tr></table></p>
+
 <p><strong>Returns:</strong></p>
 <table>
   <thead>

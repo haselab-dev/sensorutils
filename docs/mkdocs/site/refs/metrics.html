@@ -13,7 +13,7 @@
         <meta name="author" content="hogedamari">
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../favicon.ico">
       <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
@@ -78,8 +78,7 @@
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
     <a href="../index.html" title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <img src="../favicon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -171,8 +170,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../index.html" title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <img src="../favicon.png" alt="logo">
 
     </a>
     sensorutils v0.12.0
@@ -231,8 +229,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart.html" class="md-nav__link">
-        Quickstart
+      <a href="../guide.html" class="md-nav__link">
+        User Guide
       </a>
     </li>
   
@@ -261,8 +259,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../debug.html" class="md-nav__link">
-        DEBUG PAGE
+      <a href="datasets.html" class="md-nav__link">
+        Dataset Loader
       </a>
     </li>
   
@@ -307,6 +305,55 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.mse" class="md-nav__link">
+    mse()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.rmse" class="md-nav__link">
+    rmse()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.rmspe" class="md-nav__link">
+    rmspe()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.rmsle" class="md-nav__link">
+    rmsle()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.r2" class="md-nav__link">
+    r2()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.snr" class="md-nav__link">
+    snr()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.metrics.lsd" class="md-nav__link">
+    lsd()
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -325,10 +372,9 @@
                 
                 
                 <h1 id="sensorutilsmetrics">sensorutils.metrics</h1>
-<p>Under construction...</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>可能ならsklearn.metricsを使用したほうが良い</p>
+<p>可能なら<code>sklearn.metrics</code>を使用したほうが良い</p>
 </div>
 <hr />
 
@@ -345,10 +391,10 @@
 
     <div class="doc doc-contents first">
 
-      <p>to calc Mean Absolute Error.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{1}{N}\sum_{i=0}^{N} |\hat{y}_i - y_i|
-</code></pre></div>
-</td></tr></table>
+      <p>Calc Mean Absolute Error.</p>
+<div class="arithmatex">\[
+\frac{1}{N}\sum_{i=0}^{N} |\hat{y}_i - y_i|
+\]</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -373,6 +419,21 @@
         <td><p>predicted data.</p></td>
         <td><em>required</em></td>
       </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>MAE</p></td>
+    </tr>
   </tbody>
 </table>
     </div>
@@ -394,12 +455,10 @@
 
     <div class="doc doc-contents first">
 
-      <p>to calc Mean Absolute Persentage Error.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>rac{100}{N}\sum_{i=0}^{N} \left| rac{\hat{y}_i - y_i}{y_i} 
-ight|
-</code></pre></div>
-</td></tr></table>
+      <p>Calc Mean Absolute Persentage Error.</p>
+<div class="arithmatex">\[
+\frac{100}{N}\sum_{i=0}^{N} \left| \frac{\hat{y}_i - y_i}{y_i} \right|
+\]</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -426,30 +485,493 @@ ight|
       </tr>
   </tbody>
 </table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>MAPE</p></td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
   </div>
 
-<!-- ---
-::: sensorutils.metrics.mse
+<hr />
 
----
-::: sensorutils.metrics.rmse
 
----
-::: sensorutils.metrics.rmspe
+  <div class="doc doc-object doc-function">
 
----
-::: sensorutils.metrics.rmsle
 
----
-::: sensorutils.metrics.r2
 
----
-::: sensorutils.metrics.snr
+<h2 id="sensorutils.metrics.mse" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">mse</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
----
-::: sensorutils.metrics.lsd -->
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc Mean Squared Error.</p>
+<div class="arithmatex">\[
+\frac{1}{N}\sum_{i=0}^{N} (dst_i - src_i)^2
+\]</div>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>true data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>predicted data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>MSE</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.rmse" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rmse</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc Root Mean Squared Error.</p>
+<div class="arithmatex">\[
+\left(\frac{1}{N}\sum_{i=0}^{N} (\hat{y}_i - y_i)^2 \right)^{\frac{1}{2}}
+\]</div>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>true data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>predicted data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>RMSE</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.rmspe" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rmspe</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc Root Mean Squared Persentage Error.</p>
+<div class="arithmatex">\[
+100 \left(\frac{1}{N}\sum_{i=0}^{N} (\frac{\hat{y}_i - y_i}{y_i})^2 \right)^{\frac{1}{2}}
+\]</div>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>true data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>predicted data.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>RMSPE</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.rmsle" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rmsle</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc root mean squared logarithmic error.</p>
+<div class="arithmatex">\[
+\left(\frac{1}{N}\sum_{i=0}^{N} (\log (\hat{y}_i + 1) - \log (y_i + 1))^2 \right)^{\frac{1}{2}}
+\]</div>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>clean data</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>with noise</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>mean axis</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>RMSLE</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.r2" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">r2</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc r2 score(coefficient of determination).</p>
+<div class="arithmatex">\[
+ {R^{2}}( \hat{y} ) := 1 - \frac{ \frac{1}{N} \sum_{i=1}^{N} { ( {y}_i - \hat{y}_{i} ) }^{2} }{ \frac{1}{N} \sum_{i=1}^{N} { ( {y}_i - \bar{y}) }^{2} } = 1 - \frac{M S E(\hat{y})}{Var(y)}
+\]</div>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>clean data</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>with noise</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>float</code></td>
+      <td><p>coefficient of determination</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.snr" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">snr</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc Signal to Noise Ratio.</p>
+<div class="arithmatex">\[
+10 \log_{10} \left(\frac{\sum_{i=0}^{N}true_i^2}{\sum_{i=0}^{N}(true_i - pred_i)^2} \right)
+\]</div>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>clean data</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>with noise</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>mean axis (default=None)</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>SNR</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.metrics.lsd" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">lsd</span><span class="p">(</span><span class="n">true_spec</span><span class="p">,</span> <span class="n">pred_spec</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Calc Log Spectral Distance.</p>
+<div class="arithmatex">\[
+\mathrm{LSD}(S(\omega),\tilde{S}(\omega)) =
+\sqrt{\frac{1}{W}\sum_{\omega}^{W} \left(20\log_{10}\left|\frac{S(\omega)}{\tilde{S}(\omega)}\right|\right)^2}
+\]</div>
+<p><span class="arithmatex">\(S(\omega)\)</span>と<span class="arithmatex">\(\tilde{S}(\omega)\)</span> は，それぞれ原波形と雑音抑圧波形の対数スペクトル．</p>
+<p>複数の短時間スペクトルの距離は各スペクトルで距離を算出した後，平均を取ること．</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>true_spec</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>spectral 1</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>pred_spec</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>spectral 2</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>Not use</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Union[float, numpy.ndarray]</code></td>
+      <td><p>LSD</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
                 
               
               
