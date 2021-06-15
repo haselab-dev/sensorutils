@@ -1,0 +1,105 @@
+# Configure of MkDocs
+#
+# Requirements
+# - mkdocs
+# - mkdocs-material
+# - python-markdown-math
+# - mkdocstrings
+# - pytkdocs[numpy-style]
+#
+#     mkdocstringsの依存パッケージだがmkdocstringのインストール時には
+#     pytkdocsの追加機能numpy-styleがインストールされないため，
+#     追加機能を含むpytkdocsを改めてインストールする．
+#
+#     c.f.
+#
+#     https://github.com/mkdocstrings/pytkdocs/issues/104
+
+
+site_name: sensorutils v0.12.0
+# site_url: https://haselab-dev.github.io/sensorutils/mkdocs/site/
+site_author: hogedamari
+site_description: Documentation for sensorutils
+copyright: HaseLab@University of Fukui
+repo_name: 'Github'
+repo_url: https://github.com/haselab-dev/sensorutils
+# edit_url: null
+nav:
+    - Home: index.md
+    - Installation: install.md
+    - User Guide: guide.md
+    - References: refs.md
+    - Dataset Loader: refs/datasets.md
+    # - DEBUG PAGE: debug.md
+
+plugins:
+    - search
+    - mkdocstrings:
+        default_handler: python
+        handlers:
+            python:
+                setup_commands:
+                    - import sys
+                    - sys.path.append('../../src/')
+                selection:
+                    docstring_style: numpy
+                rendering:
+                    show_source: false
+                    show_root_heading: true
+                    show_root_full_path: false
+                    show_category_heading: false
+                    heading_level: 2
+
+# readthedocs
+# theme:
+#   name: readthedocs
+#   locale: en
+#   highlightjs: true
+#   include_sidebar: false
+
+# material
+theme:
+    name: material
+    language: ja
+    favicon: favicon.ico
+    logo: favicon.png
+
+    # これ入れるとブラウザでエラーが出る
+    # features:
+    #     tabs: true
+
+extra_javascript:
+    - javascripts/config.js
+    - https://polyfill.io/v3/polyfill.min.js?features=es6
+    - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+markdown_extensions:
+    # - mdx_math
+    - pymdownx.arithmatex:
+        generic: true
+
+    - pymdownx.highlight:
+        linenums: true
+    - pymdownx.superfences
+
+    # Noteとか警告文とか
+    - admonition
+
+    # 注釈
+    - footnotes
+
+    # 絵文字
+    - pymdownx.emoji
+
+    # Webアイコンフォント(要インストール)
+    # - fontawesome_markdown
+
+# bootstrap4
+# theme:
+#     name: bootstrap4
+#     suppress_nextprev: true
+
+# cinder
+# theme:
+#     name: null
+#     custom_dir: 'cinder-1.2.0/cinder'

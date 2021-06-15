@@ -1,9 +1,9 @@
 """
-sensor utils。
-とりあえずインポートしたら使える。
-便利な関数や分類しにくい関数をとりあえず入れておく。
+sensor utils
+とりあえずインポートしたら使える．
+便利な関数や分類しにくい関数をとりあえず入れておく．
 
-分離できそうなら分離すること。
+分離できそうなら分離すること
 """
 
 import pickle
@@ -15,7 +15,16 @@ import typing
 
 
 def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='index') -> np.ndarray:
-    """np.ndarray をフレーム分けするプリミティブな実装。
+    """
+    np.ndarrayをフレーム分けするプリミティブな実装で，`stride_mode`で分割アルゴリズムを指定することが可能．
+
+    `to_frames`関数は`to_frames_using_index`関数，`to_frames_using_nptricks`関数，`to_frames_using_reshape`関数を適応的に使い分ける．
+
+    使い分けは以下の通り．
+
+    - `window_size == stride` -> to_frames_using_reshape
+    - `window_size != stride and stride_mode == 'index'` -> to_frames_using_index
+    - `window_size != stride and stride_mode == 'nptrick'` -> to_frames_using_nptricks
 
     Parameters
     ----------
@@ -29,7 +38,9 @@ def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='
         stride is int more than 0.
 
     stride_mode: str
-        'index' or 'nptrick'. it is used `to_frames_*` method when window_size != stride.
+        'index' or 'nptrick'.
+        
+        it is used `to_frames_*` method when window_size != stride.
 
     Returns
     -------
@@ -47,8 +58,10 @@ def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='
 
 
 def to_frames_using_reshape(src: np.ndarray, window_size: int) -> np.ndarray:
-    """np.ndarray をフレーム分けするプリミティブな実装。
-    分割に `reshape` を使用。
+    """
+    np.ndarrayをフレーム分けするプリミティブな実装で，ウィンドウサイズとストライド幅が同じ場合に利用することが可能．
+
+    分割に`np.reshape`を使用しており，非常に高速なsliding-window処理を実行可能．
 
     Parameters
     ----------
@@ -69,8 +82,8 @@ def to_frames_using_reshape(src: np.ndarray, window_size: int) -> np.ndarray:
 
 
 def to_frames_using_index(src: np.ndarray, window_size: int, stride: int) -> np.ndarray:
-    """np.ndarray をフレーム分けするプリミティブな実装。
-    分割にインデックスを使用。
+    """
+    np.ndarray をフレーム分けするプリミティブな実装で，分割にindexingを使用している．
 
     Parameters
     ----------
@@ -95,8 +108,8 @@ def to_frames_using_index(src: np.ndarray, window_size: int, stride: int) -> np.
 
 
 def to_frames_using_nptricks(src: np.ndarray, window_size: int, stride: int) -> np.ndarray:
-    """np.ndarray をフレーム分けするプリミティブな実装。
-    分割に `np.lib.stride_tricks.as_strided` 関数を使用。
+    """
+    np.ndarray をフレーム分けするプリミティブな実装で，分割に`np.lib.stride_tricks.as_strided`関数を使用しており，indexingを使用する`to_frames_using_index`より高速である．
 
     Parameters
     ----------
@@ -122,33 +135,33 @@ def to_frames_using_nptricks(src: np.ndarray, window_size: int, stride: int) -> 
 
 
 def split_using_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
-    """segment をフレーム分けする。
+    """
+    可変サイズのsegmentからsliding-window方式で一定サイズのフレームを抽出する．
+    各shapeは以下のようになる．
 
-    各シェープは以下のようになる。
+    - segment: (segment_size, ch)
+    - frames: (num_frames, window_size, ch)
 
-    segment: (segment_size, ch)
-
-    frames: (num_frames, window_size, ch)
-
-    ch はいくらでも対応しているため、ラベルを ch に追加しておけばラベルもフレーム分けできる。
+    segmentの第2軸(axis=1)以降のshapeは任意であり，
+    例えばshapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
+    (num_frames, window_size, ch1, ch2)のデータを取得することができる．
 
     Parameters
     ----------
     segments: np.ndarray
-        分割対象のデータ。
-        len(segment.shape) == 2 であること。
+        分割対象のデータ
 
     window_size: int, default=512
         フレーム分けするサンプルサイズ
 
     stride: int, default=None
-        None は window_size となる。
+        strideがNoneはwindow_sizeが指定される．
 
-    ftrim: int, default=5
-        最初の {ftrim} サンプルをとばす
+    ftrim: int
+        最初のftrimサンプルをとばす(default=5)．
 
-    btrim: int, default=5
-        最後の {btrim} サンプルをとばす
+    btrim: int
+        最後のbtrimサンプルをとばす(default=5)．
 
     return_error_value: None
         エラーの時の返り値
@@ -156,7 +169,9 @@ def split_using_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     Returns
     -------
     frames: np.ndarray
-        フレーム分けした結果。失敗したら None を返す
+        sliding-window方式で抽出下フレーム
+
+        失敗したら`return_error_value`で指定された値を返す．
     """
 
     # 引数処理
@@ -187,13 +202,8 @@ def split_using_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
 
 
 def split_using_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, typing.List[np.ndarray]]:
-    """target のデータを元に src の分割を行う。
-
-    ```python
-    tgt = np.array([0, 0, 1, 1, 2, 2, 1])
-    src = np.array([1, 2, 3, 4, 5, 6, 7])
-    assert split_from_target(src, tgt) == {0: [np.array([1, 2])], 1: [np.array([3, 4]), np.array([7])], 2: [np.array([5, 6])]}
-    ```
+    """
+    targetのデータを元にsrcの分割を行う．
 
     Parameters
     ----------
@@ -201,12 +211,24 @@ def split_using_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, ty
         分割するデータ
 
     target: np.ndarray
-        ラベルデータ（一次元配列）
+        ラベルデータ(一次元配列)
 
     Returns
     -------
     dict:
-        key はラベル、value はデータのリスト。
+        keyはラベル，valueはデータのリスト．
+    
+    Examples
+    --------
+    >>> tgt = np.array([0, 0, 1, 1, 2, 2, 1])
+    >>> src = np.array([1, 2, 3, 4, 5, 6, 7])
+    >>> splited = split_from_target(src, tgt)
+    >>>
+    >>> # splited == {
+    >>> #    0: [np.array([1, 2])],
+    >>> #    1: [np.array([3, 4]), np.array([7])],
+    >>> #    2: [np.array([5, 6])]
+    >>> # }
     """
     from collections import defaultdict
 
@@ -223,14 +245,12 @@ def split_using_target(src:np.ndarray, target:np.ndarray) -> typing.Dict[int, ty
 
 
 def interpolate(src:np.ndarray, rate:int, kind:str='linear', axis:int=-1) -> np.ndarray:
-    """interpolation function.
-    (use scipy.interpolate.interp1d)
+    """
+    interpolation function.
 
-    example: (linear interpolation)
-    ```text
-    [0, 2, 4] - x2 -> [0, 1, 2, 3, 4]
-    [0, 3, 6] - x3 -> [0, 1, 2, 3, 4, 5, 6]
-    ```
+    Use `scipy.interpolate.interp1d` in this function.
+
+
 
     Parameters
     ----------
@@ -250,6 +270,14 @@ def interpolate(src:np.ndarray, rate:int, kind:str='linear', axis:int=-1) -> np.
     -------
     np.ndarray:
         shape[axis] - 1 == rate * ft.shape[axis]
+    
+    Examples
+    --------
+    Linear interpolation
+    ```
+    [0, 2, 4] - x2 -> [0, 1, 2, 3, 4]
+    [0, 3, 6] - x3 -> [0, 1, 2, 3, 4, 5, 6]
+    ```
     """
     N = src.shape[axis]
     x_low = np.linspace(0, 1, N)

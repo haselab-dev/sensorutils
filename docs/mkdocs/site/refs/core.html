@@ -1,0 +1,1038 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for sensorutils">
+      
+      
+      
+        <meta name="author" content="hogedamari">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
+    
+    
+      
+        <title>sensorutils.core - sensorutils v0.12.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ca7ac06f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.f1a3b89f.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sensorutilscore" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../index.html" title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sensorutils v0.12.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              sensorutils.core
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="クリア" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/haselab-dev/sensorutils/" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    sensorutils v0.12.0
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/haselab-dev/sensorutils/" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install.html" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide.html" class="md-nav__link">
+        User Guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../refs.html" class="md-nav__link">
+        References
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="datasets.html" class="md-nav__link">
+        Dataset Loader
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames" class="md-nav__link">
+    to_frames()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames_using_reshape" class="md-nav__link">
+    to_frames_using_reshape()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames_using_index" class="md-nav__link">
+    to_frames_using_index()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.to_frames_using_nptricks" class="md-nav__link">
+    to_frames_using_nptricks()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.split_using_sliding_window" class="md-nav__link">
+    split_using_sliding_window()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.split_using_target" class="md-nav__link">
+    split_using_target()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.interpolate" class="md-nav__link">
+    interpolate()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.pickle_dump" class="md-nav__link">
+    pickle_dump()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.core.pickle_load" class="md-nav__link">
+    pickle_load()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/refs/core.md" title="編集" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="sensorutilscore">sensorutils.core</h1>
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">stride_mode</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarrayをフレーム分けするプリミティブな実装で，<code>stride_mode</code>で分割アルゴリズムを指定することが可能．</p>
+<p><code>to_frames</code>関数は<code>to_frames_using_index</code>関数，<code>to_frames_using_nptricks</code>関数，<code>to_frames_using_reshape</code>関数を適応的に使い分ける．</p>
+<p>使い分けは以下の通り．</p>
+<ul>
+<li><code>window_size == stride</code> -&gt; to_frames_using_reshape</li>
+<li><code>window_size != stride and stride_mode == 'index'</code> -&gt; to_frames_using_index</li>
+<li><code>window_size != stride and stride_mode == 'nptrick'</code> -&gt; to_frames_using_nptricks</li>
+</ul>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int</code></td>
+        <td><p>stride is int more than 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride_mode</code></td>
+        <td><code>str</code></td>
+        <td><p>'index' or 'nptrick'.</p>
+<p>it is used <code>to_frames_*</code> method when window_size != stride.</p></td>
+        <td><code>&#39;index&#39;</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // stride + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames_using_reshape" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames_using_reshape</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarrayをフレーム分けするプリミティブな実装で，ウィンドウサイズとストライド幅が同じ場合に利用することが可能．</p>
+<p>分割に<code>np.reshape</code>を使用しており，非常に高速なsliding-window処理を実行可能．</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size. stride = window_size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // window_size + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames_using_index" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames_using_index</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarray をフレーム分けするプリミティブな実装で，分割にindexingを使用している．</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int</code></td>
+        <td><p>stride is int more than 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // stride + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.to_frames_using_nptricks" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">to_frames_using_nptricks</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>np.ndarray をフレーム分けするプリミティブな実装で，分割に<code>np.lib.stride_tricks.as_strided</code>関数を使用しており，indexingを使用する<code>to_frames_using_index</code>より高速である．</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>splited source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int</code></td>
+        <td><p>sliding window size.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int</code></td>
+        <td><p>stride is int more than 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>a shape of frames is <code>(num_frames, window_size, *src.shape[1:])</code>, where num_frames is <code>(src.shape[0] - window_size) // stride + 1</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.split_using_sliding_window" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">split_using_sliding_window</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>可変サイズのsegmentからsliding-window方式で一定サイズのフレームを抽出する．</p>
+<p>各shapeは以下のようになる．</p>
+<ul>
+<li>segment: (segment_size, ch)</li>
+<li>frames: (num_frames, window_size, ch)</li>
+</ul>
+<p>segmentの第2軸(axis=1)以降のshapeは任意であり，
+例えばshapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
+(num_frames, window_size, ch1, ch2)のデータを取得することができる．</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>segments</code></td>
+        <td><code>np.ndarray</code></td>
+        <td><p>分割対象のデータ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>window_size</code></td>
+        <td><code>int, default=512</code></td>
+        <td><p>フレーム分けするサンプルサイズ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td><code>int, default=None</code></td>
+        <td><p>strideがNoneはwindow_sizeが指定される．</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>ftrim</code></td>
+        <td><code>int</code></td>
+        <td><p>最初のftrimサンプルをとばす(default=5)．</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>btrim</code></td>
+        <td><code>int</code></td>
+        <td><p>最後のbtrimサンプルをとばす(default=5)．</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>return_error_value</code></td>
+        <td><code>None</code></td>
+        <td><p>エラーの時の返り値</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>sliding-window方式で抽出下フレーム</p>
+<p>失敗したら<code>return_error_value</code>で指定された値を返す．</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.split_using_target" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">split_using_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>targetのデータを元にsrcの分割を行う．</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>分割するデータ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>target</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>ラベルデータ(一次元配列)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">tgt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">splited</span> <span class="o">=</span> <span class="n">split_from_target</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># splited == {</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#    0: [np.array([1, 2])],</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#    1: [np.array([3, 4]), np.array([7])],</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1">#    2: [np.array([5, 6])]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># }</span>
+</code></pre></div>
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Dict[int, List[numpy.ndarray]]</code></td>
+      <td><p>keyはラベル，valueはデータのリスト．</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.interpolate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">interpolate</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>interpolation function.</p>
+<p>Use <code>scipy.interpolate.interp1d</code> in this function.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>src</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>interpolation source.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>rate</code></td>
+        <td><code>int</code></td>
+        <td><p>rate.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>kind</code></td>
+        <td><code>str</code></td>
+        <td><p>Specifies the kind of interpolation as a string (‘linear’, ‘nearest’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, ‘next’, where ‘zero’, ‘slinear’, ‘quadratic’ and ‘cubic’ refer to a spline interpolation of zeroth, first, second or third order; ‘previous’ and ‘next’ simply return the previous or next value of the point) or as an integer specifying the order of the spline interpolator to use. Default is ‘linear’.</p></td>
+        <td><code>&#39;linear&#39;</code></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td><code>int</code></td>
+        <td><p>Specifies the axis of y along which to interpolate. Interpolation defaults to the last axis of y.</p></td>
+        <td><code>-1</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <p>Linear interpolation
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>[0, 2, 4] - x2 -&gt; [0, 1, 2, 3, 4]
+[0, 3, 6] - x3 -&gt; [0, 1, 2, 3, 4, 5, 6]
+</code></pre></div>
+</td></tr></table></p>
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>shape[axis] - 1 == rate * ft.shape[axis]</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.pickle_dump" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pickle_dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>object dump using pickle.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>obj</code></td>
+        <td><code>Any</code></td>
+        <td><p>any object.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>path</code></td>
+        <td><code>Union[str, pathlib.Path]</code></td>
+        <td><p>save path.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.core.pickle_load" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pickle_load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>object load using pickle.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>path</code></td>
+        <td><code>Path</code></td>
+        <td><p>a saved object pickle path.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            HaseLab@University of Fukui
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\u3000\u3001\u3002\uff0c\uff0e]+", "search.placeholder": "\u691c\u7d22", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.76f349be.min.js"></script>
+      
+        <script src="../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
