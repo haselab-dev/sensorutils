@@ -387,7 +387,14 @@
 
     <div class="doc doc-contents first">
 
-      <p>np.ndarrayをフレーム分けするプリミティブな実装で，stride_modeで分割アルゴリズムを指定することが可能．</p>
+      <p>np.ndarrayをフレーム分けするプリミティブな実装で，<code>stride_mode</code>で分割アルゴリズムを指定することが可能．</p>
+<p><code>to_frames</code>関数は<code>to_frames_using_index</code>関数，<code>to_frames_using_nptricks</code>関数，<code>to_frames_using_reshape</code>関数を適応的に使い分ける．</p>
+<p>使い分けは以下の通り．</p>
+<ul>
+<li><code>window_size == stride</code> -&gt; to_frames_using_reshape</li>
+<li><code>window_size != stride and stride_mode == 'index'</code> -&gt; to_frames_using_index</li>
+<li><code>window_size != stride and stride_mode == 'nptrick'</code> -&gt; to_frames_using_nptricks</li>
+</ul>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -421,7 +428,8 @@
       <tr>
         <td><code>stride_mode</code></td>
         <td><code>str</code></td>
-        <td><p>'index' or 'nptrick'. it is used <code>to_frames_*</code> method when window_size != stride.</p></td>
+        <td><p>'index' or 'nptrick'.</p>
+<p>it is used <code>to_frames_*</code> method when window_size != stride.</p></td>
         <td><code>&#39;index&#39;</code></td>
       </tr>
   </tbody>
@@ -658,10 +666,12 @@
 
       <p>可変サイズのsegmentからsliding-window方式で一定サイズのフレームを抽出する．</p>
 <p>各shapeは以下のようになる．</p>
-<p>segment: (segment_size, ch)</p>
-<p>frames: (num_frames, window_size, ch)</p>
+<ul>
+<li>segment: (segment_size, ch)</li>
+<li>frames: (num_frames, window_size, ch)</li>
+</ul>
 <p>segmentの第2軸(axis=1)以降のshapeは任意であり，
-例えば，shapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
+例えばshapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
 (num_frames, window_size, ch1, ch2)のデータを取得することができる．</p>
 
 <p><strong>Parameters:</strong></p>

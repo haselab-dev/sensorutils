@@ -62,13 +62,13 @@ def autocorrelation(data:np.ndarray, k:int) -> np.ndarray:
 
 def correlation_rate(data:dict) -> float:
     """相関比の計算を行う．
-    カテゴリ$c$におけるサンプル数$N_c$，平均値$\mu_c$，i番目の要素$x_{ci}$，また全てのカテゴリを含めた平均値$\mu$として，
+
+    カテゴリ$c$におけるサンプル数$N_c$，平均値$\mu_c$，i番目の要素$x_{ci}$，また全てのカテゴリを含めた平均値$\mu$として，相関比は次式で計算される．
 
     $$
     \\frac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
     $$
 
-    を計算する．
 
     Parameters
     ----------

@@ -16,7 +16,15 @@ import typing
 
 def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='index') -> np.ndarray:
     """
-    np.ndarrayをフレーム分けするプリミティブな実装で，stride_modeで分割アルゴリズムを指定することが可能．
+    np.ndarrayをフレーム分けするプリミティブな実装で，`stride_mode`で分割アルゴリズムを指定することが可能．
+
+    `to_frames`関数は`to_frames_using_index`関数，`to_frames_using_nptricks`関数，`to_frames_using_reshape`関数を適応的に使い分ける．
+
+    使い分けは以下の通り．
+
+    - `window_size == stride` -> to_frames_using_reshape
+    - `window_size != stride and stride_mode == 'index'` -> to_frames_using_index
+    - `window_size != stride and stride_mode == 'nptrick'` -> to_frames_using_nptricks
 
     Parameters
     ----------
@@ -30,7 +38,9 @@ def to_frames(src: np.ndarray, window_size: int, stride: int, stride_mode: str='
         stride is int more than 0.
 
     stride_mode: str
-        'index' or 'nptrick'. it is used `to_frames_*` method when window_size != stride.
+        'index' or 'nptrick'.
+        
+        it is used `to_frames_*` method when window_size != stride.
 
     Returns
     -------
@@ -127,15 +137,13 @@ def to_frames_using_nptricks(src: np.ndarray, window_size: int, stride: int) -> 
 def split_using_sliding_window(segment:np.ndarray, **options) -> np.ndarray:
     """
     可変サイズのsegmentからsliding-window方式で一定サイズのフレームを抽出する．
-
     各shapeは以下のようになる．
 
-    segment: (segment_size, ch)
-
-    frames: (num_frames, window_size, ch)
+    - segment: (segment_size, ch)
+    - frames: (num_frames, window_size, ch)
 
     segmentの第2軸(axis=1)以降のshapeは任意であり，
-    例えば，shapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
+    例えばshapeが(segment_size, ch1, ch2)のデータをsegmentとして入力すると，
     (num_frames, window_size, ch1, ch2)のデータを取得することができる．
 
     Parameters
