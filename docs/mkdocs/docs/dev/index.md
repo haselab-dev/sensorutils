@@ -12,4 +12,4 @@
 
 ## モジュール間の依存関係
 
-![](relation.drawio)
+![](relation.drawio.svg)

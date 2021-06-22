@@ -3,4 +3,4 @@
 !!! NOTE
     WORK IN PROGRESS
 
-![](under_construction.drawio)
+![](under_construction.drawio.svg)
