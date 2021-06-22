@@ -3,7 +3,8 @@
 - [命名規則・docstring の書き方](under_construction.md)
 - [テストコードに関して](under_construction.md)
 
-ドキュメントを記述するにあたって以下のファイルが必要
+ドキュメントを記述するにあたって以下のパッケージが必要
+
 - mkdocs
 - mkdocs-material
 - python-markdown-math
