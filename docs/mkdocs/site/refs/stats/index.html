@@ -14,11 +14,11 @@
       
       
       <link rel="icon" href="../../favicon.ico">
-      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.8">
     
     
       
-        <title>HHAR Dataset Loader - sensorutils v0.12.0</title>
+        <title>sensorutils.stats - sensorutils v0.12.0</title>
       
     
     
@@ -44,6 +44,8 @@
     
     
       
+
+
     
     
   </head>
@@ -65,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#hhar-dataset-loader" class="md-skip">
+        <a href="#sensorutilsstats" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -76,7 +78,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
-    <a href="../../index.html" title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
+    <a href="../.." title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
   <img src="../../favicon.png" alt="logo">
 
@@ -94,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              HHAR Dataset Loader
+              sensorutils.stats
             
           </span>
         </div>
@@ -168,7 +170,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
+    <a href="../.." title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
   <img src="../../favicon.png" alt="logo">
 
@@ -199,7 +201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../index.html" class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -214,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install.html" class="md-nav__link">
+      <a href="../../install/" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -229,7 +231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide.html" class="md-nav__link">
+      <a href="../../guide/" class="md-nav__link">
         User Guide
       </a>
     </li>
@@ -244,7 +246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../refs.html" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         References
       </a>
     </li>
@@ -259,7 +261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets.html" class="md-nav__link">
+      <a href="../datasets/" class="md-nav__link">
         Dataset Loader
       </a>
     </li>
@@ -292,35 +294,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.datasets.hhar.HHAR" class="md-nav__link">
-    HHAR
-  </a>
-  
-    <nav class="md-nav" aria-label="HHAR">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sensorutils.datasets.hhar.HHAR.load" class="md-nav__link">
-    load()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sensorutils.datasets.hhar.load" class="md-nav__link">
-    load()
+  <a href="#sensorutils.stats.autocorrelation" class="md-nav__link">
+    autocorrelation()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.datasets.hhar.load_raw" class="md-nav__link">
-    load_raw()
+  <a href="#sensorutils.stats.correlation_rate" class="md-nav__link">
+    correlation_rate()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sensorutils.stats.cv" class="md-nav__link">
+    cv()
   </a>
   
 </li>
@@ -337,28 +326,36 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/refs/datasets/hhar.md" title="編集" class="md-content__button md-icon">
+                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/refs/stats.md" title="編集" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="hhar-dataset-loader">HHAR Dataset Loader</h1>
+                <h1 id="sensorutilsstats">sensorutils.stats</h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>可能ならpandasのgoupbyやrolling関数を用いたほうが良い</p>
+</div>
+<hr />
 
 
-  <div class="doc doc-object doc-class">
+  <div class="doc doc-object doc-function">
 
 
 
-<h2 id="sensorutils.datasets.hhar.HHAR" class="doc doc-heading">
-        <code>HHAR</code>
-
+<h2 id="sensorutils.stats.autocorrelation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">autocorrelation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></code>
 
 
 </h2>
 
     <div class="doc doc-contents first">
 
-      <p>HHARデータセットに記録されているセンサデータとメタデータを読み込む．</p>
+      <p>ラグがkの自己相関を求める．</p>
+<p>時系列データ<span class="arithmatex">\(S = \{s_1, s_2, \dots, s_n\}\)</span>に対して，ラグ<span class="arithmatex">\(k\)</span>として</p>
+<div class="arithmatex">\[
+\frac{\mathrm{Cov}[s_i, s_{i-k}]}{\sqrt{\mathrm{Var}[s_i]\mathrm{Var}[s_{i-k}]}}
+\]</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -372,41 +369,58 @@
   </thead>
   <tbody>
       <tr>
-        <td><code>path</code></td>
-        <td><code>Union[str,Path]</code></td>
-        <td><p>HHARデータセットのパス．
-Phones_[accelerometer,gyroscope].csv, Watch_[accelerometer,gyroscope].csvが置かれているディレクトリパスを指定する．</p></td>
+        <td><code>data</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>一次元データ</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>k</code></td>
+        <td><code>int</code></td>
+        <td><p>ラグ</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
 </table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ndarray</code></td>
+      <td><p>ラグkの自己相関</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
 
 
 
-  <div class="doc doc-children">
+<h2 id="sensorutils.stats.correlation_rate" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">correlation_rate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
 
 
+</h2>
 
+    <div class="doc doc-contents first">
 
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h3 id="sensorutils.datasets.hhar.HHAR.load" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensor_types</span><span class="p">,</span> <span class="n">device_types</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>HHARデータセットを読み込み，sliding-window処理を行ったデータを返す．</p>
+      <p>相関比の計算を行う．</p>
+<p>カテゴリ<span class="arithmatex">\(c\)</span>におけるサンプル数<span class="arithmatex">\(N_c\)</span>，平均値<span class="arithmatex">\(\mu_c\)</span>，i番目の要素<span class="arithmatex">\(x_{ci}\)</span>，また全てのカテゴリを含めた平均値<span class="arithmatex">\(\mu\)</span>として，相関比は次式で計算される．</p>
+<div class="arithmatex">\[
+\frac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
+\]</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -420,51 +434,75 @@ Phones_[accelerometer,gyroscope].csv, Watch_[accelerometer,gyroscope].csvが置�
   </thead>
   <tbody>
       <tr>
-        <td><code>sensor_type</code></td>
-        <td><code></code></td>
-        <td><p>センサタイプ．"acceleromter" or "gyroscope"</p></td>
+        <td><code>data</code></td>
+        <td><code>dict</code></td>
+        <td><p>key = category</p>
+<p>val = List[src,...]</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>float</code></td>
+      <td><p>相関比</p></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+  </div>
+
+<hr />
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="sensorutils.stats.cv" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">cv</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>変動係数の計算</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>frame</code></td>
+        <td><code>ndarray</code></td>
+        <td><p>計算対象のデータ</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
-        <td><code>device_type</code></td>
-        <td><code></code></td>
-        <td><p>デバイスタイプ．"Phone" or "Watch"</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>window_size</code></td>
-        <td><code>int</code></td>
-        <td><p>フレーム分けするサンプルサイズ</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>stride</code></td>
-        <td><code>int</code></td>
-        <td><p>ウィンドウの移動幅</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>subjects</code></td>
-        <td><code>Optional[list]</code></td>
-        <td><p>ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
-被験者は計9名おり，それぞれに文字列のIDが割り当てられている．</p>
-<p>被験者ID: ['a','b','c','d','e','f','g','h','i']</p></td>
+        <td><code>axis</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>計算対象とする軸</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">hhar_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;path/to/dataset&#39;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">hhar</span> <span class="o">=</span> <span class="n">HHAR</span><span class="p">(</span><span class="n">hhar_path</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="c1"># 被験者&#39;a&#39;，&#39;b&#39;，&#39;c&#39;，&#39;d&#39;のみを読み込む</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">subjects</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">hhar</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">sensor_types</span><span class="o">=</span><span class="s1">&#39;accelerometer&#39;</span><span class="p">,</span> <span class="n">device_types</span><span class="o">=</span><span class="s1">&#39;Watch&#39;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="n">subjects</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;x: </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, y: </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="c1"># &gt; x: (?, 3, 256), y: (?, 4)</span>
-</code></pre></div>
-
 <p><strong>Returns:</strong></p>
 <table>
   <thead>
@@ -475,154 +513,8 @@ Phones_[accelerometer,gyroscope].csv, Watch_[accelerometer,gyroscope].csvが置�
   </thead>
   <tbody>
     <tr>
-      <td><code>Tuple[numpy.ndarray, numpy.ndarray]</code></td>
-      <td><p>sliding-windowで切り出した入力とターゲットのフレームリスト</p>
-<p>x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
-Channelsは加速度センサの軸を表しており，先頭からx, y, zである．</p>
-<p>y_framesのshapeは(*, 4)であり，axis=1ではUser, Model, Device, Activityの順でデータが格納されている．</p>
-<p>y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．</p></td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h2 id="sensorutils.datasets.hhar.load" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sensor_type</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="s1">&#39;Watch&#39;</span><span class="p">)</span></code>
-
-
-</h2>
-
-    <div class="doc doc-contents first">
-
-      <p>Function for loading HHAR dataset</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>path</code></td>
-        <td><code>Path</code></td>
-        <td><p>Directory path of HHAR dataset.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>sensor_type</code></td>
-        <td><code>str</code></td>
-        <td><p>"accelerometer" or "gyroscope".</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>device_type</code></td>
-        <td><code>str</code></td>
-        <td><p>"Watch" or "Phone".</p></td>
-        <td><code>&#39;Watch&#39;</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Tuple[List[pandas.core.frame.DataFrame], List[pandas.core.frame.DataFrame]]</code></td>
-      <td><p>Sensor data segmented by activity, subject, and device.</p></td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h2 id="sensorutils.datasets.hhar.load_raw" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_raw</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sensor_type</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="s1">&#39;Watch&#39;</span><span class="p">)</span></code>
-
-
-</h2>
-
-    <div class="doc doc-contents first">
-
-      <p>Function for loading raw data of HHAR dataset</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>path</code></td>
-        <td><code>Path</code></td>
-        <td><p>Directory path of HHAR dataset.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>sensor_type</code></td>
-        <td><code>str</code></td>
-        <td><p>"accelerometer" or "gyroscope".</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>device_type</code></td>
-        <td><code>str</code></td>
-        <td><p>"Watch" or "Phone".</p></td>
-        <td><code>&#39;Watch&#39;</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>DataFrame</code></td>
-      <td><p>raw data of HHAR dataset</p></td>
+      <td><code>float</code></td>
+      <td><p>変動係数</p></td>
     </tr>
   </tbody>
 </table>
