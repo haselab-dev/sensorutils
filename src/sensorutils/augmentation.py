@@ -90,12 +90,12 @@ def flipping(x:np.ndarray, overall:bool=True) -> np.ndarray:
         random flipped sensor data
     """
     if overall:
-        x_new = ((-1) ** np.random.randint(0, 1)) * x
+        x_new = ((-1) ** np.random.randint(0, 2)) * x
     else:
         x_new = np.zeros(x.shape)
-        x_new[0, :] = ((-1) ** np.random.randint(0, 1)) * x[0, :]
-        x_new[1, :] = ((-1) ** np.random.randint(0, 1)) * x[1, :]
-        x_new[2, :] = ((-1) ** np.random.randint(0, 1)) * x[2, :]
+        x_new[0, :] = ((-1) ** np.random.randint(0, 2)) * x[0, :]
+        x_new[1, :] = ((-1) ** np.random.randint(0, 2)) * x[1, :]
+        x_new[2, :] = ((-1) ** np.random.randint(0, 2)) * x[2, :]
     return x_new
 
 
