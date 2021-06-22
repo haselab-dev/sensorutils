@@ -20,7 +20,7 @@ sensorutilsのリファレンス
 
 ---
 
-## For developers
+## [For developers](dev/index.md)
 
 バグの報告や機能の追加は[GithubのIssue](https://github.com/haselab-dev/sensorutils/issues)に投稿するか
 開発メンバーに直接報告してください。
