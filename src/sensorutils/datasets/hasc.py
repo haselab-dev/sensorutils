@@ -12,7 +12,7 @@ import pandas as pd
 import pickle
 from ..core import split_using_sliding_window
 
-from .base import BaseDataset
+from .base import BaseDataset, check_path
 
 
 __all__ = ['HASC', 'load', 'load_raw', 'load_meta']
@@ -236,12 +236,12 @@ class HASC(BaseDataset):
         return x_frames, y_frames, self.label_map
 
 
-def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+def load(path:Union[Path,str], meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """Function for loading HASC dataset
 
     Parameters
     ----------
-    path: Path
+    path: Union[Path, str]
         Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
     
     meta: pd.DataFrame
@@ -258,6 +258,7 @@ def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame
 
     e.g. meta.iloc[0] is meta data of data[0].
     """
+    path = check_path(path)
 
     raw = load_raw(path, meta)
     data, meta = reformat(raw)

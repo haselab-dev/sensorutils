@@ -13,19 +13,19 @@
         <meta name="author" content="hogedamari">
       
       
-      <link rel="icon" href="../../favicon.ico">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.8">
+      <link rel="icon" href="favicon.ico">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.7">
     
     
       
-        <title>sensorutils.stats - sensorutils v0.12.0</title>
+        <title>DEBUG PAGE - sensorutils v0.12.0</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ca7ac06f.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.ca7ac06f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.f1a3b89f.min.css">
+        <link rel="stylesheet" href="assets/stylesheets/palette.f1a3b89f.min.css">
         
       
     
@@ -40,12 +40,10 @@
     
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
     
       
-
-
     
     
   </head>
@@ -59,7 +57,7 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
-    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -67,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sensorutilsstats" class="md-skip">
+        <a href="#debug-page" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -78,9 +76,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="ヘッダー">
-    <a href="../.." title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
+    <a href="index.html" title="sensorutils v0.12.0" class="md-header__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  <img src="../../favicon.png" alt="logo">
+  <img src="favicon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -96,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              sensorutils.stats
+              DEBUG PAGE
             
           </span>
         </div>
@@ -170,9 +168,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
+    <a href="index.html" title="sensorutils v0.12.0" class="md-nav__button md-logo" aria-label="sensorutils v0.12.0" data-md-component="logo">
       
-  <img src="../../favicon.png" alt="logo">
+  <img src="favicon.png" alt="logo">
 
     </a>
     sensorutils v0.12.0
@@ -201,7 +199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="index.html" class="md-nav__link">
         Home
       </a>
     </li>
@@ -216,7 +214,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../install/" class="md-nav__link">
+      <a href="install.html" class="md-nav__link">
         Installation
       </a>
     </li>
@@ -231,7 +229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/" class="md-nav__link">
+      <a href="guide.html" class="md-nav__link">
         User Guide
       </a>
     </li>
@@ -246,7 +244,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="refs.html" class="md-nav__link">
         References
       </a>
     </li>
@@ -261,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/" class="md-nav__link">
+      <a href="refs/datasets.html" class="md-nav__link">
         Dataset Loader
       </a>
     </li>
@@ -294,22 +292,49 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.stats.autocorrelation" class="md-nav__link">
-    autocorrelation()
+  <a href="#mathjax" class="md-nav__link">
+    MathJax
+  </a>
+  
+    <nav class="md-nav" aria-label="MathJax">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-line" class="md-nav__link">
+    One-line
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-line" class="md-nav__link">
+    Multi-line
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    絵文字
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.stats.correlation_rate" class="md-nav__link">
-    correlation_rate()
+  <a href="#_2" class="md-nav__link">
+    注釈
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.stats.cv" class="md-nav__link">
-    cv()
+  <a href="#notewarning" class="md-nav__link">
+    NoteやWarning
   </a>
   
 </li>
@@ -326,201 +351,77 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/refs/stats.md" title="編集" class="md-content__button md-icon">
+                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/debug.md" title="編集" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="sensorutilsstats">sensorutils.stats</h1>
+                <h1 id="debug-page">DEBUG PAGE</h1>
+<p>デバッグページ</p>
+<h2 id="mathjax">MathJax</h2>
+<h3 id="one-line">One-line</h3>
+<p>式<span class="arithmatex">\(H(p, q) = - \sum^{D-1}_{i=0}{p_i \log{q_i}}\)</span>は交差エントロピーです．</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>式<span class="s">$</span><span class="nb">H</span><span class="o">(</span><span class="nb">p, q</span><span class="o">)</span><span class="nb"> </span><span class="o">=</span><span class="nb"> </span><span class="o">-</span><span class="nb"> </span><span class="nv">\sum</span><span class="nb">^{D</span><span class="o">-</span><span class="m">1</span><span class="nb">}_{i</span><span class="o">=</span><span class="m">0</span><span class="nb">}{p_i </span><span class="nv">\log</span><span class="nb">{q_i}}</span><span class="s">$</span>は交差エントロピーです．
+</code></pre></div>
+</td></tr></table>
+<h3 id="multi-line">Multi-line</h3>
+<p><strong>ガウス積分</strong></p>
+<div class="arithmatex">\[
+\int^{\infty}_{-\infty}{e^{-\alpha x^2} dx} = \sqrt{\frac{\pi}{\alpha}}
+\]</div>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="sb">$$</span><span class="nb"></span>
+<span class="nv">\int</span><span class="nb">^{</span><span class="nv">\infty</span><span class="nb">}_{</span><span class="o">-</span><span class="nv">\infty</span><span class="nb">}{e^{</span><span class="o">-</span><span class="nv">\alpha</span><span class="nb"> x^</span><span class="m">2</span><span class="nb">} dx} </span><span class="o">=</span><span class="nb"> </span><span class="nv">\sqrt</span><span class="nb">{</span><span class="nv">\frac</span><span class="nb">{</span><span class="nv">\pi</span><span class="nb">}{</span><span class="nv">\alpha</span><span class="nb">}}</span>
+<span class="s">$$</span>
+</code></pre></div>
+</td></tr></table>
+<h2 id="_1">絵文字</h2>
+<p><img alt="😄" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f604.png" title=":smile:" /></p>
+<p><img alt="0️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0030-20e3.png" title=":zero:" /><img alt="1️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0031-20e3.png" title=":one:" /><img alt="2️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0032-20e3.png" title=":two:" /><img alt="3️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0033-20e3.png" title=":three:" /><img alt="4️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0034-20e3.png" title=":four:" /><img alt="5️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0035-20e3.png" title=":five:" /><img alt="6️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0036-20e3.png" title=":six:" /><img alt="7️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0037-20e3.png" title=":seven:" /><img alt="8️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0038-20e3.png" title=":eight:" /><img alt="9️⃣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/0039-20e3.png" title=":nine:" /></p>
+<h2 id="_2">注釈</h2>
+<p>サンプル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<h2 id="notewarning">NoteやWarning</h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>可能ならpandasのgoupbyやrolling関数を用いたほうが良い</p>
+<p>これはノートです。</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>ヒントです。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>これは警告です</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>これは危険です。</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>これは成功です。</p>
+</div>
+<div class="admonition failure">
+<p class="admonition-title">Failure</p>
+<p>これは失敗です。</p>
+</div>
+<div class="admonition bug">
+<p class="admonition-title">Bug</p>
+<p>これはバグです。</p>
+</div>
+<div class="admonition summary">
+<p class="admonition-title">Summary</p>
+<p>これは概要です。</p>
+</div>
+<div class="footnote">
 <hr />
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h2 id="sensorutils.stats.autocorrelation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">autocorrelation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></code>
-
-
-</h2>
-
-    <div class="doc doc-contents first">
-
-      <p>ラグがkの自己相関を求める．</p>
-<p>時系列データ<span class="arithmatex">\(S = \{s_1, s_2, \dots, s_n\}\)</span>に対して，ラグ<span class="arithmatex">\(k\)</span>として</p>
-<div class="arithmatex">\[
-\frac{\mathrm{Cov}[s_i, s_{i-k}]}{\sqrt{\mathrm{Var}[s_i]\mathrm{Var}[s_{i-k}]}}
-\]</div>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>data</code></td>
-        <td><code>ndarray</code></td>
-        <td><p>一次元データ</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>k</code></td>
-        <td><code>int</code></td>
-        <td><p>ラグ</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>ndarray</code></td>
-      <td><p>ラグkの自己相関</p></td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-  </div>
-
-<hr />
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h2 id="sensorutils.stats.correlation_rate" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">correlation_rate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
-
-
-</h2>
-
-    <div class="doc doc-contents first">
-
-      <p>相関比の計算を行う．</p>
-<p>カテゴリ<span class="arithmatex">\(c\)</span>におけるサンプル数<span class="arithmatex">\(N_c\)</span>，平均値<span class="arithmatex">\(\mu_c\)</span>，i番目の要素<span class="arithmatex">\(x_{ci}\)</span>，また全てのカテゴリを含めた平均値<span class="arithmatex">\(\mu\)</span>として，相関比は次式で計算される．</p>
-<div class="arithmatex">\[
-\frac{\sum_C N_c (\mu_c - \mu)^2}{\sum_C \sum_i^{N_c} (x_{ci} - \mu_c)^2 + \sum_C N_c (\mu_c - \mu)^2}
-\]</div>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>data</code></td>
-        <td><code>dict</code></td>
-        <td><p>key = category</p>
-<p>val = List[src,...]</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>float</code></td>
-      <td><p>相関比</p></td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-  </div>
-
-<hr />
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h2 id="sensorutils.stats.cv" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cv</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-
-</h2>
-
-    <div class="doc doc-contents first">
-
-      <p>変動係数の計算</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>frame</code></td>
-        <td><code>ndarray</code></td>
-        <td><p>計算対象のデータ</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>axis</code></td>
-        <td><code>Optional[int]</code></td>
-        <td><p>計算対象とする軸</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>float</code></td>
-      <td><p>変動係数</p></td>
-    </tr>
-  </tbody>
-</table>
-    </div>
-
-  </div>
+<ol>
+<li id="fn:1">
+<p>sample&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
                 
               
               
@@ -560,12 +461,12 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\u3000\u3001\u3002\uff0c\uff0e]+", "search.placeholder": "\u691c\u7d22", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\u3000\u3001\u3002\uff0c\uff0e]+", "search.placeholder": "\u691c\u7d22", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.b0710199.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.76f349be.min.js"></script>
+      <script src="assets/javascripts/bundle.76f349be.min.js"></script>
       
-        <script src="../../javascripts/config.js"></script>
+        <script src="javascripts/config.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
