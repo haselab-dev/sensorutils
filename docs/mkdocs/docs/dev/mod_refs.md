@@ -87,7 +87,7 @@ INFO     -  [12:41:10] Browser connected: http://localhost:8000/dev/mod_refs.htm
 関数等の説明はsensorutilsの実装コード内のdocstringをから自動生成しています．従って，実装コード内のdocstringsを変更することでサイト上のリファレンスを変更することが可能です．
 
 !!! Warning
-    実装コードのdocstringsを修正する際はdocstrings以外の箇所を変更しないでください．もし実装コード内に問題点を見つけた場合は[こちら](https://github.com/haselab-dev/sensorutils/blob/develop/.github/CONTRIBUTING.md)を参考にしてIssueで問題点の方向を行いそちらで対処するようにしてください．
+    実装コードのdocstringsを修正する際はdocstrings以外の箇所を変更しないでください．もし実装コード内に問題点を見つけた場合は[こちら](https://github.com/haselab-dev/sensorutils/blob/develop/.github/CONTRIBUTING.md)を参考にしてIssueで問題点の報告を行いそちらで対処するようにしてください．
 
 ## 修正を提案する
 
