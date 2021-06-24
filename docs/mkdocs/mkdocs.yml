@@ -30,6 +30,7 @@ nav:
     - User Guide: guide.md
     - References: refs.md
     - Dataset Loader: refs/datasets.md
+    - For Developer: dev/index.md
     # - DEBUG PAGE: debug.md
 
 plugins:
