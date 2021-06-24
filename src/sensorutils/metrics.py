@@ -14,6 +14,15 @@ def mae(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     \\frac{1}{N}\sum_{i=0}^{N} |\hat{y}_i - y_i|
     $$
 
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    mae(a, b).shape
+    #>> ()
+    mae(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
+
     Parameters
     ----------
     true: np.ndarray
@@ -36,6 +45,15 @@ def mape(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> ty
     $$
     \\frac{100}{N}\sum_{i=0}^{N} \\left| \\frac{\hat{y}_i - y_i}{y_i} \\right|
     $$
+
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    mape(a, b).shape
+    #>> ()
+    mape(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
 
     Parameters
     ----------
@@ -60,6 +78,15 @@ def mse(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     \\frac{1}{N}\sum_{i=0}^{N} (dst_i - src_i)^2
     $$
 
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    mse(a, b).shape
+    #>> ()
+    mse(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
+
     Parameters
     ----------
     true: np.ndarray
@@ -82,6 +109,15 @@ def rmse(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> ty
     $$
     \\left(\\frac{1}{N}\sum_{i=0}^{N} (\hat{y}_i - y_i)^2 \\right)^{\\frac{1}{2}}
     $$
+
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    rmse(a, b).shape
+    #>> ()
+    rmse(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
 
     Parameters
     ----------
@@ -106,6 +142,15 @@ def rmspe(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> t
     100 \\left(\\frac{1}{N}\sum_{i=0}^{N} (\\frac{\hat{y}_i - y_i}{y_i})^2 \\right)^{\\frac{1}{2}}
     $$
 
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    rmspe(a, b).shape
+    #>> ()
+    rmspe(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
+
     Parameters
     ----------
     true: np.ndarray
@@ -128,6 +173,15 @@ def rmsle(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> t
     $$
     \\left(\\frac{1}{N}\sum_{i=0}^{N} (\log (\hat{y}_i + 1) - \log (y_i + 1))^2 \\right)^{\\frac{1}{2}}
     $$
+
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    rmsle(a, b).shape
+    #>> ()
+    rmsle(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
 
     Parameters
     ----------
@@ -155,6 +209,13 @@ def r2(true:np.ndarray, pred:np.ndarray) -> float:
      {R^{2}}( \hat{y} ) := 1 - \\frac{ \\frac{1}{N} \sum_{i=1}^{N} { ( {y}_i - \hat{y}_{i} ) }^{2} }{ \\frac{1}{N} \sum_{i=1}^{N} { ( {y}_i - \\bar{y}) }^{2} } = 1 - \\frac{M S E(\hat{y})}{Var(y)}
     $$
 
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    r2(a, b).shape
+    #>> ()
+    ```
+
     Parameters
     ----------
     true: np.ndarray
@@ -177,6 +238,15 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
     $$
     10 \log_{10} \\left(\\frac{\sum_{i=0}^{N}true_i^2}{\sum_{i=0}^{N}(true_i - pred_i)^2} \\right)
     $$
+
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    snr(a, b).shape
+    #>> ()
+    snr(a, b, axis=2).shape
+    #>> (2, 3)
+    ```
 
     Parameters
     ----------
@@ -211,6 +281,13 @@ def lsd(true_spec:np.ndarray, pred_spec:np.ndarray, axis:typing.Optional[int]=No
     $S(\omega)$と$\\tilde{S}(\omega)$ は，それぞれ原波形と雑音抑圧波形の対数スペクトル．
     
     複数の短時間スペクトルの距離は各スペクトルで距離を算出した後，平均を取ること．
+
+    ```python
+    a = np.random.randn(2, 3, 4)
+    b = np.random.randn(2, 3, 4)
+    lsd(a, b).shape
+    #>> ()
+    ```
 
     Parameters
     ----------
