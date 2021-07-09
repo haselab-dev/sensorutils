@@ -27,7 +27,7 @@ class HASC(BaseDataset):
     path: Path
         HASCデータセットのパス．BasicActivityディレクトリの親ディレクトリのパスを指定する．
     
-    cache_dir_meta: Optional[Path]
+    meta_cache_path: Optional[Path]
         メタデータのキャッシュファイルのパス．
         何も指定されない場合(cache_dir_meta=None)，メタデータの作成を行うが，キャッシュファイルは作成しない．
         ファイル名が指定された場合，そのファイルが存在すればそこからメタデータを読み込み，存在しなければメタデータの作成を行い指定したファイルパスにダンプする．
@@ -47,16 +47,16 @@ class HASC(BaseDataset):
 
     supported_target_labels = ['activity', 'frequency', 'gender', 'height', 'weight', 'person']
 
-    def __init__(self, path:Path, cache_dir_meta:Optional[Path]=None):
+    def __init__(self, path:Path, meta_cache_path:Optional[Path]=None):
         super().__init__(path)
-        self.cache_dir_meta = cache_dir_meta
+        self.cache_dir_meta = meta_cache_path
 
-        if cache_dir_meta is not None:
-            if cache_dir_meta.exists():
-                self.meta = pd.read_csv(str(cache_dir_meta), index_col=0)
+        if meta_cache_path is not None:
+            if meta_cache_path.exists():
+                self.meta = pd.read_csv(str(meta_cache_path), index_col=0)
             else:
                 self.meta = load_meta(path)
-                self.meta.to_csv(str(cache_dir_meta))
+                self.meta.to_csv(str(meta_cache_path))
         else:
             self.meta = load_meta(path)
         
