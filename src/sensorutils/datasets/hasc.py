@@ -56,8 +56,10 @@ class HASC(BaseDataset):
                 self.meta = pd.read_csv(str(cache_dir_meta), index_col=0)
             else:
                 self.meta = load_meta(path)
+                self.meta.to_csv(str(cache_dir_meta))
         else:
             self.meta = load_meta(path)
+            self.meta.to_csv(str(cache_dir_meta))
         
         self.label_map = {'activity': None, 'subject': None}
     
