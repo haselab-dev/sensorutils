@@ -59,6 +59,20 @@ class HASC(BaseDataset):
                 self.meta.to_csv(str(meta_cache_path))
         else:
             self.meta = load_meta(path)
+
+        dtypes = {
+            'LogVersion': np.float64,
+            'Frequency': np.float64,
+            'Height(cm)': np.float64,
+            'Weight(kg)': np.float64,
+            'Pace(cm)': np.float64,
+            'HeightOfOneStairStep(cm)': np.float64,
+            'UseHistory': np.float64,
+            'Count': np.float64,
+            # '﻿LogVersion': np.float64,
+        }
+        self.meta = self.meta.replace('', np.nan)
+        self.meta = self.meta.astype(dtypes)
         
         self.label_map = {'activity': None, 'subject': None}
     
