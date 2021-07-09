@@ -3,6 +3,8 @@
 http://hasc.jp/
 """
 
+import re
+import warnings
 import functools
 from pathlib import Path
 from typing import List, Tuple, Union, Optional, Iterable
@@ -46,6 +48,11 @@ class HASC(BaseDataset):
     ]
 
     supported_target_labels = ['activity', 'frequency', 'gender', 'height', 'weight', 'person']
+
+    MAPS = {
+        'activity': {'1_stay': 0, '2_walk': 1, '3_jog': 2, '4_skip': 3, '5_stUp': 4, '6_stDown': 5},
+        'gender': {'male': 0, 'female': 1},
+    }
 
     def __init__(self, path:Path, meta_cache_path:Optional[Path]=None):
         super().__init__(path)
@@ -128,11 +135,22 @@ class HASC(BaseDataset):
             t = meta_row.to_dict()[ylbl2col[yl]]
             cat_labels = ('activity', 'gender', 'person')
             if yl in cat_labels:
-                if t not in self.maps[i]:
-                    # self.maps: List[dict], self.counters: List[int]
-                    self.maps[i][t] = self.counters[i]
-                    self.counters[i] += 1
-                targets += [self.maps[i][t]]
+                if yl == 'person':
+                    reg = re.compile(r'^person(?P<pid>\d+)$')
+                    m = reg.fullmatch(t)
+                    if m is not None:
+                        pid = int(m.group('pid'))
+                        self.maps[yl][t] = pid
+                        targets += [pid]
+                    else:
+                        warnings.warn('Detected unknown label: "{}" of person label. Therefore, this data is ignored.'.format(t), Warning)
+                        raise RuntimeError('invalid label')
+                else:
+                    if t not in HASC.MAPS[yl]:
+                        warnings.warn('Detected unknown label: "{}" of {} label. Therefore, this data is ignored.'.format(t, yl), Warning)
+                        raise RuntimeError('invalid label')
+                    targets += [HASC.MAPS[yl][t]]
+
             elif yl in (set(self.supported_target_labels) - set(cat_labels)):
                 targets += [t]
             # else:
@@ -226,13 +244,18 @@ class HASC(BaseDataset):
         segments, _ = load(self.path, meta=filed_meta)
         x_frames = []
         y_frames = []
-        self.maps = [{} for _ in y_labels]
-        self.counters = [0 for _ in y_labels]
+        self.maps = dict(zip(y_labels, [{} for _ in y_labels]))
         for (_, meta_row), seg in zip(filed_meta.iterrows(), segments):
             act = meta_row['act']
             if act == '0_sequence':
                 continue
-            ys = self.__extract_targets(tuple(y_labels), meta_row)
+            try:
+                ys = self.__extract_targets(tuple(y_labels), meta_row)
+            except RuntimeError as e:
+                if str(e) == 'invalid label':
+                    continue
+                else:
+                    raise e
 
             fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
@@ -246,7 +269,8 @@ class HASC(BaseDataset):
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
 
-        self.label_map = dict(zip(y_labels, self.maps))
+        self.label_map = self.maps.copy()
+        self.label_map.update(HASC.MAPS.copy())
 
         return x_frames, y_frames, self.label_map
 
