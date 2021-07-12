@@ -1,5 +1,8 @@
-from collections.abc import Sequence
-import random
+"""信号データに対しても拡張できるような transforms
+
+`transforms.Compose` や `transforms.RandomApply`，`transforms.RandomOrder` などは `torchvision` を用いればよい．
+"""
+
 import typing
 import torch
 import torch.nn as nn
