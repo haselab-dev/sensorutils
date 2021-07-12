@@ -18,7 +18,7 @@
     
     
       
-        <title>sensorutils v0.12.0</title>
+        <title>Installation - sensorutils v0.12.0</title>
       
     
     
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sensorutils" class="md-skip">
+        <a href="#installation" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -96,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Installation
             
           </span>
         </div>
@@ -199,6 +199,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -211,12 +226,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
+          Installation
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="index.html" class="md-nav__link md-nav__link--active">
-        Home
+      <a href="install.html" class="md-nav__link md-nav__link--active">
+        Installation
       </a>
       
         
@@ -234,37 +249,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#for-users" class="md-nav__link">
-    For users
+  <a href="#requirements" class="md-nav__link">
+    Requirements
   </a>
   
-    <nav class="md-nav" aria-label="For users">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pip" class="md-nav__link">
+    Pip
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conda" class="md-nav__link">
+    Conda
+  </a>
+  
+    <nav class="md-nav" aria-label="Conda">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#conda-build" class="md-nav__link">
+    conda-buildのインストール
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#user-guide" class="md-nav__link">
-    User Guide
+  <a href="#_1" class="md-nav__link">
+    パッケージのビルドとインストール
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    Reference
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dataset-loader" class="md-nav__link">
-    Dataset Loader
+  <a href="#_2" class="md-nav__link">
+    後始末
   </a>
   
 </li>
@@ -275,16 +297,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#for-developers" class="md-nav__link">
-    For developers
+  <a href="#uninstall" class="md-nav__link">
+    Uninstall
+  </a>
+  
+    <nav class="md-nav" aria-label="Uninstall">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pip_1" class="md-nav__link">
+    Pip
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#acknowledgements" class="md-nav__link">
-    Acknowledgements
+        
+          <li class="md-nav__item">
+  <a href="#conda_1" class="md-nav__link">
+    Conda
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -292,21 +327,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="install.html" class="md-nav__link">
-        Installation
-      </a>
     </li>
   
 
@@ -397,37 +417,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#for-users" class="md-nav__link">
-    For users
+  <a href="#requirements" class="md-nav__link">
+    Requirements
   </a>
   
-    <nav class="md-nav" aria-label="For users">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pip" class="md-nav__link">
+    Pip
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conda" class="md-nav__link">
+    Conda
+  </a>
+  
+    <nav class="md-nav" aria-label="Conda">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#conda-build" class="md-nav__link">
+    conda-buildのインストール
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#user-guide" class="md-nav__link">
-    User Guide
+  <a href="#_1" class="md-nav__link">
+    パッケージのビルドとインストール
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    Reference
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dataset-loader" class="md-nav__link">
-    Dataset Loader
+  <a href="#_2" class="md-nav__link">
+    後始末
   </a>
   
 </li>
@@ -438,16 +465,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#for-developers" class="md-nav__link">
-    For developers
+  <a href="#uninstall" class="md-nav__link">
+    Uninstall
+  </a>
+  
+    <nav class="md-nav" aria-label="Uninstall">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pip_1" class="md-nav__link">
+    Pip
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#acknowledgements" class="md-nav__link">
-    Acknowledgements
+        
+          <li class="md-nav__item">
+  <a href="#conda_1" class="md-nav__link">
+    Conda
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -463,38 +503,88 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/index.md" title="編集" class="md-content__button md-icon">
+                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/install.md" title="編集" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="sensorutils">sensorutils</h1>
-<p>Welcome! This is the documentation for sensorutils.</p>
+                <h1 id="installation">Installation</h1>
+<p>sensorutilsはpipからインストールすることで利用できるようになります。</p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>python 3.x</li>
+<li>numpy</li>
+<li>pandas</li>
+<li>scipy</li>
+</ul>
 <hr />
-<h2 id="for-users">For users</h2>
-<h3 id="installation"><a href="install.html">Installation</a></h3>
-<p>sensorutilsのインストール</p>
-<h3 id="user-guide"><a href="guide.html">User Guide</a></h3>
-<p>代表的な使い方</p>
-<h3 id="reference"><a href="refs.html">Reference</a></h3>
-<p>sensorutilsのリファレンス</p>
-<h3 id="dataset-loader"><a href="refs/datasets.html">Dataset Loader</a></h3>
-<p>行動認識ベンチマークデータセットのローダ</p>
+<h2 id="pip">Pip</h2>
+<p>最新版は下記のコマンドでインストールすることが可能です．</p>
+<p>以前のバージョンは<a href="install_prev_ver.html">こちら</a>を参照してください．</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>pip install git+https://github.com/haselab-dev/sensorutils
+</code></pre></div>
+</td></tr></table>
+<p><strong>玄人向け</strong></p>
+<p>特定のブランチやタグを指定してインストールする場合</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>pip install git+https://github.com/haselab-dev/sensorutils@<span class="o">{</span>ブランチ名 <span class="p">|</span> タグ名<span class="o">}</span>
+</code></pre></div>
+</td></tr></table>
 <hr />
-<h2 id="for-developers"><a href="dev/index.html">For developers</a></h2>
-<p>バグの報告や機能の追加は<a href="https://github.com/haselab-dev/sensorutils/issues">GithubのIssue</a>に投稿するか
-開発メンバーに直接報告してください。</p>
-<p><strong>ドキュメントを作成してくれる人募集中</strong></p>
-<!--
-### データセットローダの追加
+<h2 id="conda">Conda</h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>特にこだわりがなければpipでインストールすることをおすすめします．</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>以下の手順を守らない場合，環境が壊れる可能性があるため，十分に注意を払って作業を行ってください！</p>
+<p>環境が壊れても責任はとれません．</p>
+</div>
+<h3 id="conda-build">conda-buildのインストール</h3>
+<p>conda用にパッケージをビルドするためのツールをインストールします．すでにインストールされている場合はこのステップは飛ばしてください．</p>
+<p><code>conda-build</code>のインストールは次のコマンドで実行可能ですが，<strong>実行時には必ず<code>base</code>環境にインストールされることを確認してください</strong>．<code>conda-build</code>が<code>base</code>以外の環境にインストールされるとconda環境が壊れる可能性があります．</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>conda install -n base conda-build
+</code></pre></div>
+</td></tr></table>
+<h3 id="_1">パッケージのビルドとインストール</h3>
+<p>次にsensorutilsパッケージのビルドを行います．次のコマンドでは最新版のパッケージがビルド及びインストールされます．</p>
+<p>他のバージョンをインストールしたい場合は2行目のリポジトリリンクでバージョンを指定して下さい(<a href="install_prev_ver.html">参考</a>)．</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nb">cd</span> &lt;適当な作業ディレクトリ&gt;
+git clone https://github.com/haselab-dev/sensorutils.git
+<span class="nb">cd</span> sensorutils
 
-新しいデータセットローダを追加する場合は
-[ここに書かれている仕様](https://github.com/haselab-dev/sensorutils/blob/develop/src/sensorutils/datasets/README.md)に従ってください．
--->
+conda activate &lt;インストールするconda環境&gt;
+conda build recipe
 
+conda install --use-local sensorutils
+<span class="c1"># conda install -c file:///C:/Users/{name}/Miniconda3/conda-bld sensorutils</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="_2">後始末</h3>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>conda build purge <span class="c1"># not delete conda package</span>
+conda build purge-all <span class="c1"># delete conda package</span>
+</code></pre></div>
+</td></tr></table>
 <hr />
-<h2 id="acknowledgements">Acknowledgements</h2>
-<p><img alt="😄" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f604.png" title=":smile:" /></p>
+<h2 id="uninstall">Uninstall</h2>
+<p>パッケージを削除する場合</p>
+<h3 id="pip_1">Pip</h3>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>pip uninstall sensorutils
+</code></pre></div>
+</td></tr></table>
+<h3 id="conda_1">Conda</h3>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>conda uninstall sensorutils
+</code></pre></div>
+</td></tr></table>
                 
               
               
@@ -513,15 +603,30 @@
   
     <nav class="md-footer__inner md-grid" aria-label="フッター">
       
+        
+        <a href="index.html" class="md-footer__link md-footer__link--prev" aria-label="前: Home" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                前
+              </span>
+              Home
+            </div>
+          </div>
+        </a>
+      
       
         
-        <a href="install.html" class="md-footer__link md-footer__link--next" aria-label="次: Installation" rel="next">
+        <a href="guide.html" class="md-footer__link md-footer__link--next" aria-label="次: User Guide" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 次
               </span>
-              Installation
+              User Guide
             </div>
           </div>
           <div class="md-footer__button md-icon">
