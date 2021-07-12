@@ -29,14 +29,10 @@ def mae(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    mae(a, b).shape
-    #>> ()
-    mae(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> mae(a, b)
+    >>> mae(a, b, axis=2)
     """
     return np.abs(true - pred).mean(axis=axis)
 
@@ -63,14 +59,10 @@ def mape(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> ty
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    mape(a, b).shape
-    #>> ()
-    mape(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> mape(a, b)
+    >>> mape(a, b, axis=2)
     """
     return mae(np.ones_like(true), pred / true, axis) * 100
 
@@ -97,14 +89,10 @@ def mse(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    mse(a, b).shape
-    #>> ()
-    mse(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> mse(a, b)
+    >>> mse(a, b, axis=2)
     """
     return (np.square(true - pred)).mean(axis=axis)
 
@@ -131,14 +119,10 @@ def rmse(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> ty
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    rmse(a, b).shape
-    #>> ()
-    rmse(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> rmse(a, b)
+    >>> rmse(a, b, axis=2)
     """
     return np.sqrt(mse(true, pred, axis))
 
@@ -165,14 +149,10 @@ def rmspe(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> t
 
     Example
     -------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    rmspe(a, b).shape
-    #>> ()
-    rmspe(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> rmspe(a, b)
+    >>> rmspe(a, b, axis=2)
     """
     return rmse(np.ones_like(true), pred / true, axis) * 100
 
@@ -202,14 +182,10 @@ def rmsle(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> t
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    rmsle(a, b).shape
-    #>> ()
-    rmsle(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> rmsle(a, b)
+    >>> rmsle(a, b, axis=2)
     """
     return rmse(np.log(true + 1), np.log(pred + 1), axis=axis)
 
@@ -236,12 +212,9 @@ def r2(true:np.ndarray, pred:np.ndarray) -> float:
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    r2(a, b).shape
-    #>> ()
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> r2(a, b)
     """
     return 1 - (mse(true, pred) / np.var(true))
 
@@ -271,14 +244,10 @@ def snr(true:np.ndarray, pred:np.ndarray, axis:typing.Optional[int]=None) -> typ
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    snr(a, b).shape
-    #>> ()
-    snr(a, b, axis=2).shape
-    #>> (2, 3)
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> snr(a, b)
+    >>> snr(a, b, axis=2)
     """
     assert true.shape == pred.shape, 'true.shape ({}) == pred.shape ({})'.format(true.shape, pred.shape)
     noise_mse = (np.square(true - pred)).sum(axis=axis)
@@ -316,12 +285,9 @@ def lsd(true_spec:np.ndarray, pred_spec:np.ndarray, axis:typing.Optional[int]=No
 
     Examples
     --------
-    ```python
-    a = np.random.randn(2, 3, 4)
-    b = np.random.randn(2, 3, 4)
-    lsd(a, b).shape
-    #>> ()
-    ```
+    >>> a = np.random.randn(2, 3, 4)
+    >>> b = np.random.randn(2, 3, 4)
+    >>> lsd(a, b).shape
     """
     return np.sqrt(np.mean(20 * np.log10(np.abs(true_spec / (true_spec - pred_spec)))))
 
