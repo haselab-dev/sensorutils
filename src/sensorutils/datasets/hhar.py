@@ -15,7 +15,7 @@ from pathlib import Path
 from ..core import split_using_sliding_window, split_using_target
 from typing import Optional, Union, List, Dict, Tuple
 
-from .base import BaseDataset
+from .base import BaseDataset, check_path
 
 
 __all__ = ['HHAR', 'load', 'load_raw']
@@ -186,12 +186,12 @@ class HHAR(BaseDataset):
         return x_frames, y_frames
 
 
-def load(path:Path, sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+def load(path:Union[Path,str], sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     """Function for loading HHAR dataset
 
     Parameters
     ----------
-    path: Path
+    path: Union[Path, str]
         Directory path of HHAR dataset.
     
     sensor_type: str
@@ -211,6 +211,7 @@ def load(path:Path, sensor_type:str, device_type:str='Watch') -> Tuple[List[pd.D
 
     e.g. meta[0] is meta data of data[0].
     """
+    path = check_path(path)
 
     if (device_type[0] == 'w') or (device_type[0] == 'W'):
         device_type = DEVICE_TYPES[1]

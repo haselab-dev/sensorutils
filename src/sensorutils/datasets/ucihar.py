@@ -8,7 +8,7 @@ import pandas as pd
 from pathlib import Path
 from typing import List, Tuple, Union, Optional
 
-from .base import BaseDataset
+from .base import BaseDataset, check_path
 
 
 __all__ = ['UCIHAR', 'load', 'load_raw', 'load_meta']
@@ -112,12 +112,12 @@ class UCIHAR(BaseDataset):
         return sdata, targets
 
 
-def load(path:Path, include_gravity:bool) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+def load(path:Union[Path,str], include_gravity:bool) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """Function for loading UCI Smartphone dataset
 
     Parameters
     ----------
-    path: Path
+    path: Union[Path, str]
         Directory path of UCI Smartphone dataset.
 
     Returns
@@ -131,18 +131,19 @@ def load(path:Path, include_gravity:bool) -> Tuple[List[pd.DataFrame], pd.DataFr
 
     e.g. meta.iloc[0] is meta data of data[0].
     """
+    path = check_path(path)
 
     raw = load_raw(path, include_gravity=include_gravity)
     data, meta = reformat(raw)
     return data, meta
 
 
-def load_meta(path:Path) -> pd.DataFrame:
+def load_meta(path:Union[Path, str]) -> pd.DataFrame:
     """Function for loading meta data of UCI Smartphone dataset
 
     Parameters
     ----------
-    path: Path
+    path: Union[Path, str]
         Directory path of UCI Smartphone dataset, which includes 'train' and 'test' directory.
 
     Returns
@@ -150,6 +151,7 @@ def load_meta(path:Path) -> pd.DataFrame:
     metas: pd.DataFrame:
         meta data of HASC dataset.
     """
+    path = check_path(path)
 
     # train
     train_labels = pd.read_csv(str(path/'train'/'y_train.txt'), header=None)

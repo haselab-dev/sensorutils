@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Optional, Union, List, Tuple
 from ..core import split_using_target, split_using_sliding_window
 
-from .base import BaseDataset
+from .base import BaseDataset, check_path
 
 
 __all__ = ['WISDM', 'load', 'load_raw']
@@ -111,12 +111,12 @@ class WISDM(BaseDataset):
         return x_frames, y_frames
 
 
-def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
+def load(path:Union[Path,str]) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
     """Function for loading WISDM dataset
 
     Parameters
     ----------
-    path: Path
+    path: Union[Path, str]
         Directory path of WISDM dataset('data' directory)
 
     Returns
@@ -130,6 +130,8 @@ def load(path:Path) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
 
     e.g. meta[0] is meta data of data[0].
     """
+    path = check_path(path)
+
     raw = load_raw(path)
     data, meta = reformat(raw)
     return data, meta

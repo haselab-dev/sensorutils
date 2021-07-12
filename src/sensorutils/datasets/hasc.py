@@ -3,6 +3,8 @@
 http://hasc.jp/
 """
 
+import re
+import warnings
 import functools
 from pathlib import Path
 from typing import List, Tuple, Union, Optional, Iterable
@@ -12,7 +14,7 @@ import pandas as pd
 import pickle
 from ..core import split_using_sliding_window
 
-from .base import BaseDataset
+from .base import BaseDataset, check_path
 
 
 __all__ = ['HASC', 'load', 'load_raw', 'load_meta']
@@ -27,9 +29,9 @@ class HASC(BaseDataset):
     path: Path
         HASCデータセットのパス．BasicActivityディレクトリの親ディレクトリのパスを指定する．
     
-    cache_dir_meta: Optional[Path]
+    meta_cache_path: Optional[Path]
         メタデータのキャッシュファイルのパス．
-        何も指定されない場合(cache_dir_meta=None)，メタデータの作成を行うが，キャッシュファイルは作成しない．
+        何も指定されない場合(meta_cache_path=None)，メタデータの作成を行うが，キャッシュファイルは作成しない．
         ファイル名が指定された場合，そのファイルが存在すればそこからメタデータを読み込み，存在しなければメタデータの作成を行い指定したファイルパスにダンプする．
 
     See Also
@@ -47,17 +49,37 @@ class HASC(BaseDataset):
 
     supported_target_labels = ['activity', 'frequency', 'gender', 'height', 'weight', 'person']
 
-    def __init__(self, path:Path, cache_dir_meta:Optional[Path]=None):
-        super().__init__(path)
-        self.cache_dir_meta = cache_dir_meta
+    MAPS = {
+        'activity': {'1_stay': 0, '2_walk': 1, '3_jog': 2, '4_skip': 3, '5_stUp': 4, '6_stDown': 5},
+        'gender': {'male': 0, 'female': 1},
+    }
 
-        if cache_dir_meta is not None:
-            if cache_dir_meta.exists():
-                self.meta = pd.read_csv(str(cache_dir_meta), index_col=0)
+    def __init__(self, path:Path, meta_cache_path:Optional[Path]=None):
+        super().__init__(path)
+        self.cache_dir_meta = meta_cache_path
+
+        if meta_cache_path is not None:
+            if meta_cache_path.exists():
+                self.meta = pd.read_csv(str(meta_cache_path), index_col=0)
             else:
                 self.meta = load_meta(path)
+                self.meta.to_csv(str(meta_cache_path))
         else:
             self.meta = load_meta(path)
+
+        dtypes = {
+            'LogVersion': np.float64,
+            'Frequency': np.float64,
+            'Height(cm)': np.float64,
+            'Weight(kg)': np.float64,
+            'Pace(cm)': np.float64,
+            'HeightOfOneStairStep(cm)': np.float64,
+            'UseHistory': np.float64,
+            'Count': np.float64,
+            # '﻿LogVersion': np.float64,
+        }
+        self.meta = self.meta.replace('', np.nan)
+        self.meta = self.meta.astype(dtypes)
         
         self.label_map = {'activity': None, 'subject': None}
     
@@ -113,11 +135,22 @@ class HASC(BaseDataset):
             t = meta_row.to_dict()[ylbl2col[yl]]
             cat_labels = ('activity', 'gender', 'person')
             if yl in cat_labels:
-                if t not in self.maps[i]:
-                    # self.maps: List[dict], self.counters: List[int]
-                    self.maps[i][t] = self.counters[i]
-                    self.counters[i] += 1
-                targets += [self.maps[i][t]]
+                if yl == 'person':
+                    reg = re.compile(r'^person(?P<pid>\d+)$')
+                    m = reg.fullmatch(t)
+                    if m is not None:
+                        pid = int(m.group('pid'))
+                        self.maps[yl][t] = pid
+                        targets += [pid]
+                    else:
+                        warnings.warn('Detected unknown label: "{}" of person label. Therefore, this data is ignored.'.format(t), Warning)
+                        raise RuntimeError('invalid label')
+                else:
+                    if t not in HASC.MAPS[yl]:
+                        warnings.warn('Detected unknown label: "{}" of {} label. Therefore, this data is ignored.'.format(t, yl), Warning)
+                        raise RuntimeError('invalid label')
+                    targets += [HASC.MAPS[yl][t]]
+
             elif yl in (set(self.supported_target_labels) - set(cat_labels)):
                 targets += [t]
             # else:
@@ -211,13 +244,18 @@ class HASC(BaseDataset):
         segments, _ = load(self.path, meta=filed_meta)
         x_frames = []
         y_frames = []
-        self.maps = [{} for _ in y_labels]
-        self.counters = [0 for _ in y_labels]
+        self.maps = dict(zip(y_labels, [{} for _ in y_labels]))
         for (_, meta_row), seg in zip(filed_meta.iterrows(), segments):
             act = meta_row['act']
             if act == '0_sequence':
                 continue
-            ys = self.__extract_targets(tuple(y_labels), meta_row)
+            try:
+                ys = self.__extract_targets(tuple(y_labels), meta_row)
+            except RuntimeError as e:
+                if str(e) == 'invalid label':
+                    continue
+                else:
+                    raise e
 
             fs = split_using_sliding_window(
                 np.array(seg), window_size=window_size, stride=stride,
@@ -231,17 +269,18 @@ class HASC(BaseDataset):
         y_frames = np.concatenate(y_frames)
         assert len(x_frames) == len(y_frames), 'Mismatch length of x_frames and y_frames'
 
-        self.label_map = dict(zip(y_labels, self.maps))
+        self.label_map = self.maps.copy()
+        self.label_map.update(HASC.MAPS.copy())
 
         return x_frames, y_frames, self.label_map
 
 
-def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+def load(path:Union[Path,str], meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """Function for loading HASC dataset
 
     Parameters
     ----------
-    path: Path
+    path: Union[Path, str]
         Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
     
     meta: pd.DataFrame
@@ -258,6 +297,7 @@ def load(path:Path, meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], pd.DataFrame
 
     e.g. meta.iloc[0] is meta data of data[0].
     """
+    path = check_path(path)
 
     raw = load_raw(path, meta)
     data, meta = reformat(raw)

@@ -197,8 +197,19 @@ class HASCTest(unittest.TestCase):
             _, y, label_map = self.loader.load(window_size=256, stride=256, ftrim=5, btrim=5, queries=queries, y_labels=['activity', 'frequency', 'gender', 'height', 'weight', 'person'])
             self.assertIsInstance(label_map, dict)
             self.assertSetEqual(set(label_map['person'].keys()), set(subjects))
-            self.assertEqual(y[:, 5].min(), 0)
-            self.assertEqual(y[:, 5].max(), len(subjects)-1)
+            # self.assertEqual(y[:, 5].min(), 0)
+            # self.assertEqual(y[:, 5].max(), len(subjects)-1)
+            self.assertSetEqual(set(subjects), set(label_map['person'].keys()))
+            self.assertSetEqual(set([
+                1068, 3053, 2033, 1106, 3079, 
+                2007, 1085, 1060, 1103, 3032, 
+                1107, 1045, 2063, 3055, 1066, 
+                3001, 1039, 1113, 3034, 3056, 
+                2100, 1087, 1089, 1109, 1017, 
+                1063, 1098, 3038, 2012, 1097, 
+                3036, 3033, 1078, 2068, 3076, 
+                1040, 2024, 1073, 2040
+            ]), set(label_map['person'].values()))
 
         # self.assertIsInstance(raw, tuple)
         # self.assertEqual(len(raw), 2)
