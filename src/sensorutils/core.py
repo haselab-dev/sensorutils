@@ -313,29 +313,3 @@ def pickle_load(path:pathlib.Path) -> typing.Any:
     with open(path, mode='rb') as f:
         data = pickle.load(f)
     return data
-
-
-def cast(type:typing.Callable, *args) -> typing.Iterator[typing.Any]:
-    """型変換を行うヘルパ関数
-
-    Parameters
-    ----------
-    type: Callable
-        変換型
-
-    *args: List
-        変換対象
-
-    Returns
-    -------
-    Iterator[Any]:
-        変換後の変数
-
-    Sample
-    ------
-    ```python
-    x, y = 2, 5
-    x, y = cast(float, x, y)
-    ```
-    """
-    return map(type, args)
