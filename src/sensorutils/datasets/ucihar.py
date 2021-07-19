@@ -35,7 +35,7 @@ class UCIHAR(BaseDataset):
         super().__init__(path)
         # self.load_meta()
     
-    def load(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> Tuple[np.ndarray, np.ndarray]:
+    def load(self, train:bool=True, person_list:Optional[list]=None) -> Tuple[np.ndarray, np.ndarray]:
         """
         UCI Smartphoneデータセットを読み込み，sliding-window処理を行ったデータを返す．
 
@@ -49,21 +49,18 @@ class UCIHAR(BaseDataset):
             ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
             被験者は計9名おり，それぞれに整数のIDが割り当てられている．
 
-        include_gravity: bool
-            姿勢情報(第0周波数成分)を含むかどうかのフラグ．
-       
         Returns
         -------
         sdata, targets: Tuple[np.ndarray, np.ndarray]
             sliding-windowで切り出した入力とターゲットのフレームリスト
 
             x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
-            Channelsは加速度センサの軸を表しており，先頭からx, y, zである．
+            Channelsは加速度センサ及びジャイロセンサの各軸を表しており，先頭からtotal_acc_x, total_acc_y, total_acc_z, body_acc_x, body_acc_y, body_acc_z, body_gyro_x, body_gyro_y, body_gyro_zである．
 
             y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
             Labelsは先頭からactivity，subject，trainフラグを表している．
 
-            y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
+            activity label以外y_framesのデータはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．
         
         See Also
         --------
@@ -78,16 +75,13 @@ class UCIHAR(BaseDataset):
         >>> ucihar = UCIHAR(ucihar_path)
         >>>
         >>> person_list = [1, 2, 5, 7, 9]
-        >>> x, y = ucihar.load(train=True, person_list=person_list, include_gravity=True)
+        >>> x, y = ucihar.load(train=True, person_list=person_list)
         >>> print(f'x: {x.shape}, y: {y.shape}')
         >>>
-        >>> # > x: (?, 3, 128), y: (?, 3)
+        >>> # > x: (?, 9, 128), y: (?, 3)
         """
 
-        if include_gravity:
-            sdata, metas = load(self.path, include_gravity=True)
-        else:
-            sdata, metas = load(self.path, include_gravity=False)
+        sdata, metas = load(self.path)
  
         sdata = np.stack(sdata).transpose(0, 2, 1)
         flags = np.zeros((sdata.shape[0],), dtype=bool)
@@ -112,7 +106,7 @@ class UCIHAR(BaseDataset):
         return sdata, targets
 
 
-def load(path:Union[Path,str], include_gravity:bool) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
+def load(path:Union[Path,str]) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """Function for loading UCI Smartphone dataset
 
     Parameters
@@ -133,7 +127,7 @@ def load(path:Union[Path,str], include_gravity:bool) -> Tuple[List[pd.DataFrame]
     """
     path = check_path(path)
 
-    raw = load_raw(path, include_gravity=include_gravity)
+    raw = load_raw(path)
     data, meta = reformat(raw)
     return data, meta
 
@@ -174,7 +168,7 @@ def load_meta(path:Union[Path, str]) -> pd.DataFrame:
     return metas
 
 
-def load_raw(path:Path, include_gravity:bool) -> Tuple[np.ndarray, pd.DataFrame]:
+def load_raw(path:Path) -> Tuple[np.ndarray, pd.DataFrame]:
     """Function for loading raw data of UCI Smartphone dataset
 
     Parameters
@@ -182,37 +176,32 @@ def load_raw(path:Path, include_gravity:bool) -> Tuple[np.ndarray, pd.DataFrame]
     path: Path
         Directory path of UCI Smartphone dataset, which includes 'train' and 'test' directory.
 
-    include_gravity: bool
-        Flag whether attitude information (0th frequency component) is included.
-
     Returns
     -------
     sensor_data, meta: np.ndarray, pd.DataFrame
         raw data of UCI Smartphone dataset
 
-        Shape of sensor_data is (?, 3, 128).
+        Shape of sensor_data is (?, 9, 128).
     """
 
-    if include_gravity:
-        x_tr = pd.read_csv(str(path/'train'/'Inertial Signals'/'total_acc_x_train.txt'), sep=r'\s+', header=None).to_numpy()
-        y_tr = pd.read_csv(str(path/'train'/'Inertial Signals'/'total_acc_y_train.txt'), sep=r'\s+', header=None).to_numpy()
-        z_tr = pd.read_csv(str(path/'train'/'Inertial Signals'/'total_acc_z_train.txt'), sep=r'\s+', header=None).to_numpy()
-        x_ts = pd.read_csv(str(path/'test'/'Inertial Signals'/'total_acc_x_test.txt'), sep=r'\s+', header=None).to_numpy()
-        y_ts = pd.read_csv(str(path/'test'/'Inertial Signals'/'total_acc_y_test.txt'), sep=r'\s+', header=None).to_numpy()
-        z_ts = pd.read_csv(str(path/'test'/'Inertial Signals'/'total_acc_z_test.txt'), sep=r'\s+', header=None).to_numpy()
-    else:
-        x_tr = pd.read_csv(str(path/'train'/'Inertial Signals'/'body_acc_x_train.txt'), sep=r'\s+', header=None).to_numpy()
-        y_tr = pd.read_csv(str(path/'train'/'Inertial Signals'/'body_acc_y_train.txt'), sep=r'\s+', header=None).to_numpy()
-        z_tr = pd.read_csv(str(path/'train'/'Inertial Signals'/'body_acc_z_train.txt'), sep=r'\s+', header=None).to_numpy()
-        x_ts = pd.read_csv(str(path/'test'/'Inertial Signals'/'body_acc_x_test.txt'), sep=r'\s+', header=None).to_numpy()
-        y_ts = pd.read_csv(str(path/'test'/'Inertial Signals'/'body_acc_y_test.txt'), sep=r'\s+', header=None).to_numpy()
-        z_ts = pd.read_csv(str(path/'test'/'Inertial Signals'/'body_acc_z_test.txt'), sep=r'\s+', header=None).to_numpy()
+    sensor_types = ['total_acc', 'body_acc', 'body_gyro']
+    axes = ['x', 'y', 'z']
 
-    x = np.concatenate([x_tr, x_ts], axis=0)
-    y = np.concatenate([y_tr, y_ts], axis=0)
-    z = np.concatenate([z_tr, z_ts], axis=0)
+    train_data = [
+        pd.read_csv(str(path/'train'/'Inertial Signals'/'{}_{}_train.txt'.format(stype, axis)), sep=r'\s+', header=None).to_numpy() \
+        for stype in sensor_types \
+        for axis in axes
+    ]
+    train_data = np.stack(train_data, axis=1)
 
-    sensor_data = np.concatenate([x[:, np.newaxis, :], y[:, np.newaxis, :], z[:, np.newaxis, :]], axis=1)
+    test_data = [
+        pd.read_csv(str(path/'test'/'Inertial Signals'/'{}_{}_test.txt'.format(stype, axis)), sep=r'\s+', header=None).to_numpy() \
+        for stype in sensor_types \
+        for axis in axes
+    ]
+    test_data = np.stack(test_data, axis=1)
+
+    sensor_data = np.concatenate([train_data, test_data], axis=0)
     sensor_data = sensor_data.astype(np.float64)
     meta = load_meta(path)
 
@@ -240,6 +229,13 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """
 
     data, meta = raw
-    data = list(map(lambda x: pd.DataFrame(x.T, columns=['x', 'y', 'z']), data))
+    sensor_types = ['total_acc', 'body_acc', 'body_gyro']
+    axes = ['x', 'y', 'z']
+    columns = [
+        '{}_{}'.format(stype, axis)
+        for stype in sensor_types \
+        for axis in axes
+    ]
+    data = list(map(lambda x: pd.DataFrame(x.T, columns=columns), data))
     return data, meta
 
