@@ -217,28 +217,6 @@ def intensity(x:np.ndarray, axis:int=-1) -> typing.Union[float,np.ndarray]:
     return np.sum(src, axis=axis) / n
 
 
-def zcr_zero(x:np.ndarray, axis:int=-1) -> typing.Union[float,np.ndarray]:
-    """連続でない平均値の出現を考慮したゼロ交差率．
-
-    Parameters
-    ----------
-    x: np.ndarray
-        計算対象
-
-    axis: int
-        対象の軸
-
-    Returns
-    -------
-    Union[float, np.ndarray]:
-        計算結果
-    """
-    src = x - np.mean(x, axis=axis, keepdims=True)
-    num = np.count_nonzero(np.diff(np.sign(src), axis=axis), axis=axis)
-    num -= np.count_nonzero(src == 0, axis=axis)
-    return num / x.shape[axis]
-
-
 def zcr(x:np.ndarray, axis:int=-1) -> typing.Union[float,np.ndarray]:
     """平均値の出現を考慮しないゼロ交差率
 
@@ -258,19 +236,3 @@ def zcr(x:np.ndarray, axis:int=-1) -> typing.Union[float,np.ndarray]:
     src = x - np.mean(x, axis=axis, keepdims=True)
     num = np.count_nonzero(np.diff(np.sign(src), axis=axis), axis=axis)
     return num / x.shape[axis]
-
-
-def zerocorssing_fast(x:np.ndarray) -> int:
-    """0 の出現を考慮しないゼロ交差回数
-
-    Parameters
-    ----------
-    x: np.ndarray
-        一次元配列．計算対象
-
-    Returns
-    -------
-    int:
-        回数
-    """
-    return ((x[:-1] * x[1:]) < 0).sum()
