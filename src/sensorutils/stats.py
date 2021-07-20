@@ -114,3 +114,125 @@ def cv(frame:np.ndarray, axis:typing.Optional[int]=None) -> float:
         変動係数
     """
     return np.sqrt(np.var(frame, axis=axis)) / np.mean(frame, axis=axis)
+
+
+def abs_mean(x:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float,np.ndarray]:
+    """大きさの平均
+
+    Parameters
+    ----------
+    x: np.ndarray
+        計算対象
+
+    axis: Optional[int]
+        対象の軸
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+        計算結果
+    """
+    return np.mean(np.abs(x), axis=axis)
+
+
+def abs_max(x:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float,np.ndarray]:
+    """大きさの最大値
+
+    Parameters
+    ----------
+    x: np.ndarray
+        計算対象
+
+    axis: Optional[int]
+        対象の軸
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+        計算結果
+    """
+    return np.max(np.abs(x), axis=axis)
+
+
+def abs_min(x:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float,np.ndarray]:
+    """大きさの最小値
+
+    Parameters
+    ----------
+    x: np.ndarray
+        計算対象
+
+    axis: Optional[int]
+        対象の軸
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+        計算結果
+    """
+    return np.min(np.abs(x), axis=axis)
+
+
+def abs_std(x:np.ndarray, axis:typing.Optional[int]=None) -> typing.Union[float,np.ndarray]:
+    """大きさの標準偏差
+
+    Parameters
+    ----------
+    x: np.ndarray
+        計算対象
+
+    axis: Optional[int]
+        対象の軸
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+        計算結果
+    """
+    return np.std(np.abs(x), axis=axis)
+
+
+def intensity(x:np.ndarray, axis:int=-1) -> typing.Union[float,np.ndarray]:
+    """動きの激しさ
+
+    $$
+    \frac{1}{n-1}\sum_{i=1}^{n-1}|x_i - x_{i+1}|
+    $$
+
+    Parameters
+    ----------
+    x: np.ndarray
+        計算対象
+
+    axis: int
+        対象の軸
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+        計算結果
+    """
+    src = np.abs(np.diff(x, axis=axis))  # n-1 される
+    n = src.shape[axis]
+    return np.sum(src, axis=axis) / n
+
+
+def zcr(x:np.ndarray, axis:int=-1) -> typing.Union[float,np.ndarray]:
+    """平均値の出現を考慮しないゼロ交差率
+
+    Parameters
+    ----------
+    x: np.ndarray
+        計算対象
+
+    axis: int
+        対象の軸
+
+    Returns
+    -------
+    Union[float, np.ndarray]:
+        計算結果
+    """
+    src = x - np.mean(x, axis=axis, keepdims=True)
+    num = np.count_nonzero(np.diff(np.sign(src), axis=axis), axis=axis)
+    return num / x.shape[axis]
