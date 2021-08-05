@@ -9,13 +9,13 @@ sensorutilsのリファレンスサイトはMkDocsでMarkdownをビルドして�
 リファレンスのビルドに必要なパッケージは以下の通りです．
 
 - mkdocs==1.2.1
-- mkdocs-material==0.2.1
-- python-markdown-math==7.1.7
+- mkdocs-material==7.1.7
+- python-markdown-math==0.8
 - mkdocstrings==0.15.2
 - pytkdocs[numpy-style]==0.11.1
 
 ```sh
-$ pip install mkdocs==1.2.1 mkdocs-material==0.2.1 python-markdown-math==7.1.7 mkdocstrings==0.15.2
+$ pip install mkdocs==1.2.1 mkdocs-material==7.1.7 python-markdown-math==0.8 mkdocstrings==0.15.2
 
 $ pip install pytkdocs[numpy-style]==0.11.1
 ```
