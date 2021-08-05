@@ -5,7 +5,7 @@ sensorutilsはpipからインストールすることで利用できるように
 ## Requirements
 
 - python >= 3.7
-- numpy >= 1.20
+- numpy >= 1.19
 - pandas >= 1.2
 - scipy >= 1.6
 
