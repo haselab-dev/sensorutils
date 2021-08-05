@@ -4,7 +4,7 @@
 # This file has been created for pip. So, in "conda", you cannnot use this file.
 
 # For running sensorutils
-numpy>=1.20
+numpy>=1.19
 pandas>=1.2
 scipy>=1.6
 
