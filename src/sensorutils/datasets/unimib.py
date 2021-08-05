@@ -180,6 +180,14 @@ def load(path:Union[Path,str], data_type:str='full') -> Tuple[List[pd.DataFrame]
     path: Union[Path, str]
         Directory path of UniMib SHAR dataset('data' directory).
 
+    data_type: str
+        Data type
+
+        - 'full': segmented sensor data which contain all activities
+        - 'adl' : segmented sensor data which contain ADL activities
+        - 'fall': segmented sensor data which contain fall activities
+        - 'raw' : raw sensor data (not segmented, all activities)
+
     Returns
     -------
     data, meta: List[pd.DataFrame], pd.DataFrame
@@ -208,26 +216,27 @@ def load_raw(path:Path, data_type:str='full') -> Union[Tuple[np.ndarray, pd.Data
 
     data_type: str
         Data type
-        'full': segmented sensor data which contain all activities
-        'adl' : segmented sensor data which contain ADL activities
-        'fall': segmented sensor data which contain fall activities
-        'raw' : raw sensor data (not segmented, all activities)
+
+        - 'full': segmented sensor data which contain all activities
+        - 'adl' : segmented sensor data which contain ADL activities
+        - 'fall': segmented sensor data which contain fall activities
+        - 'raw' : raw sensor data (not segmented, all activities)
 
     Returns
     -------
-    * If data_type = 'full', 'adl' or 'fall'
+    data, meta: Tuple[np.ndarray, pd.DataFrame] or Tuple[List[np.ndarray], pd.DataFrame]
 
-    data, meta: Tuple[np.ndarray, pd.DataFrame]
-        Sensor data and meta data.
-        Data shape is (?, 151, 3), and the second axis shows frames.
-        Third axis is channel axis, which indicates x, y and z acceleration.
-    
-    * If data_type = 'raw'
+        * If data_type = 'full', 'adl' or 'fall': Tuple[np.ndarray, pd.DataFrame]
 
-    data, meta: Tuple[List[np.ndarray], pd.DataFrame]
-        Sensor data and meta data.
-        Data shape is (?, ?, 3), and the second axis shows segments which is variable length.
-        Third axis is channel, which indicates x, y and z acceleration.
+            Sensor data and meta data.
+            Data shape is (?, 151, 3), and the second axis shows frames.
+            Third axis is channel axis, which indicates x, y and z acceleration.
+        
+        * If data_type = 'raw': Tuple[List[np.ndarray], pd.DataFrame]
+
+            Sensor data and meta data.
+            Data shape is (?, ?, 3), and the second axis shows segments which is variable length.
+            Third axis is channel, which indicates x, y and z acceleration.
 
     See Also
     --------

@@ -7,6 +7,6 @@
 - [Opportunity](datasets/opportunity.md)
 - [PAMAP2](datasets/pamap2.md)
 - [UCI Smartphone](datasets/ucihar.md)
-- [UniUib](datasets/unimib.md)
+- [UniMib](datasets/unimib.md)
 - [WISDM](datasets/wisdm.md)
 
