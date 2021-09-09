@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 import itertools
+import copy
 from pathlib import Path
 from typing import List, Tuple, Optional, Union
 from ..core import split_using_target, split_using_sliding_window
@@ -393,7 +394,8 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], List[pd.DataFrame]]:
         segs += sub_segs
 
     cols_meta = ['activity_id', 'person_id',]
-    cols_sensor = list(set(Columns) - set(cols_meta))
+    # cols_sensor = list(set(Columns) - set(cols_meta))
+    cols_sensor = [c for c in Columns if c not in cols_meta]
     data = list(map(lambda seg: seg[cols_sensor], segs))
     meta = list(map(lambda seg: seg[cols_meta], segs))
     

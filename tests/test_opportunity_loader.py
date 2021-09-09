@@ -4,7 +4,6 @@ import unittest
 import numpy as np
 import pandas as pd
 import itertools
-import copy
 from pathlib import Path
 
 sys.path.append('../src/')
@@ -30,8 +29,8 @@ class OpportunityTest(unittest.TestCase):
     def test_load_fn(self):
         data, meta = load(self.path)
 
-        y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels))
+        y_labels = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+        x_labels = [c for c in Column if c not in y_labels]
 
         # compare between data and meta
         self.assertEqual(len(data), len(meta))
@@ -43,6 +42,7 @@ class OpportunityTest(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([set(m.columns) == set(y_labels) for m in meta]))
+        self.assertTrue(all([list(m.columns) == y_labels for m in meta]))
 
         ## data type check
         self.assertTrue(all([
@@ -72,6 +72,7 @@ class OpportunityTest(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([set(d.columns) == set(x_labels) for d in data]))
+        self.assertTrue(all([list(d.columns) == x_labels for d in data]))
 
         ## data type check
         C = list(set(data[0].columns) - set(self.loader.NOT_SUPPORTED_LABELS))
@@ -83,8 +84,8 @@ class OpportunityTest(unittest.TestCase):
     def test_load_raw_fn(self):
         raw = load_raw(self.path)
 
-        y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels))
+        y_labels = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+        x_labels = [c for c in Column if c not in y_labels]
 
         # raw
         ## type check
@@ -133,8 +134,8 @@ class OpportunityTest(unittest.TestCase):
         raw = load_raw(self.path)
         data, meta = reformat(raw)
 
-        y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels))
+        y_labels = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+        x_labels = [c for c in Column if c not in y_labels]
 
         # compare between data and meta
         self.assertEqual(len(data), len(meta))
@@ -146,6 +147,7 @@ class OpportunityTest(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([set(m.columns) == set(y_labels) for m in meta]))
+        self.assertTrue(all([list(m.columns) == y_labels for m in meta]))
 
         ## data type check
         self.assertTrue(all([
@@ -175,6 +177,7 @@ class OpportunityTest(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([set(d.columns) == set(x_labels) for d in data]))
+        self.assertTrue(all([list(d.columns) == x_labels for d in data]))
 
         ## data type check
         C = list(set(data[0].columns) - set(self.loader.NOT_SUPPORTED_LABELS))
@@ -185,8 +188,8 @@ class OpportunityTest(unittest.TestCase):
 
     def test_opp_load_method_filed_labels(self):
         # check processing for exceptions
-        y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels) - set(self.loader.NOT_SUPPORTED_LABELS))
+        y_labels = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+        x_labels = [c for c in Column if c not in y_labels and c not in self.loader.NOT_SUPPORTED_LABELS]
 
         with self.assertRaises(ValueError):
             _, _ = self.loader.load(window_size=128, stride=128, ftrim_sec=2, btrim_sec=2, x_labels=y_labels)
@@ -208,8 +211,8 @@ class OpportunityTest(unittest.TestCase):
         self.assertEqual(y.shape[1], 2)
 
     def test_opp_load_method_framing(self):
-        y_labels = ['Locomotion', 'subject', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms']
-        x_labels = list(set(copy.deepcopy(Column)) - set(y_labels) - set(self.loader.NOT_SUPPORTED_LABELS))
+        y_labels = ['Locomotion', 'HL_Activity', 'LL_Left_Arm', 'LL_Left_Arm_Object', 'LL_Right_Arm', 'LL_Right_Arm_Object', 'ML_Both_Arms', 'subject']
+        x_labels = [c for c in Column if c not in y_labels and c not in self.loader.NOT_SUPPORTED_LABELS]
         for stride, ws in itertools.product([64, 128, 256, 512], [64, 128, 256, 512]):
             print(f'window size: {ws}, stride: {stride}')
             with self.subTest(f'window size: {ws}, stride: {stride}'):
@@ -237,7 +240,7 @@ class OpportunityTest(unittest.TestCase):
                 ### x_labels, y_labelsによって変わるため要検討
                 ### otherのデータが除去されていることも確認
                 self.assertSetEqual(set(np.unique(y[:, 0])), set(self.activities)-set([0])) # activity(protocol): performed activities
-                self.assertSetEqual(set(np.unique(y[:, 1])), set(self.subjects)) # subject
+                self.assertSetEqual(set(np.unique(y[:, -1])), set(self.subjects)) # subject
 
                 del x, y
 
@@ -262,7 +265,7 @@ class OpportunityTest(unittest.TestCase):
             with self.subTest(f'pattern {i}'):
                 _, y = self.loader.load(window_size=128, stride=128, ftrim_sec=2, btrim_sec=2, subjects=subjects)
                 subjects_id = list(map(lambda x: int(x[-1])-1, subjects))
-                self.assertSetEqual(set(np.unique(y[:, 1])), set(subjects_id))
+                self.assertSetEqual(set(np.unique(y[:, -1])), set(subjects_id))
 
 
 if __name__ == '__main__':

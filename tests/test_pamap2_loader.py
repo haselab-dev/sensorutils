@@ -40,7 +40,7 @@ class PAMAP2Test(unittest.TestCase):
         self.assertTrue(all(isinstance(m, pd.DataFrame) for m in meta))
 
         ## shape and column check
-        self.assertTrue(all([set(m.columns) == set(['activity_id', 'person_id']) for m in meta]))
+        self.assertTrue(all([list(m.columns) == ['activity_id', 'person_id'] for m in meta]))
 
         ## data type check
         self.assertTrue(all([
@@ -64,8 +64,8 @@ class PAMAP2Test(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([
-            set(d.columns) == \
-            set(['timestamp(s)', 'heart_rate(bpm)', 'IMU_hand_temperature', 'IMU_hand_acc1_x', 'IMU_hand_acc1_y', 'IMU_hand_acc1_z', 'IMU_hand_acc2_x', 'IMU_hand_acc2_y', 'IMU_hand_acc2_z', 'IMU_hand_gyro_x', 'IMU_hand_gyro_y', 'IMU_hand_gyro_z', 'IMU_hand_mag_x', 'IMU_hand_mag_y', 'IMU_hand_mag_z', 'IMU_hand_orientation0', 'IMU_hand_orientation1', 'IMU_hand_orientation2', 'IMU_hand_orientation3', 'IMU_chest_temperature', 'IMU_chest_acc1_x', 'IMU_chest_acc1_y', 'IMU_chest_acc1_z', 'IMU_chest_acc2_x', 'IMU_chest_acc2_y', 'IMU_chest_acc2_z', 'IMU_chest_gyro_x', 'IMU_chest_gyro_y', 'IMU_chest_gyro_z', 'IMU_chest_mag_x', 'IMU_chest_mag_y', 'IMU_chest_mag_z', 'IMU_chest_orientation0', 'IMU_chest_orientation1', 'IMU_chest_orientation2', 'IMU_chest_orientation3', 'IMU_ankle_temperature', 'IMU_ankle_acc1_x', 'IMU_ankle_acc1_y', 'IMU_ankle_acc1_z', 'IMU_ankle_acc2_x', 'IMU_ankle_acc2_y', 'IMU_ankle_acc2_z', 'IMU_ankle_gyro_x', 'IMU_ankle_gyro_y', 'IMU_ankle_gyro_z', 'IMU_ankle_mag_x', 'IMU_ankle_mag_y', 'IMU_ankle_mag_z', 'IMU_ankle_orientation0', 'IMU_ankle_orientation1', 'IMU_ankle_orientation2', 'IMU_ankle_orientation3']) \
+            list(d.columns) == \
+            ['timestamp(s)', 'heart_rate(bpm)', 'IMU_hand_temperature', 'IMU_hand_acc1_x', 'IMU_hand_acc1_y', 'IMU_hand_acc1_z', 'IMU_hand_acc2_x', 'IMU_hand_acc2_y', 'IMU_hand_acc2_z', 'IMU_hand_gyro_x', 'IMU_hand_gyro_y', 'IMU_hand_gyro_z', 'IMU_hand_mag_x', 'IMU_hand_mag_y', 'IMU_hand_mag_z', 'IMU_hand_orientation0', 'IMU_hand_orientation1', 'IMU_hand_orientation2', 'IMU_hand_orientation3', 'IMU_chest_temperature', 'IMU_chest_acc1_x', 'IMU_chest_acc1_y', 'IMU_chest_acc1_z', 'IMU_chest_acc2_x', 'IMU_chest_acc2_y', 'IMU_chest_acc2_z', 'IMU_chest_gyro_x', 'IMU_chest_gyro_y', 'IMU_chest_gyro_z', 'IMU_chest_mag_x', 'IMU_chest_mag_y', 'IMU_chest_mag_z', 'IMU_chest_orientation0', 'IMU_chest_orientation1', 'IMU_chest_orientation2', 'IMU_chest_orientation3', 'IMU_ankle_temperature', 'IMU_ankle_acc1_x', 'IMU_ankle_acc1_y', 'IMU_ankle_acc1_z', 'IMU_ankle_acc2_x', 'IMU_ankle_acc2_y', 'IMU_ankle_acc2_z', 'IMU_ankle_gyro_x', 'IMU_ankle_gyro_y', 'IMU_ankle_gyro_z', 'IMU_ankle_mag_x', 'IMU_ankle_mag_y', 'IMU_ankle_mag_z', 'IMU_ankle_orientation0', 'IMU_ankle_orientation1', 'IMU_ankle_orientation2', 'IMU_ankle_orientation3'] \
             for d in data
         ]))
 
@@ -139,7 +139,7 @@ class PAMAP2Test(unittest.TestCase):
         self.assertTrue(all(isinstance(m, pd.DataFrame) for m in meta))
 
         ## shape and column check
-        self.assertTrue(all([set(m.columns) == set(['activity_id', 'person_id']) for m in meta]))
+        self.assertTrue(all([list(m.columns) == ['activity_id', 'person_id'] for m in meta]))
 
         ## data type check
         self.assertTrue(all([
@@ -163,8 +163,8 @@ class PAMAP2Test(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([
-            set(d.columns) == \
-            set(['timestamp(s)', 'heart_rate(bpm)', 'IMU_hand_temperature', 'IMU_hand_acc1_x', 'IMU_hand_acc1_y', 'IMU_hand_acc1_z', 'IMU_hand_acc2_x', 'IMU_hand_acc2_y', 'IMU_hand_acc2_z', 'IMU_hand_gyro_x', 'IMU_hand_gyro_y', 'IMU_hand_gyro_z', 'IMU_hand_mag_x', 'IMU_hand_mag_y', 'IMU_hand_mag_z', 'IMU_hand_orientation0', 'IMU_hand_orientation1', 'IMU_hand_orientation2', 'IMU_hand_orientation3', 'IMU_chest_temperature', 'IMU_chest_acc1_x', 'IMU_chest_acc1_y', 'IMU_chest_acc1_z', 'IMU_chest_acc2_x', 'IMU_chest_acc2_y', 'IMU_chest_acc2_z', 'IMU_chest_gyro_x', 'IMU_chest_gyro_y', 'IMU_chest_gyro_z', 'IMU_chest_mag_x', 'IMU_chest_mag_y', 'IMU_chest_mag_z', 'IMU_chest_orientation0', 'IMU_chest_orientation1', 'IMU_chest_orientation2', 'IMU_chest_orientation3', 'IMU_ankle_temperature', 'IMU_ankle_acc1_x', 'IMU_ankle_acc1_y', 'IMU_ankle_acc1_z', 'IMU_ankle_acc2_x', 'IMU_ankle_acc2_y', 'IMU_ankle_acc2_z', 'IMU_ankle_gyro_x', 'IMU_ankle_gyro_y', 'IMU_ankle_gyro_z', 'IMU_ankle_mag_x', 'IMU_ankle_mag_y', 'IMU_ankle_mag_z', 'IMU_ankle_orientation0', 'IMU_ankle_orientation1', 'IMU_ankle_orientation2', 'IMU_ankle_orientation3']) \
+            list(d.columns) == \
+            ['timestamp(s)', 'heart_rate(bpm)', 'IMU_hand_temperature', 'IMU_hand_acc1_x', 'IMU_hand_acc1_y', 'IMU_hand_acc1_z', 'IMU_hand_acc2_x', 'IMU_hand_acc2_y', 'IMU_hand_acc2_z', 'IMU_hand_gyro_x', 'IMU_hand_gyro_y', 'IMU_hand_gyro_z', 'IMU_hand_mag_x', 'IMU_hand_mag_y', 'IMU_hand_mag_z', 'IMU_hand_orientation0', 'IMU_hand_orientation1', 'IMU_hand_orientation2', 'IMU_hand_orientation3', 'IMU_chest_temperature', 'IMU_chest_acc1_x', 'IMU_chest_acc1_y', 'IMU_chest_acc1_z', 'IMU_chest_acc2_x', 'IMU_chest_acc2_y', 'IMU_chest_acc2_z', 'IMU_chest_gyro_x', 'IMU_chest_gyro_y', 'IMU_chest_gyro_z', 'IMU_chest_mag_x', 'IMU_chest_mag_y', 'IMU_chest_mag_z', 'IMU_chest_orientation0', 'IMU_chest_orientation1', 'IMU_chest_orientation2', 'IMU_chest_orientation3', 'IMU_ankle_temperature', 'IMU_ankle_acc1_x', 'IMU_ankle_acc1_y', 'IMU_ankle_acc1_z', 'IMU_ankle_acc2_x', 'IMU_ankle_acc2_y', 'IMU_ankle_acc2_z', 'IMU_ankle_gyro_x', 'IMU_ankle_gyro_y', 'IMU_ankle_gyro_z', 'IMU_ankle_mag_x', 'IMU_ankle_mag_y', 'IMU_ankle_mag_z', 'IMU_ankle_orientation0', 'IMU_ankle_orientation1', 'IMU_ankle_orientation2', 'IMU_ankle_orientation3'] \
             for d in data
         ]))
 
