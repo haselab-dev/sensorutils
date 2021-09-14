@@ -10,8 +10,6 @@ from typing import List, Tuple, Union
 import numpy as np
 import pandas as pd
 
-from sensorutils.datasets.opportunity import Sampling_Rate
-
 from .base import check_path
 
 
