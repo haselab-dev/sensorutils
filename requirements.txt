@@ -9,7 +9,7 @@ pandas>=1.2
 scipy>=1.6
 
 # For building documentations
-mkdocs==1.2.1
+mkdocs==1.2.3
 mkdocs-material==7.1.7
 python-markdown-math==0.8
 mkdocstrings==0.15.2
