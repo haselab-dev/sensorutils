@@ -1,42 +1,36 @@
 # sensorutils
 
-センサデータのロード関数やその他便利な関数群の共有リポジトリ。
+sensorutilsは行動認識データセットのロードや前処理の実装を提供するライブラリです．
 
-こうしたほうが使いやすくない等の相談は issues や slack、直接言うなど気軽に行いたい。
+リファレンスサイトは[こちら](https://haselab-dev.github.io/sensorutils/mkdocs/site/)です．
 
-## ファイル構成について
-
-特に指定はないけどジャンル別にすると使用するときに使いやすいかも。
-各ファイルに関して長くなったら分割、ファイル分けなどを行うこと。
+## Project Structure
 
 * datasets  : データセットのロード関数
-* core      : センサデータ処理関数（主に `preprocessing` を担当。肥大化したら適宜分離）
+* core      : センサデータ処理関数（主に `preprocessing`関連の処理）
 * stats     : 統計的処理
-    * 可能なら `pandas` の `goupby` や `rolling` 関数を用いたほうが良い
+    <!-- * 可能なら `pandas` の `goupby` や `rolling` 関数を用いたほうが良い -->
 * metrics   : センサデータの評価関数
-    * 可能なら `sklearn.metrics` を使用したほうが良い
-* doc       : ドキュメントファイルを格納
+    <!-- * 可能なら `sklearn.metrics` を使用したほうが良い -->
+* docs       : ドキュメントファイルを格納
 * tests     : テストコードを格納
-    * `python -m unittest discover tests` で実行できるようにしておく？
+    <!-- * `python -m unittest discover tests` で実行できるようにしておく？ -->
 
-詳細は `docs` ディレクトリへ
+## Usage
 
-## usage
-
-`sensorutils` をインポートすると `core.py` と `dataset` が自動的に読み込まれる。
-
-インポートしたときに `doc` と `test` が補完に表示されるがインポートする意味はない。
+`sensorutils` をインポートすると `core.py` と `dataset` が自動的に読み込まれます．
+(インポートしたときに `doc` と `test` が補完に表示されるがインポートする意味はありません．)
 
 ```python
 import sensorutils
 import sensorutils.datasets
 ```
 
-* [sensorutils.datasetの使い方](doc/samples)
+sensorutilsの代表的な使用方法は[こちら](https://haselab-dev.github.io/sensorutils/mkdocs/site/guide.html)が参考になります．
+具体的なコード例は[サンプル](docs/samples)を参照してください．
 
-詳細は `docs` ディレクトリへ
 
-## requirement
+## Requirement
 
 **共通**
 * python >= 3.7
@@ -44,7 +38,15 @@ import sensorutils.datasets
 * pandas >= 1.2
 * scipy >= 1.6
 
-## install
+## Installation
+
+sensorutilsはpipを利用してインストールすることができます．
+condaを用いてインストールすることもできますが，
+pipを用いる方法が最も簡単です．
+condaを用いたインストール方法は
+[リファレンスサイト](https://haselab-dev.github.io/sensorutils/mkdocs/site/install.html)か
+下記の`Build package`を参照してください．
+
 
 ### pip
 
@@ -58,14 +60,7 @@ pip install git+https://github.com/haselab-dev/sensorutils
 pip install git+https://github.com/haselab-dev/sensorutils[@{ブランチ名 | タグ名}]
 ```
 
-## test
-
-```bash
-# cd sensorutils
-python tests/test_core.py
-```
-
-## build package
+## Build package
 
 ### pip
 
@@ -147,7 +142,11 @@ pip uninstall sensorutils
 conda uninstall sensorutils
 ```
 
-## loadmap
+## Test
+
+テストコードは実装されていますが，現状は完全なものではありません．
+
+## Loadmap
 
 * 1.0
    * [x] create abstruct class for dataset loader
