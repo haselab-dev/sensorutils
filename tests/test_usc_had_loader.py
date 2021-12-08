@@ -1,5 +1,6 @@
 import sys
 import unittest
+import copy
 
 import numpy as np
 import pandas as pd
@@ -14,6 +15,9 @@ class USC_HAD_Test(unittest.TestCase):
     path = None
     activities = list(range(12))
     subjects = list(range(1, 14+1))
+
+    data_columns = ['acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z']
+    meta_columns = ['version', 'trial', 'activity', 'subject', 'age', 'height', 'weight', 'sensor_location', 'sensor_orientation']
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -38,7 +42,7 @@ class USC_HAD_Test(unittest.TestCase):
         self.assertTrue(all(isinstance(m, pd.DataFrame) for m in meta))
 
         ## shape and column check
-        self.assertTrue(all([list(m.columns) == ['version', 'trial', 'activity', 'subject', 'age', 'height', 'weight', 'sensor_location', 'sensor_orientation'] for m in meta]))
+        self.assertTrue(all([list(m.columns) == USC_HAD_Test.meta_columns for m in meta]))
 
         ## data type check
         self.assertTrue(all([
@@ -55,7 +59,7 @@ class USC_HAD_Test(unittest.TestCase):
         ]))
 
         ## data check
-        for col in ['version', 'trial', 'activity', 'subject', 'age', 'height', 'weight', 'sensor_location', 'sensor_orientation']:
+        for col in USC_HAD_Test.meta_columns:
             self.assertTrue(all([
                 set(np.unique(m[col])) == set([m[col].iloc[0]]) for m in meta
             ]))
@@ -67,8 +71,7 @@ class USC_HAD_Test(unittest.TestCase):
 
         ## shape and column check
         self.assertTrue(all([
-            list(d.columns) == \
-            ['acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z']
+            list(d.columns) == USC_HAD_Test.data_columns
             for d in data
         ]))
 
@@ -87,14 +90,7 @@ class USC_HAD_Test(unittest.TestCase):
         self.assertTrue(all(isinstance(r, pd.DataFrame) for r in raw))
 
         ## shape and column check
-        tgt = tuple([
-            'acc_x', 'acc_y', 'acc_z',
-            'gyro_x', 'gyro_y', 'gyro_z',
-            'version', 'trial',
-            'activity', 'subject',
-            'age', 'height', 'weight',
-            'sensor_location', 'sensor_orientation',
-        ])
+        tgt = tuple(USC_HAD_Test.data_columns+USC_HAD_Test.meta_columns)
         self.assertTrue(all([
             tuple(r.columns) == tgt for r in raw
         ]))
@@ -112,7 +108,7 @@ class USC_HAD_Test(unittest.TestCase):
         self.assertTrue(all(flgs))
 
         ## data check
-        for col in ['version', 'trial', 'activity', 'subject', 'age', 'height', 'weight', 'sensor_location', 'sensor_orientation']:
+        for col in USC_HAD_Test.meta_columns:
             self.assertTrue(all([
                 set(np.unique(r[col])) == set([r[col].iloc[0]]) for r in raw
             ]))
@@ -138,7 +134,7 @@ class USC_HAD_Test(unittest.TestCase):
         self.assertTrue(all(isinstance(m, pd.DataFrame) for m in meta))
 
         ## shape and column check
-        self.assertTrue(all([list(m.columns) == ['version', 'trial', 'activity', 'subject', 'age', 'height', 'weight', 'sensor_location', 'sensor_orientation'] for m in meta]))
+        self.assertTrue(all([list(m.columns) == USC_HAD_Test.meta_columns for m in meta]))
 
         ## data type check
         flgs = []
@@ -153,7 +149,7 @@ class USC_HAD_Test(unittest.TestCase):
         self.assertTrue(all(flgs))
 
         ## data check
-        for col in ['version', 'trial', 'activity', 'subject', 'age', 'height', 'weight', 'sensor_location', 'sensor_orientation']:
+        for col in USC_HAD_Test.meta_columns:
             self.assertTrue(all([
                 set(np.unique(m[col])) == set([m[col].iloc[0]]) for m in meta
             ]))
@@ -174,7 +170,7 @@ class USC_HAD_Test(unittest.TestCase):
         ## shape and column check
         self.assertTrue(all([
             list(d.columns) == \
-            ['acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z']
+            USC_HAD_Test.data_columns
             for d in data
         ]))
 
@@ -187,16 +183,8 @@ class USC_HAD_Test(unittest.TestCase):
     def test_usc_had_load_method_filed_labels(self):
         # check processing for exceptions
             
-        x_labels = [
-            'acc_x', 'acc_y', 'acc_z',
-            'gyro_x', 'gyro_y', 'gyro_z',
-        ]
-        y_labels = [
-            'version', 'trial',
-            'activity', 'subject',
-            'age', 'height', 'weight',
-            'sensor_location', 'sensor_orientation',
-        ]
+        x_labels = copy.deepcopy(USC_HAD_Test.data_columns)
+        y_labels = copy.deepcopy(USC_HAD_Test.meta_columns)
 
         with self.assertRaises(ValueError):
             _, _ = self.loader.load(window_size=256, stride=256, ftrim_sec=5, btrim_sec=5, subjects=None, x_labels=y_labels)
@@ -218,16 +206,9 @@ class USC_HAD_Test(unittest.TestCase):
         self.assertEqual(y.shape[1], 2)
 
     def test_usc_had_load_method_framing(self):
-        x_labels = [
-            'acc_x', 'acc_y', 'acc_z',
-            'gyro_x', 'gyro_y', 'gyro_z',
-        ]
-        y_labels = [
-            'version', 'trial',
-            'activity', 'subject',
-            'age', 'height', 'weight',
-            'sensor_location', 'sensor_orientation',
-        ]
+        x_labels = copy.deepcopy(USC_HAD_Test.data_columns)
+        y_labels = copy.deepcopy(USC_HAD_Test.meta_columns)
+
         for stride, ws in itertools.product([64, 128, 256, 512], [64, 128, 256, 512]):
             # print(f'window size: {ws}, stride: {stride}')
             with self.subTest(f'window size: {ws}, stride: {stride}'):
@@ -259,7 +240,7 @@ class USC_HAD_Test(unittest.TestCase):
 
                 del x, y
 
-    def test_pamap2_load_method_filed_subjects(self):
+    def test_usc_had_load_method_filed_subjects(self):
         patterns = [
             [4, 3, 1, 6, 5, 8, 14, 11, 12, 7, 10, 13],
             [3, 11, 14, 6, 12, 5],
