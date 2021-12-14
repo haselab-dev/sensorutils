@@ -110,7 +110,7 @@ class MHEALTH(BaseDataset):
             segments = self.data_cache
         return segments
     
-    def load(self, window_size:int, stride:int, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=5, btrim_sec:int=5, subjects:Optional[list]=None) -> Tuple[np.ndarray, np.ndarray]:
+    def load(self, window_size:int=100, stride:int=100, x_labels:Optional[list]=None, y_labels:Optional[list]=None, ftrim_sec:int=0, btrim_sec:int=0, subjects:Optional[list]=None) -> Tuple[np.ndarray, np.ndarray]:
         """
         mHealthデータセットを読み込み，sliding-window処理を行ったデータを返す．
 
