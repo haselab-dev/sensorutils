@@ -201,7 +201,7 @@ class MHEALTH(BaseDataset):
             if fs is not None:
                 frames += [fs]
             else:
-                print('no frame')
+                print('no frame: {}'.format(np.array(seg).shape))
         frames = np.concatenate(frames)
         assert frames.shape[-1] == len(x_labels) + len(y_labels) + 2, 'Extracted data shape does not match with the number of total labels'
         # x_labelsでサポートされているラベルはすべてfloat64で対応
