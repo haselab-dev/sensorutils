@@ -16,7 +16,7 @@
 #     https://github.com/mkdocstrings/pytkdocs/issues/104
 
 
-site_name: sensorutils v0.13.1
+site_name: sensorutils v0.14.0
 # site_url: https://haselab-dev.github.io/sensorutils/mkdocs/site/
 site_author: hogedamari
 site_description: Documentation for sensorutils

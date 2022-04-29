@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
     name='sensorutils',
-    version='0.13.1',
+    version='0.14.0',
     description='A utils for sensor data',
     #long_description=long_description,
     #long_description_content_type='text/markdown',

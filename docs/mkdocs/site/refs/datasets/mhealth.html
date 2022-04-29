@@ -18,7 +18,7 @@
     
     
       
-        <title>UniMib SHAR Dataset Loader - sensorutils v0.14.0</title>
+        <title>mHealth Dataset Loader - sensorutils v0.14.0</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#unimib-shar-dataset-loader" class="md-skip">
+        <a href="#mhealth-dataset-loader" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -94,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              UniMib SHAR Dataset Loader
+              mHealth Dataset Loader
             
           </span>
         </div>
@@ -307,15 +307,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.datasets.unimib.UniMib" class="md-nav__link">
-    UniMib
+  <a href="#sensorutils.datasets.mhealth.MHEALTH" class="md-nav__link">
+    MHEALTH
   </a>
   
-    <nav class="md-nav" aria-label="UniMib">
+    <nav class="md-nav" aria-label="MHEALTH">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#sensorutils.datasets.unimib.UniMib.load" class="md-nav__link">
+  <a href="#sensorutils.datasets.mhealth.MHEALTH.load" class="md-nav__link">
     load()
   </a>
   
@@ -327,14 +327,14 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.datasets.unimib.load" class="md-nav__link">
+  <a href="#sensorutils.datasets.mhealth.load" class="md-nav__link">
     load()
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#sensorutils.datasets.unimib.load_raw" class="md-nav__link">
+  <a href="#sensorutils.datasets.mhealth.load_raw" class="md-nav__link">
     load_raw()
   </a>
   
@@ -352,20 +352,20 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/refs/datasets/unimib.md" title="編集" class="md-content__button md-icon">
+                  <a href="https://github.com/haselab-dev/sensorutils/edit/master/docs/refs/datasets/mhealth.md" title="編集" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="unimib-shar-dataset-loader">UniMib SHAR Dataset Loader</h1>
+                <h1 id="mhealth-dataset-loader">mHealth Dataset Loader</h1>
 
 
   <div class="doc doc-object doc-class">
 
 
 
-<h2 id="sensorutils.datasets.unimib.UniMib" class="doc doc-heading">
-        <code>UniMib</code>
+<h2 id="sensorutils.datasets.mhealth.MHEALTH" class="doc doc-heading">
+        <code>MHEALTH</code>
 
 
 
@@ -373,7 +373,7 @@
 
     <div class="doc doc-contents first">
 
-      <p>UniMib SHARデータセットに記録されているセンサデータとメタデータを読み込む．</p>
+      <p>MHEALTHデータセットに記録されているセンサデータとメタデータを読み込む．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -389,8 +389,30 @@
       <tr>
         <td><code>path</code></td>
         <td><code>Path</code></td>
-        <td><p>UniMib SHARデータセットのパス(path/to/dataset/data)．</p></td>
+        <td><p>mHealthデータセットのパス(path/to/dataset/).</p></td>
         <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Attributes:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>supported_x_labels</code></td>
+        <td><code>List[str]</code></td>
+        <td><p>ターゲット以外のすべてのラベルのリスト</p></td>
+      </tr>
+      <tr>
+        <td><code>supported_y_labels</code></td>
+        <td><code>List[str]</code></td>
+        <td><p>ターゲットラベルのリスト</p></td>
       </tr>
   </tbody>
 </table>
@@ -408,19 +430,21 @@
 
 
 
+
+
   <div class="doc doc-object doc-method">
 
 
 
-<h3 id="sensorutils.datasets.unimib.UniMib.load" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ftrim_sec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">btrim_sec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="sensorutils.datasets.mhealth.MHEALTH.load" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">x_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ftrim_sec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">btrim_sec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>UniMib SHARデータセットを読み込み，sliding-window処理を行ったデータを返す．</p>
+      <p>mHealthデータセットを読み込み，sliding-window処理を行ったデータを返す．</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -434,63 +458,62 @@
   </thead>
   <tbody>
       <tr>
-        <td><code>data_type</code></td>
-        <td><code>str</code></td>
-        <td><p>ロードするデータの種類(adl, fall, full, raw)を選択する(full = adl + fall)．
-rawは前処理済みデータではない生のデータを扱う．</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
         <td><code>window_size</code></td>
-        <td><code>Optional[int]</code></td>
-        <td><p>フレーム分けするサンプルサイズ
-data_type != 'raw'の場合は強制的に151となるが，
-data_type == 'raw'の場合は必ず指定する必要がある．</p></td>
-        <td><code>None</code></td>
+        <td><code>int</code></td>
+        <td><p>フレーム分けするサンプルサイズ</p></td>
+        <td><code>100</code></td>
       </tr>
       <tr>
         <td><code>stride</code></td>
-        <td><code>Optional[int]</code></td>
-        <td><p>ウィンドウの移動幅</p>
-<p>data_type != 'raw'の場合は指定する必要はないが，
-data_type == 'raw'の場合は必ず指定する必要がある．</p></td>
+        <td><code>int</code></td>
+        <td><p>ウィンドウの移動幅</p></td>
+        <td><code>100</code></td>
+      </tr>
+      <tr>
+        <td><code>x_labels</code></td>
+        <td><code>Optional[list]</code></td>
+        <td><p>入力(従属変数)のラベルリスト(ラベル名は元データセットに準拠)．ここで指定したラベルのデータが入力として取り出される．</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>y_labels</code></td>
+        <td><code>Optional[list]</code></td>
+        <td><p>ターゲットのラベルリスト(仕様はx_labelsと同様)</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>ftrim_sec</code></td>
         <td><code>int</code></td>
         <td><p>セグメント先頭のトリミングサイズ(単位は秒)</p></td>
-        <td><code>3</code></td>
+        <td><code>0</code></td>
       </tr>
       <tr>
         <td><code>btrim_sec</code></td>
         <td><code>int</code></td>
         <td><p>セグメント末尾のトリミングサイズ(単位は秒)</p></td>
-        <td><code>3</code></td>
+        <td><code>0</code></td>
       </tr>
       <tr>
         <td><code>subjects</code></td>
         <td><code>Optional[list]</code></td>
         <td><p>ロードする被験者を指定する．指定されない場合はすべての被験者のデータを返す．
-被験者は計9名おり，それぞれに整数のIDが割り当てられている．</p>
-<p>被験者ID: [1, 2, ..., 30]</p></td>
+被験者は計10名おり，それぞれにIDが割り当てられている．</p>
+<p>被験者ID: [1, 2, 3, 4, 5, 6 ,7, 8, 9, 10]</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">unimib_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;path/to/dataset&#39;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">unimib</span> <span class="o">=</span> <span class="n">UniMib</span><span class="p">(</span><span class="n">unimib_path</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">mhealth_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;path/to/dataset/&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mhealth</span> <span class="o">=</span> <span class="n">MHEALTH</span><span class="p">(</span><span class="n">mhealth_path</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;acceleration_chest_x&#39;</span><span class="p">,</span> <span class="s1">&#39;acceleration_chest_y&#39;</span><span class="p">,</span> <span class="s1">&#39;acceleration_chest_z&#39;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;activity&#39;</span><span class="p">]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">subjects</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mhealth</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">x_labels</span><span class="o">=</span><span class="n">xlabels</span><span class="p">,</span> <span class="n">y_labels</span><span class="o">=</span><span class="n">y_labels</span><span class="p">,</span> <span class="n">ftrim_sec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">btrim_sec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="n">subjects</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;x: </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, y: </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">unimib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="n">subjects</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;full - x: </span><span class="si">{}</span><span class="s1">, y: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="c1"># &gt; full - x: (?, 3, 151), y: (?, 2)</span>
-<span class="o">&gt;&gt;&gt;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">unimib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">ftrim_sec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">btrim_sec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">subjects</span><span class="o">=</span><span class="n">subjects</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;raw - x: </span><span class="si">{}</span><span class="s1">, y: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="c1"># &gt; raw - x: (?, 3, 64), y: (?, 2)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># &gt; x: (?, 3, 128), y: (?, 1)</span>
 </code></pre></div>
 
 <p><strong>Returns:</strong></p>
@@ -506,11 +529,9 @@ data_type == 'raw'の場合は必ず指定する必要がある．</p></td>
       <td><code>Tuple[numpy.ndarray, numpy.ndarray]</code></td>
       <td><p>sliding-windowで切り出した入力とターゲットのフレームリスト</p>
 <p>x_framesは3次元配列で構造は大まかに(Batch, Channels, Frame)のようになっている．
-Channelsは加速度センサの軸を表しており，先頭からx, y, zである．
-また，このローダはdata_typeによってwindow_sizeの挙動が変わり，
-data_type != 'raw'の場合はwindow_sizeは強制的に151となる．</p>
+Channelsはx_labelsで指定したものが格納される．</p>
 <p>y_framesは2次元配列で構造は大まかに(Batch, Labels)のようになっている．
-Labelsは先頭からactivity，subjectを表している．</p>
+Labelsはy_labelsで指定したものが格納される．</p>
 <p>y_framesはデータセット内の値をそのまま返すため，分類で用いる際はラベルの再割り当てが必要となることに注意する．</p></td>
     </tr>
   </tbody>
@@ -535,15 +556,15 @@ Labelsは先頭からactivity，subjectを表している．</p>
 
 
 
-<h2 id="sensorutils.datasets.unimib.load" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">)</span></code>
+<h2 id="sensorutils.datasets.mhealth.load" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
 
 
 </h2>
 
     <div class="doc doc-contents first">
 
-      <p>Function for loading UniMib SHAR dataset</p>
+      <p>Function for loading mHealth dataset</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -559,20 +580,8 @@ Labelsは先頭からactivity，subjectを表している．</p>
       <tr>
         <td><code>path</code></td>
         <td><code>Union[pathlib.Path, str]</code></td>
-        <td><p>Directory path of UniMib SHAR dataset('data' directory).</p></td>
+        <td><p>Directory path of mHealth dataset.</p></td>
         <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>data_type</code></td>
-        <td><code>str</code></td>
-        <td><p>Data type</p>
-<ul>
-<li>'full': segmented sensor data which contain all activities</li>
-<li>'adl' : segmented sensor data which contain ADL activities</li>
-<li>'fall': segmented sensor data which contain fall activities</li>
-<li>'raw' : raw sensor data (not segmented, all activities)</li>
-</ul></td>
-        <td><code>&#39;full&#39;</code></td>
       </tr>
   </tbody>
 </table>
@@ -586,7 +595,7 @@ Labelsは先頭からactivity，subjectを表している．</p>
   </thead>
   <tbody>
     <tr>
-      <td><code>Tuple[List[pandas.core.frame.DataFrame], pandas.core.frame.DataFrame]</code></td>
+      <td><code>Tuple[List[pandas.core.frame.DataFrame], List[pandas.core.frame.DataFrame]]</code></td>
       <td><p>Sensor data segmented by activity and subject.</p></td>
     </tr>
   </tbody>
@@ -601,15 +610,15 @@ Labelsは先頭からactivity，subjectを表している．</p>
 
 
 
-<h2 id="sensorutils.datasets.unimib.load_raw" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_raw</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">)</span></code>
+<h2 id="sensorutils.datasets.mhealth.load_raw" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">load_raw</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
 
 
 </h2>
 
     <div class="doc doc-contents first">
 
-      <p>Function for loading raw data of UniMib SHAR dataset</p>
+      <p>Function for loading raw data of mHealth dataset</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -625,20 +634,8 @@ Labelsは先頭からactivity，subjectを表している．</p>
       <tr>
         <td><code>path</code></td>
         <td><code>Path</code></td>
-        <td><p>Directory path of UniMib SHAR dataset('data' directory).</p></td>
+        <td><p>Directory path of mHealth dataset.</p></td>
         <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>data_type</code></td>
-        <td><code>str</code></td>
-        <td><p>Data type</p>
-<ul>
-<li>'full': segmented sensor data which contain all activities</li>
-<li>'adl' : segmented sensor data which contain ADL activities</li>
-<li>'fall': segmented sensor data which contain fall activities</li>
-<li>'raw' : raw sensor data (not segmented, all activities)</li>
-</ul></td>
-        <td><code>&#39;full&#39;</code></td>
       </tr>
   </tbody>
 </table>
@@ -652,21 +649,9 @@ Labelsは先頭からactivity，subjectを表している．</p>
   </thead>
   <tbody>
     <tr>
-      <td><code>Union[Tuple[numpy.ndarray, pandas.core.frame.DataFrame], Tuple[List[pandas.core.frame.DataFrame], pandas.core.frame.DataFrame]]</code></td>
-      <td><ul>
-<li>
-<p>If data_type = 'full', 'adl' or 'fall': Tuple[np.ndarray, pd.DataFrame]</p>
-<p>Sensor data and meta data.
-Data shape is (?, 151, 3), and the second axis shows frames.
-Third axis is channel axis, which indicates x, y and z acceleration.</p>
-</li>
-<li>
-<p>If data_type = 'raw': Tuple[List[np.ndarray], pd.DataFrame]</p>
-<p>Sensor data and meta data.
-Data shape is (?, ?, 3), and the second axis shows segments which is variable length.
-Third axis is channel, which indicates x, y and z acceleration.</p>
-</li>
-</ul></td>
+      <td><code>List[pandas.core.frame.DataFrame]</code></td>
+      <td><p>Raw data of mHealth dataset.</p>
+<p>Each item in 'chunks_per_subjects ' is a part of dataset, which is splited by subject.</p></td>
     </tr>
   </tbody>
 </table>
