@@ -9,4 +9,7 @@
 - [UCI Smartphone](datasets/ucihar.md)
 - [UniMib](datasets/unimib.md)
 - [WISDM](datasets/wisdm.md)
+- [DSADS](datasets/dsads.md)
+- [USC-HAD](datasets/uschad.md)
+- [mHealth](datasets/mhealth.md)
 
