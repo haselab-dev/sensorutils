@@ -40,7 +40,9 @@ class HASC(BaseDataset):
     """
 
     supported_queries = [
-        'Frequency', 'Gender', 'Height', 'Weight', 'Person'
+        'Frequency', 'Gender', 'Height', 'Weight', 'Person',
+        # add
+        'TerminalType',
     ]
 
     supported_activity_labels = [
@@ -100,7 +102,7 @@ class HASC(BaseDataset):
         - Person 
         """
         if not (set(queries.keys()) < set(self.supported_queries)):
-            raise ValueError(f'Unknown queries detected. (Supported: {self.supported_queries})')
+            raise ValueError(f'Unknown queries ({set(queries.keys()) - set(self.supported_queries)}) detected. (Supported: {self.supported_queries})')
 
         # クエリの整形
         # 括弧は特殊文字として扱われるため無視したい場合はバッククォートで囲む
