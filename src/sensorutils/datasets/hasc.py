@@ -331,7 +331,7 @@ def load_meta(path:Path) -> pd.DataFrame:
         return s
 
     def read_meta(file:Path):
-        with file.open(mode='rU', encoding='utf-8') as f:
+        with file.open(mode='r', encoding='utf-8') as f:
             ret = [s.strip() for s in f.readlines()]
             ret = filter(bool, ret)
             ret = [replace_meta_str(s) for s in ret]
@@ -424,4 +424,3 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     """
     data, meta = raw
     return data, meta
-
