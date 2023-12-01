@@ -28,7 +28,7 @@ class HASC(BaseDataset):
     ----------
     path: Path
         HASCデータセットのパス．BasicActivityディレクトリの親ディレクトリのパスを指定する．
-    
+
     meta_cache_path: Optional[Path]
         メタデータのキャッシュファイルのパス．
         何も指定されない場合(meta_cache_path=None)，メタデータの作成を行うが，キャッシュファイルは作成しない．
@@ -47,7 +47,9 @@ class HASC(BaseDataset):
         'stay', 'walk', 'jog', 'skip', 'stup', 'stdown',
     ]
 
-    supported_target_labels = ['activity', 'frequency', 'gender', 'height', 'weight', 'person']
+    supported_target_labels = [
+        'activity', 'frequency', 'gender', 'height', 'weight', 'person'
+    ]
 
     MAPS = {
         'activity': {'1_stay': 0, '2_walk': 1, '3_jog': 2, '4_skip': 3, '5_stUp': 4, '6_stDown': 5},
@@ -80,15 +82,15 @@ class HASC(BaseDataset):
         }
         self.meta = self.meta.replace('', np.nan)
         self.meta = self.meta.astype(dtypes)
-        
+
         self.label_map = {'activity': None, 'subject': None}
-    
+
     @classmethod
     def load_from_cache(cls, cache_path:Path):
         with cache_path.open('rb') as fp:
             x, y = pickle.load(fp)
         return x, y
-    
+
     def _filter_with_meta(self, queries):
         """
         Supported Queries
@@ -110,11 +112,11 @@ class HASC(BaseDataset):
             queries['Person'] = queries['Person'].replace('Person', 'person')
         for k in queries.keys():
             queries[k] = f'({queries[k]})'
-        
+
         query_string = ' & '.join([queries[k] for k in queries.keys()])
         filed_meta = self.meta.query(query_string)
         return filed_meta
-    
+
     def __extract_targets(self, y_labels:Iterable, meta_row:pd.Series) -> np.ndarray:
         if not isinstance(meta_row, pd.Series):
             raise TypeError('meta_row must be "pd.Series", but {}'.format(type(meta_row)))
@@ -181,7 +183,7 @@ class HASC(BaseDataset):
 
         btrim: int
             セグメント末尾のトリミングサイズ
-        
+
         queries: dict
             メタ情報に基づいてフィルタリングを行うためのクエリ．
 
@@ -190,7 +192,7 @@ class HASC(BaseDataset):
             Valueはクエリ文字列(DataFrame.queryに準拠)
 
             詳しい使い方は後述．
-        
+
         y_labels: Union[str, list]
 
             ターゲットデータとしてロードするデータの種類を指定．
@@ -214,7 +216,7 @@ class HASC(BaseDataset):
 
             y_framesはy_labelsで指定したターゲットラベルであり，
             y_frames(axis=1)のラベルの順序はy_labelsのものが保持されている．
-        
+
         Examples
         --------
         サンプリングレートが100Hz and 身長が170cmより大きい and 体重が100kg以上でフィルタリング
@@ -244,7 +246,7 @@ class HASC(BaseDataset):
             filed_meta = self.meta
         else:
             filed_meta = self._filter_with_meta(queries)
-        
+
         segments, _ = load(self.path, meta=filed_meta)
         x_frames = []
         y_frames = []
@@ -286,15 +288,15 @@ def load(path:Union[Path,str], meta:pd.DataFrame) -> Tuple[List[pd.DataFrame], p
     ----------
     path: Union[Path, str]
         Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
-    
+
     meta: pd.DataFrame
         meta data loaded by 'load_meta'.
-    
+
     Returns
     -------
     data, meta: List[pd.DataFrame], pd.DataFrame
         Sensor data segmented by activity and subject.
-    
+
     See Also
     --------
     The order of 'data' and 'meta' correspond.
@@ -347,11 +349,8 @@ def load_meta(path:Path) -> pd.DataFrame:
     assert path.exists(), '{} is not exists.'.format(str(path))
     files = path.glob('**/**/*.meta')
     metas = [read_meta(p) for p in files]
-    metas = functools.reduce(
-        lambda a, b: a.append([b]),
-        metas,
-        pd.DataFrame()
-    )
+    metas = [pd.DataFrame(m, index=[0]) for m in metas]
+    metas = pd.concat(metas, ignore_index=True)
     return metas
 
 
@@ -362,17 +361,17 @@ def load_raw(path:Path, meta:Optional[pd.DataFrame]=None) -> Tuple[List[pd.DataF
     ----------
     path: Path
         Directory path of HASC dataset, which is parent directory of "BasicActivity" directory.
-    
+
     meta: pd.DataFrame
         meta data loaded by 'load_meta'.
-    
+
     Returns
     -------
     data, meta: List[pd.DataFrame], pd.DataFrame
         raw data of HASC dataset.
 
         Each item in 'data' is a part of dataset, which is splited by subject.
-    
+
     See Also
     --------
     The order of 'data' and 'meta' correspond.
@@ -390,7 +389,7 @@ def load_raw(path:Path, meta:Optional[pd.DataFrame]=None) -> Tuple[List[pd.DataF
         else:
             print('[load] not found:', str(path))
         return pd.DataFrame()
-    
+
     if meta is None:
         meta = load_meta(path)
 
@@ -410,7 +409,7 @@ def reformat(raw) -> Tuple[List[pd.DataFrame], pd.DataFrame]:
     ----------
     raw:
         data loaded by 'load_raw'
-    
+
     Returns
     -------
     data, meta: List[pd.DataFrame], pd.DataFrame
